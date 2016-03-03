@@ -1,0 +1,31 @@
+.login{
+	display: table;
+	border: solid 1px #666;
+	position: relative;
+	margin: 10% auto;
+	padding: 30px;
+	color: #35205c;
+}
+.loginRow{
+	display: table-row;
+}
+.loginCell{
+	display: table-cell;
+	margin-bottom: 5px;
+}
+.loginBtn{
+	text-align: right;
+}
+.loginBtn a{
+	text-decoration: none;
+	background: #3f4478;
+	color: #eee;
+	padding: 1px 7px;
+}
+.loginBtn a:hover{
+	
+}
+.loginMsg{
+	margin-top: 10px;
+	color: #c66;
+}

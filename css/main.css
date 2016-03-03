@@ -1,0 +1,371 @@
+body{
+	--lineHeight: 20px;
+	--headHeight: 40px;
+	--darkBkgr: #336699;
+	--lightBkgr: #b3cce6;
+	--navMinWidth: 20px;
+	--navWidth: 150px;
+	--mainSpacing: 4px;
+	--footerHeight: 20px;
+	--border: #b3cce6;
+	--lightText: #ccc;
+	--darkText: #001;
+	--navGroup: #264c72;
+	--closeColor: #e25a5a;
+	--animationSpinSpead: 0.7s;
+}
+
+@-webkit-keyframes spinnerRotate
+{
+    from{-webkit-transform:rotate(0deg);}
+    to{-webkit-transform:rotate(360deg);}
+}
+@-moz-keyframes spinnerRotate
+{
+    from{-moz-transform:rotate(0deg);}
+    to{-moz-transform:rotate(360deg);}
+}
+@-ms-keyframes spinnerRotate
+{
+    from{-ms-transform:rotate(0deg);}
+    to{-ms-transform:rotate(360deg);}
+}
+.spin{
+    -webkit-animation-name: spinnerRotate;
+    -webkit-animation-duration: var(--animationSpinSpead);
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-name: spinnerRotate;
+    -moz-animation-duration: var(--animationSpinSpead);
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+    -ms-animation-name: spinnerRotate;
+    -ms-animation-duration: var(--animationSpinSpead);
+    -ms-animation-iteration-count: infinite;
+    -ms-animation-timing-function: linear;
+}
+
+html, body{
+	margin: 0;
+	height: 100%;
+	width: 100%;
+	background: var(--darkBkgr);
+	color: var(--darkText);
+	font-family: Verdana,Geneva,sans-serif;
+	font-size: 12px;
+	line-height: var(--lineHeight);
+}
+.head{
+	width: 100%;
+	background: var(--darkBkgr);
+	height: var(--headHeight);
+	box-sizing: border-box;
+	border-bottom: solid 1px var(--border);
+	display: table;
+	align-items: center;
+	color: var(--lightText);
+}
+.navigation{
+	height: -moz-calc(100% - var(--headHeight) - var(--footerHeight));
+    height: -webkit-calc(100% - var(--headHeight) - var(--footerHeight));
+    height: calc(100% - var(--headHeight) - var(--footerHeight));
+	width: var(--navWidth);
+	background: var(--lightBkgr);
+	box-sizing: border-box;
+	border-top: solid var(--mainSpacing) var(--darkBkgr);
+	border-bottom: solid var(--mainSpacing) var(--darkBkgr);
+	border-left: solid var(--mainSpacing) var(--darkBkgr);
+	float: left;
+}
+.navResize{
+	height: -moz-calc(100% - var(--headHeight) - var(--footerHeight));
+    height: -webkit-calc(100% - var(--headHeight) - var(--footerHeight));
+    height: calc(100% - var(--headHeight) - var(--footerHeight));
+	width: var(--mainSpacing);
+	background: var(--darkBkgr);
+	box-sizing: border-box;
+	float: left;
+	cursor: col-resize;
+}
+.content{
+	height: -moz-calc(100% - var(--headHeight) - var(--footerHeight));
+    height: -webkit-calc(100% - var(--headHeight) - var(--footerHeight));
+    height: calc(100% - var(--headHeight) - var(--footerHeight));
+	width: -moz-calc(100% - var(--navWidth) - var(--mainSpacing));
+    width: -webkit-calc(100% - var(--navWidth) - var(--mainSpacing));
+    width: calc(100% - var(--navWidth) - var(--mainSpacing));
+	background: var(--lightBkgr);
+	box-sizing: border-box;
+	border-top: solid var(--mainSpacing) var(--darkBkgr);
+	border-bottom: solid var(--mainSpacing) var(--darkBkgr);
+	border-right: solid var(--mainSpacing) var(--darkBkgr);
+	float: left;	
+}
+.footer{
+	clear: both;
+	width: 100%;
+	height: var(--footerHeight);
+	background: var(--darkBkgr);
+	box-sizing: border-box;
+	border-top: solid 1px var(--border);
+}
+#cmsHead{
+	padding-right: 30px;
+}
+.row{
+	display: table-row;
+}
+.cmsTitle{
+	display: table-cell;
+	padding-left: 10px;
+	margin: 0;
+	vertical-align: middle;
+}
+.logout{
+	display: table-cell;
+	font-size: 24px;
+	margin-bottom: auto;
+	margin-top: auto;
+	cursor: pointer;
+	vertical-align: middle;
+	text-align: right;
+	padding-right: 10px;
+	width: 30px;
+}
+.ajaxLoading{
+	position: fixed;
+	top: 8px;
+	right: 1px;
+	display: table-cell;
+	font-size: 24px;
+	margin-bottom: auto;
+	margin-top: auto;
+	vertical-align: middle;
+	text-align: right;
+	padding-right: 10px;
+	width: 30px;
+	cursor: default;
+}
+.logout:hover{
+	color: #fff;
+}
+.logoutMsg{
+	position: fixed;
+	top: 45%;
+	left: 50%;
+	color: #ccc;
+	font-size: 24px;
+}
+.navigationGroup{
+	background: var(--navGroup);	
+	background: -webkit-linear-gradient(var(--navGroup), var(--darkBkgr)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(var(--navGroup), var(--darkBkgr)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(var(--navGroup), var(--darkBkgr)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(var(--navGroup), var(--darkBkgr)); /* Standard syntax */
+	margin: 1px;
+	color: var(--lightText);
+	padding: 1px 0px 1px 5px;
+	cursor: pointer;
+}
+.navigationGroup:hover{
+	background: var(--darkBkgr);	
+	background: -webkit-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(var(--darkBkgr), var(--navGroup)); /* Standard syntax */
+	
+}
+.navigationGroupContent{
+	margin: 1px;
+	overflow: auto;
+}
+.navigationItem{
+	padding: 1px 0px 1px 10px;
+	cursor: pointer;
+	height: var(--lineHeight);
+	overflow: hidden;
+}
+.navigationItem i{
+	font-size: 12px;
+	float: right;
+	padding-top: 4px;
+	padding-right: 2px;
+	color: var(--navGroup);
+}
+.navigationItem:hover{
+	text-decoration: underline;
+}
+
+.tabBar{
+	display: relative;
+	margin: 1px 1px 0 1px;
+	height: var(--tabBarHeight);
+}
+.tabBar i{
+	color: var(--navGroup);
+	cursor: default;
+	display: inline-block;
+	position: absolute;
+	top: 0px;
+	right: 1px;
+	padding: 0px 1px 1px 1px;
+}
+.tabBar i:hover{
+	background: var(--closeColor);
+	color: var(--lightText);
+}
+.tabBar span{
+	
+}
+.tab{
+	background: var(--darkBkgr);
+	display: inline-block;
+	position: relative;	
+    padding: 2px 14px 2px 4px;
+	box-sizing: border-box;	
+	margin: 0;
+	cursor: pointer;
+	border-top: solid 1px var(--darkBkgr);	
+	border-left: solid 1px var(--darkBkgr);
+	border-right: solid 1px var(--lightBkgr);
+	color: var(--lightText);
+}
+.tab i{
+	color: var(--lightText);
+}
+.tab:hover{
+	background: var(--navGroup);	
+	background: -webkit-linear-gradient(var(--darkBkgr), var(--lightBkgr)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(var(--darkBkgr), var(--lightBkgr)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(var(--darkBkgr), var(--lightBkgr)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(var(--darkBkgr), var(--lightBkgr)); /* Standard syntax */
+	border-bottom: solid 1px var(--lightBkgr);
+}
+.tabActive{
+	background: var(--lightBkgr);
+	display: inline-block;
+	position: relative;
+    padding: 2px 14px 2px 4px;
+	box-sizing: border-box;
+	border-bottom: solid 1px var(--lightBkgr);
+	border-top: solid 1px var(--darkBkgr);
+	border-left: solid 1px var(--darkBkgr);
+	border-right: solid 1px var(--darkBkgr);
+}
+.tabContentContainer{
+	width: 100%;
+	height: -moz-calc(100% - var(--lineHeight) - 9px);
+    height: -webkit-calc(100% - var(--lineHeight) - 9px);
+    height: calc(100% - var(--lineHeight) - 9px);
+	border: solid 1px var(--darkBkgr);
+	margin-top: -1px;
+}
+.tabContent{
+	position: relative;
+	margin: -1px 1px 1px 1px;
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+}
+.gridControl{
+	padding: 4px 0 0 0;
+}
+.gridControl a{
+	background: var(--navGroup);	
+	background: -webkit-linear-gradient(var(--navGroup), var(--darkBkgr)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(var(--navGroup), var(--darkBkgr)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(var(--navGroup), var(--darkBkgr)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(var(--navGroup), var(--darkBkgr)); /* Standard syntax */
+	border-radius: 4px;
+	margin: 1px;
+	color: var(--lightText);
+	padding: 1px 4px 1px 4px;
+	cursor: pointer;
+	margin: 0 4px;
+}
+.gridControl a:hover{
+	background: var(--darkBkgr);	
+	background: -webkit-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(var(--darkBkgr), var(--navGroup)); /* Standard syntax */
+}
+.dataGrid{
+	table-layout: fixed;
+	border-collapse: collapse;
+	overflow: hidden;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	width: 100px;
+}
+.dataGrid thead {
+	color: var(--lightText);
+	background-color: var(--darkBkgr);
+	display: block;
+}
+.dataGrid thead tr {
+	display: block;
+	position: relative;
+	white-space: nowrap;
+	margin-left: 1px;
+}
+.dataGrid thead tr th{
+	border-right: solid 1px var(--lightBkgr);
+	background-color: var(--darkBkgr);
+}
+.dataGrid tbody tr {
+	display: block;
+	position: relative;
+	white-space: nowrap;
+}
+.dataGrid tbody {
+    display: block;
+    overflow: auto;
+	height: var(--lineHeight);
+	color: var(--darkText);
+	border-left: solid 1px var(--darkBkgr);
+}
+.dataGrid tbody tr td{
+	border-bottom: solid 1px var(--darkBkgr);
+	border-right: solid 1px var(--darkBkgr);
+}
+.dataGrid tr th:first-child{
+}
+.dataGrid tr td:first-child{
+	
+}
+.dataGrid th,.dataGrid td{
+	display: inline-block;
+	text-align: left;
+	padding-left: 4px;
+	overflow: hidden;
+	white-space: nowrap;
+	width: 80px;
+	z-index:9;
+}
+.gridFixed{
+	border-bottom: solid 1px var(--lightBkgr) !important;
+	border-right: solid 1px var(--lightBkgr) !important;	
+	color: var(--lightText);
+	background-color: var(--darkBkgr);
+	position: absolute;
+	z-index:10;
+}
+.openRecord{
+	cursor: default;
+}
+.openRecord:hover{
+	background-color: var(--navGroup);
+}
+.recordView{
+	width: 100%;
+	table-layout: fixed;
+}
+.recordView tr td{
+	
+}
+.recordView tr td:first-child{
+	
+}
