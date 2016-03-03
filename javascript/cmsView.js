@@ -93,7 +93,6 @@ function cmsView(objName, recordView, recordId){
 		div.parent = this.root.elm;
 		div.setCssClass('gridControl');
 		div.setNewText(data.totalRecords.name + ' ' + data.totalRecords.value);
-//		div.setNewText($(xml).find("totalRecords").attr('name') + ' ' + $(xml).find("totalRecords").attr('value'));
 		div.render();
 
 		a = new domElement('a');
@@ -120,9 +119,6 @@ function cmsView(objName, recordView, recordId){
 		table.setCssClass("recordView");
 		table.parent = container.elm;
 		table.render();
-		
-//		var cellColl = data.getElementsByTagName("cell");
-//		var dataColl = data.getElementsByTagName("data");
 		
 		for(var cellKey in data.cell){
 			tr = new domElement("tr");
@@ -181,8 +177,6 @@ function cmsView(objName, recordView, recordId){
 		console.log("render record view");
 		
 		var hTag, div;
-//		var data = xml.getElementsByTagName("recordView")[0];
-//		var headerColl = data.getElementsByTagName("header");
 		for(var headerKey in data.recordView.header){
 			hTag = new domElement('h3');
 			hTag.parent = this.root.elm;
@@ -200,11 +194,9 @@ function cmsView(objName, recordView, recordId){
 		var dataValue = new Array();
 		var dataKey = new Array();
 		for(var key = 0; key < this.fieldColl.length; key++){
-			//console.log(JSON.stringify(value));
 			dataKey[dataKey.length] = this.fieldColl[key].name
 			dataValue[dataValue.length] = this.fieldColl[key].getValue();
 		}
-		//alert(data);
 		var data = new ajax();
 		data.async = true;
 		data.attributes = null;
@@ -214,15 +206,6 @@ function cmsView(objName, recordView, recordId){
 		data.register_argument("dataKey", JSON.stringify(dataKey));
 		data.register_argument("dataValue", JSON.stringify(dataValue));
 		data.send();
-//		var fieldData = {};
-//		for(var key in this.recordFields){
-//			if(key != this.parent.code + "Id"){
-//				fieldData[key] = this.recordFields[key].getValue();
-//			}
-//		}
-//		console.log(JSON.stringify(fieldData));
-//		data.register_argument("data", JSON.stringify(fieldData));
-//		data.send();
 		
 	};
 	
@@ -249,11 +232,8 @@ function cmsView(objName, recordView, recordId){
 		
 		var timer = window.performance.now();
 		var rowParent, row, cellColl, cell, cellTag, offset, isLastHeader, offsetFromHeader;
-//		var grid = this.xml.getElementsByTagName('dataGrid')[0];
-//		var rowColl = grid.getElementsByTagName('row');
 		var cellText;
 		this.rowNumber = 1;
-//		this.rowNumber = rowColl.length;
 		var cellWidth = new Array();
 		var primaryKey = null;
 		var cssClass;
@@ -275,14 +255,12 @@ function cmsView(objName, recordView, recordId){
 			row.parent = rowParent;
 			row.render();
 			
-//			cellColl = rowColl[rowKey].getElementsByTagName('cell');
 			if(cellTag == 'th'){
 				this.cellPerRow = this.data.dataGrid.row[rowKey].cell.length;
 			}
 			offset = 0;
 			isLastHeader = false;
 			offsetFromHeader = 0;
-//			var numberOfCells = cellColl.length;
 			for(var cellKey in this.data.dataGrid.row[rowKey].cell){
 				cssClass = "";
 				if(this.data.dataGrid.row[rowKey].cell[cellKey].primary){

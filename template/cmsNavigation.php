@@ -46,38 +46,6 @@ class cmsNavigation extends user
 			}while($sql->next());
 		}
 		
-// 		$group = $xml->addNode('group');
-// 		$xml->setAttribute('name', $this->kwd('favorite'));
-		
-// 		$group = $xml->addNode('group');
-// 		$xml->setAttribute('name', $this->kwd('dbStruct'));
-// 		$sql = new database();
-// 		$sql->query("SHOW TABLES");
-// 		if($sql->num_rows() > 0){
-// 			do{
-// 				foreach ($sql->row as $value){
-// 					if(strpos($value, TABLE_ML_SUFFIX)){
-// 						$xml->setAttribute('ml', '1', $table[substr($value, 0, -strlen(TABLE_ML_SUFFIX))]);
-// 					}else{
-// 						$table[$value] = $xml->addNode('item', '', false, $group);
-// 						$xml->setAttribute('name', $this->kwd($value));
-// 						$xml->setAttribute('code', $value);
-// 						$xml->setAttribute('ml', '0');
-// 					}
-// 				}
-// 			}while($sql->next());
-// 		}
-		
-// 		$group = $xml->addNode('group');
-// 		$xml->setAttribute('name', $this->kwd('settings'));
-// 		$xml->addNode('item', '', false, $group);
-// 		$xml->setAttribute('name', $this->kwd('userSettings'));
-		
-// 		$group = $xml->addNode('group');
-// 		$xml->setAttribute('name', $this->kwd('administration'));
-// 		$xml->addNode('item', '', false, $group);
-// 		$xml->setAttribute('name', $this->kwd('adminnistrativeSettings'));
-		
 	}
 }
 

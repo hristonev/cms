@@ -145,13 +145,6 @@ function cmsNavigation(root){
 				view.ml = this.groupItem[obj.getAttribute('groupKey')][obj.getAttribute('itemKey')].ml;
 				view.container = document.getElementById('cmsContent');
 				view.render();
-//				var code = this.groupItem[obj.getAttribute('groupKey')][obj.getAttribute('itemKey')].getAttribute('code');
-//				var view = new cmsView(code);
-//				view.navigation = obj;
-//				view.name = this.groupItem[obj.getAttribute('groupKey')][obj.getAttribute('itemKey')].getAttribute('name');
-//				view.ml = this.groupItem[obj.getAttribute('groupKey')][obj.getAttribute('itemKey')].getAttribute('ml');
-//				view.container = document.getElementById('cmsContent');
-//				view.render();
 				break;
 		};
 	};
