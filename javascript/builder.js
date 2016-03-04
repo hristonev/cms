@@ -1,3 +1,5 @@
+var CKEDITOR_BASEPATH = '/cms/javascript/ckeditor/';
+
 var builder = function(){
 	//instance
 	if(typeof(window.__builder) == "undefined"){
@@ -21,7 +23,9 @@ var builder = function(){
 		"cmsHead",
 		"cmsNavigation",
 		"cmsView",
-		"cmsViewTab",
+		"cmsViewTab"
+	);
+	this.loadNonEssentialModule = new Array(
 		"ckeditor/ckeditor"
 	);
 	this.loaded = 0;
@@ -43,8 +47,8 @@ var builder = function(){
 				"group": "js",
 				"className": module
 			}
-		}).done(function(xml) {
-			eval(xml);
+		}).done(function(data) {
+			eval(data);
 			$('body').data("builder").loaded++;
 			if($('body').data("builder").loadModule.length > 0){
 				$('body').data("builder").loadJS();
@@ -113,6 +117,23 @@ var builder = function(){
 			var nav = new cmsNavigation(this.navigation);
 			nav.caller = this;
 			nav.render();
+
+			//loading non esentials for startup
+			var jsItem;
+			while(this.loadNonEssentialModule.length > 0){
+				jsItem = this.loadNonEssentialModule.pop();
+				$.ajax({
+					method: "POST",
+					url: "index.php",
+					dataType: "script",
+					data: {
+						"group": "js",
+						"className": jsItem
+					}
+				}).done(function(data) {
+					eval(data);
+				});
+			}
 		}
 	};
 

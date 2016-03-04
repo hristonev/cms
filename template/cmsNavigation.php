@@ -31,16 +31,22 @@ class cmsNavigation extends user
 		$sql = new database();
 		$sql->query("SHOW TABLES");
 		if($sql->num_rows() > 0){
-			$group2->item = new stdClass();
 			do{
 				foreach ($sql->row as $value){
+					$group = &$group2;
+					if(strpos($value, 'sys') === 0){
+						$group = &$group4;
+					}
+					if(!property_exists($group,'item')){
+						$group->item = new stdClass();
+					}
 					if(strpos($value, TABLE_ML_SUFFIX)){
 						$code = substr($value, 0, -strlen(TABLE_ML_SUFFIX));
-						$group2->item->$code->ml = true;
+						$group->item->$code->ml = true;
 					}else{
-						$group2->item->$value = new stdClass();
-						$group2->item->$value->name = $this->kwd($value);
-						$group2->item->$value->ml = false;
+						$group->item->$value = new stdClass();
+						$group->item->$value->name = $this->kwd($value);
+						$group->item->$value->ml = false;
 					}
 				}
 			}while($sql->next());

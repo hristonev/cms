@@ -172,6 +172,7 @@ class cmsView extends user
 		$header = &$json->recordView->header[];
 		$header = new stdClass();
 		$header->name = $this->kwd("languageIndependentFields");
+		$header->langId = 0;
 		$header->cell = array();
 		if($sql->num_rows() > 0){
 			do{
@@ -232,6 +233,7 @@ class cmsView extends user
 					$header = &$json->recordView->header[];
 					$header = new stdClass();
 					$header->name = $sql->name;
+					$header->langId = $sql->langId;
 					foreach ($fields as $field => $value){
 						$sql1->query("
 							SELECT
@@ -248,6 +250,7 @@ class cmsView extends user
 						$cell = &$header->cell[];
 						$cell = new stdClass();
 						$cell->name = $field;
+						$cell->langId = $sql->langId;
 						if((int)$sql1->id > 0){
 							$cell->type = $sql1->type;
 						}else{
@@ -277,9 +280,82 @@ class cmsView extends user
 		unset($sql);
 	}
 
-	public function xSaveRecord($arg, &$xml){
+	public function xSaveRecord($arg, &$json){
 		$sql = new database();
-// 		$data = json_decode($arg['data'], true);
+		$data = json_decode( preg_replace('~[\r\n]+~', '', $arg['data']), true);
+		$table = $data['object'];
+		$tableML = $table. TABLE_ML_SUFFIX;
+		$idFld = $table. "Id";
+		$mlIdFld = $tableML. "Id";
+		$langIdFld = "langId";
+
+		//non ml table
+		$query = "";
+		$insert = false;
+		$execute = false;
+		$langId = 0;
+		if((int)$data[0][$idFld] > 0){
+			$query .= "UPDATE ". $table;
+		}else{
+			$query .= "INSERT INTO ". $table;
+			$insert = true;
+		}
+		$query .= " SET ";
+		$delimiter = "";
+		foreach ($data[0] as $key => $value){
+			if($key != $idFld && strlen($value) > 0){
+				$query .= $delimiter. "`". $key. "` = '". $sql->real_escape_string($value). "'";
+				$delimiter = ", ";
+				$execute = true;
+			}
+		}
+		if(!$insert){
+			$query .= " WHERE `". $idFld. "` = ". (int)$data[0][$idFld];
+		}
+		if($execute){
+// 			dump($query);
+			$sql->exec($query);
+			$json->$langId = new stdClass();
+			$json->$langId->$idFld = $sql->insert_id;
+		}
+
+		//ml table
+		if(count($data) > 1){
+			foreach ($data as $langId => $dataSet){
+				$query = "";
+				$insert = false;
+				$execute = false;
+				if((int)$langId > 0){
+					if((int)$data[$langId][$mlIdFld] > 0){
+						$query .= "UPDATE ". $tableML;
+					}else{
+						$query .= "INSERT INTO ". $tableML;
+						$insert = true;
+					}
+					$query .= " SET ";
+					$query .= $idFld . " = ". (int)$data[0][$idFld];
+					$query .= ", ". $langIdFld . " = ". (int)$langId;
+					$delimiter = ", ";
+					foreach ($data[$langId] as $key => $value){
+						if($key != $idFld && $key != $langIdFld && $key != $mlIdFld && strlen($value) > 0){
+							$query .= $delimiter. "`". $key. "` = '". $sql->real_escape_string($value). "'";
+							$execute = true;
+						}
+					}
+					if(!$insert){
+						$query .= " WHERE `". $mlIdFld. "` = ". (int)$data[$langId][$mlIdFld];
+					}
+				}
+				if($execute){
+// 					dump($query);
+					$sql->exec($query);
+					$json->$langId = new stdClass();
+					$json->$langId->$mlIdFld = $sql->insert_id;
+				}
+			}
+		}
+// 		dump($data);
+// 		dump(json_decode($arg['data'], false, 512, JSON_BIGINT_AS_STRING));
 // 		$query = "INSERT INTO `". $arg['object']. "` SET ";
 // 		$delimiter = "";
 // 		foreach ($data as $key => $value){
@@ -290,6 +366,7 @@ class cmsView extends user
 // 		$sql->exec($query);
 		unset($sql);
 	}
+
 }
 
 ?>

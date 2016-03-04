@@ -73,10 +73,10 @@
   };
 
   var sha512 = function(message, bits) {
-    var h0h, h0l, h1h, h1l, h2h, h2l, h3h, h3l, 
+    var h0h, h0l, h1h, h1l, h2h, h2l, h3h, h3l,
         h4h, h4l, h5h, h5l, h6h, h6l, h7h, h7l, block, code, end = false,
         i, j, index = 0, start = 0, bytes = 0, length = message.length,
-        s0h, s0l, s1h, s1l, c1, c2, c3, c4, 
+        s0h, s0l, s1h, s1l, c1, c2, c3, c4,
         abh, abl, dah, dal, cdh, cdl, bch, bcl,
         majh, majl, t1h, t1l, t2h, t2l, chh, chl;
 
@@ -153,10 +153,10 @@
     block = 0;
     do {
       blocks[0] = block;
-      blocks[1] = blocks[2] = blocks[3] = blocks[4] = 
-      blocks[5] = blocks[6] = blocks[7] = blocks[8] = 
-      blocks[9] = blocks[10] = blocks[11] = blocks[12] = 
-      blocks[13] = blocks[14] = blocks[15] = blocks[16] = 
+      blocks[1] = blocks[2] = blocks[3] = blocks[4] =
+      blocks[5] = blocks[6] = blocks[7] = blocks[8] =
+      blocks[9] = blocks[10] = blocks[11] = blocks[12] =
+      blocks[13] = blocks[14] = blocks[15] = blocks[16] =
       blocks[17] = blocks[18] = blocks[19] = blocks[20] =
       blocks[21] = blocks[22] = blocks[23] = blocks[24] =
       blocks[25] = blocks[26] = blocks[27] = blocks[28] =

@@ -52,6 +52,7 @@ function cmsView(objName, recordView, recordId){
 	this.saveTimeout = null;
 	this.saveTime = 1000;
 	this.fieldColl = new Array();
+	this.cell = {};
 
 	builder.registerResize("window.__cmsView['instance'][" + this.instanceKey + "]", "gridResize");
 
@@ -112,8 +113,8 @@ function cmsView(objName, recordView, recordId){
 		this.gridResize();
 	};
 
-	this.renderRecordFields = function(container, data){
-		var table, tr, td, fld = null, name;
+	this.renderRecordFields = function(container, data, langId){
+		var container, table, tr, td, fld = null, name, langFldId, editor;
 
 		table = new domElement("table");
 		table.setCssClass("recordView");
@@ -166,9 +167,34 @@ function cmsView(objName, recordView, recordId){
 					fld.parent = td.elm;
 					fld.render();
 					break;
+				case "TEXT":
+					fld = new domElement("textarea");
+					console.info(name + this.recordId);
+					fld.name = name;
+					langFldId = name + "_" + data.cell[cellKey].langId + "_" + this.recordId
+					fld.elm.id = langFldId;
+					fld.parent = td.elm;
+					fld.render();
+					fld.editor = CKEDITOR.replace(langFldId);
+					fld.editor.caller = {};
+					fld.editor.caller.instanceKey = this.instanceKey;
+					fld.editor.caller.saveTimeout = null;
+					fld.editor.caller.saveTime = this.saveTime;
+					fld.editor.on("change", function(){
+						clearTimeout(this.caller.saveTimeout);
+						//save delay
+						this.caller.saveTimeout = setTimeout("window.__cmsView['instance'][" + this.caller.instanceKey + "].saveRecord();", this.caller.saveTime);
+					});
+					break;
 			}
+			fld.langId = langId;
 			this.fieldColl[this.fieldColl.length] = fld;
-			fld.setValue(data.cell[cellKey].data);
+			if(typeof(data.cell[cellKey].data) != "undefined"){
+				fld.setValue(decodeURIComponent(data.cell[cellKey].data));
+			}
+			if(name == "langId"){
+				fld.setValue(langId);
+			}
 		}
 	};
 
@@ -176,38 +202,68 @@ function cmsView(objName, recordView, recordId){
 		data = JSON.parse(dataStr);
 		console.log("render record view");
 
+		container = new domElement("div");
+		container.setCssClass("recordViewContainer");
+		container.parent = this.root.elm;
+		container.render();
+
 		var hTag, div;
 		for(var headerKey in data.recordView.header){
 			hTag = new domElement('h3');
-			hTag.parent = this.root.elm;
+			hTag.parent = container.elm;
 			hTag.setNewText(data.recordView.header[headerKey].name);
 			hTag.render();
 			div = new domElement('div');
-			div.parent = this.root.elm;
+			div.setCssClass("recordViewBorder");
+			div.parent = container.elm;
 			div.render();
-			this.renderRecordFields(div, data.recordView.header[headerKey]);
+			this.renderRecordFields(div, data.recordView.header[headerKey], data.recordView.header[headerKey].langId);
 		}
 	};
 
 	this.saveRecord = function(){
 		this.saveTimeout = null;
-		var dataValue = new Array();
-		var dataKey = new Array();
+		var dataToSend = {};
+		var htmlData;
+
+		dataToSend.object = this.parent.code;
 		for(var key = 0; key < this.fieldColl.length; key++){
-			dataKey[dataKey.length] = this.fieldColl[key].name
-			dataValue[dataValue.length] = this.fieldColl[key].getValue();
+			if(typeof(dataToSend[this.fieldColl[key].langId]) == "undefined"){
+				dataToSend[this.fieldColl[key].langId] = {};
+			}
+			if(typeof(this.fieldColl[key].editor) != "undefined"){
+				htmlData = this.fieldColl[key].editor.getData();
+				if(htmlData != ""){
+					htmlData.replace(/"/g, '&quot;');
+				}
+				dataToSend[this.fieldColl[key].langId][this.fieldColl[key].name] = encodeURIComponent(htmlData);
+			}else{
+				dataToSend[this.fieldColl[key].langId][this.fieldColl[key].name] = encodeURIComponent(this.fieldColl[key].getValue());
+			}
 		}
 		var data = new ajax();
 		data.async = true;
+		data.call_back = "window.__cmsView['instance'][" + this.instanceKey + "].saveRecordBack";
 		data.attributes = null;
 		data.group = "template";
 		data.className = "cmsView";
 		data.methodName = "xSaveRecord";
-		data.register_argument("dataKey", JSON.stringify(dataKey));
-		data.register_argument("dataValue", JSON.stringify(dataValue));
+		data.register_argument("data", JSON.stringify(dataToSend));
 		data.send();
 
 	};
+
+	this.saveRecordBack = function(dataStr){
+		var data = JSON.parse(dataStr);
+		//set primary key field if the record is successfully saved
+		for(var key = 0; key < this.fieldColl.length; key++){
+			if(typeof(data[this.fieldColl[key].langId]) != "undefined"
+				&& typeof(data[this.fieldColl[key].langId][this.fieldColl[key].name]) != "undefined"
+				&& parseInt(data[this.fieldColl[key].langId][this.fieldColl[key].name]) > 0){
+				this.fieldColl[key].setValue(data[this.fieldColl[key].langId][this.fieldColl[key].name]);
+			}
+		}
+	}
 
 	this.renderGrid = function(){
 		this.table = new domElement('table');
@@ -350,7 +406,7 @@ function cmsView(objName, recordView, recordId){
 	this.gridResize = function(){
 		if(this.recordView){
 
-		}else{
+		}else if(typeof(this.table) != "undefined"){
 			var margin = this.root.elm.clientWidth;
 			margin -= parseInt($(this.table.elm).css('margin-left'));
 			margin -= parseInt($(this.table.elm).css('margin-right'));
@@ -404,7 +460,7 @@ function cmsView(objName, recordView, recordId){
 				break;
 			case 'saveRecord':
 				clearTimeout(this.saveTimeout);
-				//some delay
+				//save delay
 				this.saveTimeout = setTimeout("window.__cmsView['instance'][" + this.instanceKey + "].saveRecord();", this.saveTime);
 				break;
 		}

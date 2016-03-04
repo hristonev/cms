@@ -19,12 +19,6 @@ class base
 
 	}
 
-	public function x_kwd($arg, &$xml){
-		if(isset($arg["code"])){
-			$xml->add_node("CDATA", $this->kwd($arg["code"]));
-		}
-	}
-
 	public function set_globals(&$obj){
 		foreach ($obj as $key => $value){
 			$this->$key = $value;
@@ -101,7 +95,7 @@ class base
 				$kwd->exec("INSERT INTO `kwd` SET `kwd`.`code` = '". $cmsPrefix. $code. "'");
 			}
 			if($addSymbols){
-				$value = '#'. $code. '#';
+				$value = "~". $code;
 			}else{
 				$value = $code;
 			}
@@ -109,8 +103,9 @@ class base
 		return $value;
 	}
 
-	public function xKwd($arg, &$xml){
-		$xml->addNode('kwd', $this->kwd($arg['code']));
+	public function xKwd($arg, &$json){
+		$cmsPrefix = '#';
+		$json->value = $this->kwd($arg["code"]);
 	}
 
 	public function globals($code){

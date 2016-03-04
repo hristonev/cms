@@ -23,8 +23,9 @@ function cmsHead(root){
 					"code" : "cmsTitle"
 				}
 			}
-		}).done(function(xml) {
-			$(".cmsTitle").text($(xml).find("kwd").text());
+		}).done(function(dataStr) {
+			var data = JSON.parse(dataStr);
+			$(".cmsTitle").text(data.value);
 		});
 
 		var logout = new domElement('i');
@@ -40,8 +41,9 @@ function cmsHead(root){
 					"code" : "logout"
 				}
 			}
-		}).done(function(xml) {
-			$(".logout").prop('title', $(xml).find("kwd").text());
+		}).done(function(dataStr) {
+			var data = JSON.parse(dataStr);
+			$(".logout").prop('title', data.value);
 		});
 		logout.parent = row.elm;
 		logout.elm.setAttribute('instance', this.caller.instance_key);
