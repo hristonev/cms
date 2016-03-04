@@ -11,12 +11,12 @@ cmsView.prototype.tab = function(code, close){
 	if(typeof(close) == "undefined"){
 		close = false;
 	}
-	
+
 	if(typeof(window.__cmsView['tabBar']) != "undefined"){
 		this.tabBar = window.__cmsView['tabBar'];
 		this.content = window.__cmsView['content'];
 	}
-	
+
 	if(typeof(this.tabBar) == "undefined"){
 		console.log('create new tab bar');
 		this.tabBar = new domElement('div');
@@ -24,13 +24,13 @@ cmsView.prototype.tab = function(code, close){
 		this.tabBar.setCssClass('tabBar');
 		this.tabBar.render();
 		window.__cmsView['tabBar'] = this.tabBar;
-		
+
 		this.content = new domElement('div');
 		this.content.parent = this.container;
 		this.content.setCssClass('tabContentContainer');
 		this.content.render();
 		window.__cmsView['content'] = this.content;
-		
+
 		window.__cmsView['tab'] = new Array();
 		window.__cmsView['tabContent'] = new Array();
 		window.__cmsView['tabExchange'] = new Array();
@@ -43,7 +43,7 @@ cmsView.prototype.tab = function(code, close){
 		}
 		if(typeof(window.__cmsView['tab'][code]) == "undefined"){
 			console.log('new tab ' + code);
-			
+
 			tab = new domElement('div');
 			tab.parent = this.tabBar.elm;
 			tab.setAttribute('eventCode', 'tabSwitch');
@@ -77,7 +77,7 @@ cmsView.prototype.tab = function(code, close){
 				ex.render();
 				ex.setEvent('onclick', 'tabSwitch');
 			}
-			
+
 			tabContent = new domElement('div');
 			tabContent.parent = this.content.elm;
 			tabContent.setCssClass('tabContent');
@@ -90,7 +90,7 @@ cmsView.prototype.tab = function(code, close){
 				ex.setCssClass('fa fa-exchange');
 				ex.render();
 			}
-			
+
 			window.__cmsView['tabExchange'][code] = ex;
 		}else{
 			window.__cmsView['tab'][code].setCssClass('tabActive');
@@ -106,7 +106,7 @@ cmsView.prototype.tab = function(code, close){
 			window.__cmsView['tab'][lastTabCode].setCssClass('tabActive');
 			window.__cmsView['tabContent'][lastTabCode].elm.style.display = "";
 		}
-		
+
 		window.__cmsView['tab'][code].destructChildren();
 		window.__cmsView['tab'][code].destruct();
 		window.__cmsView['tabContent'][code].destructChildren();
@@ -115,8 +115,8 @@ cmsView.prototype.tab = function(code, close){
 		delete window.__cmsView['tab'][code];
 		delete window.__cmsView['tabContent'][code];
 		delete window.__cmsView['tabExchange'][code];
-		
+
 	}
-	
+
 	return tabContent;
 };

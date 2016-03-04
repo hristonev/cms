@@ -9,7 +9,7 @@ function domElement(tag_name){
 	this.txt_node = null;
 	this.instance_key = window.__domElement.length;
 	window.__domElement[this.instance_key] = this;
-	
+
 	//public
 	this.tag = tag_name;
 	this.name = null;
@@ -19,7 +19,7 @@ function domElement(tag_name){
 	this.caller = null;
 	this.insert_before = null;
 	this.insert_after = null;
-	
+
 	this.elm.is_domElement = function(){
 		return true;
 	};
@@ -37,7 +37,7 @@ function domElement(tag_name){
 		}
 		var instance = window.__domElement[this.getAttribute('domElement_instance')];
 		delete window.__domElement[this.getAttribute('domElement_instance')];
-		
+
 		instance.remove_all_events();
 		this.parentNode.removeChild(this);
 		delete this;
@@ -47,38 +47,38 @@ domElement.prototype = {
 	getElm: function(){
 		return this.elm;
 	},
-	
+
 	getValue: function(){
 		return this.elm.value;
 	},
-	
+
 	setValue: function(value){
 		this.elm.value = value;
 	},
-	
+
 	setStyle: function(name, value){
 		this.elm.style[name] = value;
 	},
-	
+
 	setTitle: function(value){
 		this.elm.setAttribute('title', value);
 	},
-	
+
 	setCssClass: function(value){
 		this.elm.className = value;
 	},
 	setAttribute: function(name, value){
 		this.elm.setAttribute('dom_attr_' + name, value);
 	},
-	
+
 	getAttribute: function(name, value){
 		return this.elm.getAttribute('dom_attr_' + name);
 	},
-	
+
 	hasAttribute: function(name, value){
 		return this.elm.hasAttribute('dom_attr_' + name);
 	},
-	
+
 	setEvent: function(event, code){
 		this.event_code[event] = code;
 		events.registerEventHandler(this.elm, event, function(e){
@@ -96,21 +96,21 @@ domElement.prototype = {
 			}
 		}
 	},
-	
+
 	setNewText: function(text){
 		this.text = text;
 	},
-	
+
 	handleEvent: function(e){
 		this.caller.handleOutsideEvent(this, e);
 	},
-	
+
 	render: function(){
 		if(this.text != null){
 			this.txt_node = document.createTextNode(this.text);
 			this.elm.appendChild(this.txt_node);
 		}
-		
+
 		//this.elm = document.createElement(this.tag);
 		this.elm.setAttribute('domElement_instance', this.instance_key);
 		if(this.insert_before == null && this.insert_after == null){

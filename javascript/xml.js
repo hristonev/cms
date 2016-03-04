@@ -1,9 +1,9 @@
 function xml(){
 	this.doc = document.implementation.createDocument("", "", null);
-	
+
 	this.root = doc.createElement("root");
 	doc.appendChild(this.root);
-	
+
 	return doc;
 }
 
@@ -21,12 +21,12 @@ xml.prototype = {
 			if(typeof(appendTo) == "undefined"){
 				appendTo = null;
 			}
-			
+
 			var node = this.doc.createElement(name);
-			
+
 			return node;
 		},
-		
+
 		getRoot: function(){
 			return this.root;
 		}

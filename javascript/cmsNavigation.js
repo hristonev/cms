@@ -1,5 +1,5 @@
 function cmsNavigation(root){
-	
+
 	this.root = root;
 	this.caller = null;		//builder
 	this.xmlObject = null;
@@ -10,12 +10,12 @@ function cmsNavigation(root){
 	this.groupOveralHeight = 0;
 	this.expandedGroupKey = null;
 	this.animationSpead = 200;
-	
+
 	//instance
 	window.__cmsNavigation = this;
-	
+
 	builder.registerResize("window.__cmsNavigation", "recalculateNavigation");
-	
+
 	this.render = function(){
 		var data = new ajax();
 		data.async = true;
@@ -26,7 +26,7 @@ function cmsNavigation(root){
 		data.methodName = "xGetData";
 		data.send();
 	};
-	
+
 	this.build = function(dataStr){
 		var data = JSON.parse(dataStr);
 		for(var groupKey in data.navigation.group){
@@ -42,7 +42,7 @@ function cmsNavigation(root){
 			this.groupOveralHeight += this.group[groupKey].elm.clientHeight;
 			this.groupOveralHeight += parseInt($(this.group[groupKey].elm).css('margin-top'));
 			this.groupOveralHeight += parseInt($(this.group[groupKey].elm).css('margin-bottom'));
-			
+
 			//render items
 			this.groupItem[groupKey] = new Array();
 			if(typeof(data.navigation.group[groupKey].item) != "undefind"){
@@ -57,7 +57,7 @@ function cmsNavigation(root){
 			this.expandGroup(storage.get('navigationExpanded'));
 		}
 	};
-	
+
 	this.recalculateNavigation = function(){
 		this.navHeight = this.root.elm.clientHeight;
 		this.groupOveralHeight = 0;
@@ -71,7 +71,7 @@ function cmsNavigation(root){
 			this.groupContent.elm.style.height = (this.navHeight - this.groupOveralHeight) + 'px';
 		}
 	};
-	
+
 	this.destroyGroupContent = function(){
 		window.__cmsNavigationDestroy = this.groupContent;
 		$(window.__cmsNavigationDestroy.elm).animate(
@@ -82,7 +82,7 @@ function cmsNavigation(root){
 			}
 		);
 	};
-	
+
 	this.expandGroup = function(groupKey){
 		if(this.expandedGroupKey == groupKey){
 			this.destroyGroupContent();
@@ -99,7 +99,7 @@ function cmsNavigation(root){
 			this.groupContent.elm.style.height = '0px';
 			this.groupContent.render();
 			var item, ex;
-			
+
 			for(var itemKey in this.groupItem[groupKey]){
 				item = new domElement('div');
 				item.parent = this.groupContent.elm;
@@ -112,24 +112,24 @@ function cmsNavigation(root){
 				item.setAttribute('itemKey', itemKey);
 				item.render();
 				item.setEvent('onclick', 'showView');
-				
+
 				if(typeof(window.__cmsView) != "undefined" && typeof(window.__cmsView['tab'][this.groupItem[groupKey][itemKey].getAttribute('code')]) != "undefined"){
 					ex = new domElement('i');
 					ex.parent = item.elm;
 					ex.setCssClass('fa fa-exchange');
 					ex.render();
 				}
-				
+
 			}
 			$(this.groupContent.elm).animate({height:(this.navHeight - this.groupOveralHeight)},this.animationSpead);
 			storage.set('navigationExpanded', groupKey);
 		}
 	};
-	
+
 	this.destructExchange = function(code){
 		$("[dom_attr_code='" + code + "']").find( "i" ).remove();
 	};
-	
+
 	this.handleOutsideEvent = function(obj, e){
 		var call = obj.getAttribute('eventCode');
 		console.log('event ' + call);

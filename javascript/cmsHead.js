@@ -1,13 +1,13 @@
 function cmsHead(root){
 	this.root = root;
 	this.caller = null;		//builder
-	
+
 	this.render = function(){
 		var row = new domElement('div');
 		row.parent = this.root.elm;
 		row.setCssClass('row');
 		row.render();
-		
+
 		var title = new domElement('h2');
 		title.parent = row.elm;
 		title.setCssClass('cmsTitle');
@@ -26,7 +26,7 @@ function cmsHead(root){
 		}).done(function(xml) {
 			$(".cmsTitle").text($(xml).find("kwd").text());
 		});
-		
+
 		var logout = new domElement('i');
 		logout.setCssClass('fa fa-sign-out logout');
 		$.ajax({
@@ -49,7 +49,7 @@ function cmsHead(root){
 		logout.setAttribute('eventCode', 'logout');
 		logout.render();
 		logout.setEvent('onclick', 'logout');
-		
+
 		var logout = new domElement('i');
 		logout.setCssClass('fa fa-spinner ajaxLoading');
 		logout.elm.setAttribute('id', 'ajaxLoading');

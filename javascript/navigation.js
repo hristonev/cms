@@ -1,5 +1,5 @@
 function navigation(){
-	
+
 	this.resize = null;
 	this.instance = null;
 	this.instanceKey = null;
@@ -9,7 +9,7 @@ function navigation(){
 	this.menuPrefix = null;
 	this.menu = new Array();
 	this.mouseDown = false;
-	
+
 	this.init = function(){
 		//setup instance in window for event handler and future use of same instance
 		window.__navigation = this;
@@ -17,7 +17,7 @@ function navigation(){
 		this.collectMenu(this.menuContainer);
 		this.makeActive();
 	};
-	
+
 	this.makeActive = function(){
 		for(var z = 0; z < this.menu.length; z++){
 			msg("add event " + this.menu[z].id);
@@ -30,7 +30,7 @@ function navigation(){
 				msg("click " + id);
 				var gridId = id;
 				var gridObject = id;
-				
+
 				var grid = new list();
 				grid.id = gridId;
 				grid.dbObject = gridObject;
@@ -42,12 +42,12 @@ function navigation(){
 					msg("render grid");
 					grid.render();
 				}else{
-					
+
 				}
 			});
 		}
 	};
-	
+
 	this.collectMenu = function(obj){
 		var nodes = obj.childNodes;
 		for(var z = 0; z < nodes.length; z++){
@@ -60,7 +60,7 @@ function navigation(){
 			}
 		}
 	};
-	
+
 	this.startResize = function(e){
 		if(!this.mouseDown){
 			events.register_event_handler(this.body, "onmousemove", function(e){
@@ -76,16 +76,16 @@ function navigation(){
 			this.mouseDown = true;
 		}
 	};
-	
+
 	this.stopResize = function(e){
 		events.remove_events(this.body);
 		this.mouseDown = false;
 	};
-	
+
 	this.resize = function(e){
 		if(this.mouseDown){
 			this.navigation.style.width = e.clientX + "px";
 		}
 	};
-	
+
 }

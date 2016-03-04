@@ -1,19 +1,19 @@
-<?php 
+<?php
 
 class manager extends user
 {
 	protected $headAddionional = array();
 	public $ajax = false;
-	
+
 	public function __construct(){
 		parent::__construct();
-		
+
 		$this->childClass = & $this;
 	}
-	
+
 	public function render(){
 		$code = '';
-		
+
 		if(is_array($_POST) && count($_POST) > 0){
 			$code .= $this->xmlhttp();
 		}else if($this->isValid()){
@@ -23,14 +23,14 @@ class manager extends user
 		}else{
 			$code .= $this->html(parent::render());
 		}
-		
+
 		return $code;
 	}
-	
+
 	private function html($template){
 		$this->childClass->headAddionional[] = 'user.js';
 		$this->childClass->headAddionional[] = 'user.css';
-		
+
 		$code = '<!DOCTYPE html>';
 		$code .= '<html lang="en">';
 		$code .= '<head>';
@@ -55,7 +55,7 @@ class manager extends user
 		$code .= '</html>';
 		return $code;
 	}
-	
+
 	private function xmlhttp(){
 		$code = '';
 		$this->ajax = true;
@@ -99,7 +99,7 @@ class manager extends user
 					$code .= json_encode($json);
 				}
 		}
-		
+
 		return $code;
 	}
 }

@@ -19,22 +19,22 @@ function cmsView(objName, recordView, recordId){
 		window.__cmsView = new Array();
 		window.__cmsView['instance'] = new Array();
 	}
-	
+
 	if(typeof(recordView) == "undefined"){
 		this.recordView = false;
 	}else{
 		this.recordView = recordView;
 	}
-	
+
 	if(typeof(recordId) == "undefined"){
 		this.recordId = 0;
 	}else{
 		this.recordId = recordId;
 	}
-	
+
 	this.instanceKey = window.__cmsView['instance'].length;
 	window.__cmsView['instance'][this.instanceKey] = this;
-	
+
 	this.code = objName;
 	this.ml = false;
 	this.name = null;
@@ -52,9 +52,9 @@ function cmsView(objName, recordView, recordId){
 	this.saveTimeout = null;
 	this.saveTime = 1000;
 	this.fieldColl = new Array();
-	
+
 	builder.registerResize("window.__cmsView['instance'][" + this.instanceKey + "]", "gridResize");
-	
+
 	this.render = function(){
 		this.root = this.tab(this.code);
 		if(this.loadData && !this.recordView){
@@ -82,13 +82,13 @@ function cmsView(objName, recordView, recordId){
 			data.send();
 		}
 	};
-	
+
 	this.build = function(dataStr){
 		data = JSON.parse(dataStr);
 		var div, a;
-		
+
 		this.data = data;
-		
+
 		div = new domElement('div');
 		div.parent = this.root.elm;
 		div.setCssClass('gridControl');
@@ -103,38 +103,38 @@ function cmsView(objName, recordView, recordId){
 		a.caller = this;
 		a.render();
 		a.setEvent('onclick', 'Record');
-		
+
 		/*
 		 * render data grid
 		 */
 		this.renderGrid();
-		
+
 		this.gridResize();
 	};
-	
+
 	this.renderRecordFields = function(container, data){
 		var table, tr, td, fld = null, name;
-		
+
 		table = new domElement("table");
 		table.setCssClass("recordView");
 		table.parent = container.elm;
 		table.render();
-		
+
 		for(var cellKey in data.cell){
 			tr = new domElement("tr");
 			tr.parent = table.elm;
 			tr.render();
-			
+
 			td = new domElement("td");
 			td.parent = tr.elm;
 			name = data.cell[cellKey].name;
 			td.setNewText(name);
 			td.render();
-			
+
 			td = new domElement("td");
 			td.parent = tr.elm;
 			td.render();
-			
+
 			switch(data.cell[cellKey].type){
 				case "DISABLE":
 					fld = new domElement("input");
@@ -171,11 +171,11 @@ function cmsView(objName, recordView, recordId){
 			fld.setValue(data.cell[cellKey].data);
 		}
 	};
-	
+
 	this.renderRecord = function(dataStr){
 		data = JSON.parse(dataStr);
 		console.log("render record view");
-		
+
 		var hTag, div;
 		for(var headerKey in data.recordView.header){
 			hTag = new domElement('h3');
@@ -188,7 +188,7 @@ function cmsView(objName, recordView, recordId){
 			this.renderRecordFields(div, data.recordView.header[headerKey]);
 		}
 	};
-	
+
 	this.saveRecord = function(){
 		this.saveTimeout = null;
 		var dataValue = new Array();
@@ -206,30 +206,30 @@ function cmsView(objName, recordView, recordId){
 		data.register_argument("dataKey", JSON.stringify(dataKey));
 		data.register_argument("dataValue", JSON.stringify(dataValue));
 		data.send();
-		
+
 	};
-	
+
 	this.renderGrid = function(){
 		this.table = new domElement('table');
 		this.table.parent = this.root.elm;
 		this.table.setCssClass('dataGrid');
 		this.table.render();
-		
+
 		this.thead = new domElement('thead');
 		this.thead.parent = this.table.elm;
 		this.thead.render();
-		
+
 		this.tbody = new domElement('tbody');
 		this.tbody.parent = this.table.elm;
 		this.tbody.caller = this;
 		this.tbody.setAttribute('eventCode', 'scroll');
 		this.tbody.render();
 		this.tbody.setEvent('onscroll', 'scroll');
-		
+
 		this.tfoot = new domElement('tfoot');
 		this.tfoot.parent = this.table.elm;
 		this.tfoot.render();
-		
+
 		var timer = window.performance.now();
 		var rowParent, row, cellColl, cell, cellTag, offset, isLastHeader, offsetFromHeader;
 		var cellText;
@@ -254,7 +254,7 @@ function cmsView(objName, recordView, recordId){
 			row = new domElement('tr');
 			row.parent = rowParent;
 			row.render();
-			
+
 			if(cellTag == 'th'){
 				this.cellPerRow = this.data.dataGrid.row[rowKey].cell.length;
 			}
@@ -319,14 +319,14 @@ function cmsView(objName, recordView, recordId){
 		row.parent = this.tfoot.elm;
 		row.setStyle("display", "block");
 		row.render();
-		
+
 		cell = new domElement('td');
 		cell.parent = row.elm;
 		cell.setStyle("height", "0px");
 		cell.setStyle("display", "block");
 		cell.elm.setAttribute("colspan", this.cellPerRow);
 		cell.render();
-		
+
 		this.fake = new domElement('div');
 		this.fake.parent = cell.elm;
 		this.fake.setStyle("height", "0px");
@@ -334,11 +334,11 @@ function cmsView(objName, recordView, recordId){
 		this.fake.elm.style.bottom = "0px";
 		this.fake.elm.style.display = "none";
 		this.fake.render();
-		
+
 		console.log((this.rowNumber * this.cellPerRow) + " elments render in grid for " + (window.performance.now() - timer) + "ms");
-		
+
 	};
-	
+
 	this.scrollEvent = function(){
 //		events.stop(e);
 		for(var cellKey = 0; cellKey < this.headCell.length; cellKey++){
@@ -346,10 +346,10 @@ function cmsView(objName, recordView, recordId){
 		}
 		this.thead.elm.style.marginLeft = -this.tbody.elm.scrollLeft + "px";
 	};
-	
+
 	this.gridResize = function(){
 		if(this.recordView){
-			
+
 		}else{
 			var margin = this.root.elm.clientWidth;
 			margin -= parseInt($(this.table.elm).css('margin-left'));
@@ -363,7 +363,7 @@ function cmsView(objName, recordView, recordId){
 			}
 			this.table.elm.style.width = margin + 'px';
 			this.fake.elm.style.width = this.root.elm.clientWidth + 'px';
-			
+
 			if(this.tbody.elm.scrollHeight > (this.root.elm.clientHeight - this.thead.elm.clientHeight - this.table.elm.previousSibling.clientHeight)){
 				margin = this.root.elm.parentNode.clientHeight;
 				margin -= parseInt($('.gridControl').css('margin-top'));
@@ -375,7 +375,7 @@ function cmsView(objName, recordView, recordId){
 			}
 		}
 	};
-	
+
 	this.handleOutsideEvent = function(obj, e){
 		var call = obj.getAttribute('eventCode');
 		if(call != "scroll"){
@@ -397,7 +397,7 @@ function cmsView(objName, recordView, recordId){
 				if(obj.hasAttribute('recordId')){
 					recordId = parseInt(obj.getAttribute('recordId'));
 				}
-				
+
 				var Record = new cmsView(this.code + "_" + recordId, true, recordId);
 				Record.parent = this;
 				Record.render();

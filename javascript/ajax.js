@@ -18,35 +18,35 @@ var ajax = function(){
 		window.__base["ajax_request"] = new Array();
 		window.__base["ajax_request_arg"] = new Array();
 	}
-	
+
 	this.register_argument = function(name, value){
 		this.argument += '&argument[' + name + ']=' + value;
 	};
-	
+
 	this.get_url = function(){
 		var url = "?ajax=1";
 		url += "&group=" + this.group;
 		url += "&className=" + this.className;
 		url += "&methodName=" + this.methodName;
 		url += this.argument;
-		
+
 		return url;
 	};
-	
+
 	this.send = function(){
 		var loading = document.getElementById("ajaxLoading");
 		if(loading !== null){
 			loading.className = "fa fa-spinner ajaxLoading spin";
 		}
 		window.__base["ajax"] += 1;
-		
+
 		var xml_doc = null;
 		this.argument += '&argument[header]=' + this.header;
-		
+
 		var xml_http;
 		var ie = false;
 		try{ // Firefox, Opera 8.0+, Safari
-			xml_http = new XMLHttpRequest(); 
+			xml_http = new XMLHttpRequest();
 			xml_http.overrideMimeType('text/xml');
 		}catch (trymicrosoft){// Internet Explorer e
 			try{
@@ -64,12 +64,12 @@ var ajax = function(){
 			}
 
 		}
-		
+
 		var url = this.baseURL;
 		this.argument += "&group=" + this.group + "&className=" + this.className + "&methodName=" + this.methodName;
 		var call_back = this.call_back;
 		var attributes = this.attributes;
-		
+
 		xml_http.onreadystatechange = function(){
 			if (xml_http.readyState == 4 && xml_http.status == 200){
 				window.__base["ajax"] -= 1;
@@ -93,14 +93,14 @@ var ajax = function(){
 			}
 		};
 		if(ie){
-			
+
 		}
 		xml_http.open(this.method, url, this.async);
 		xml_http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xml_http.setRequestHeader("Content-length", this.argument.length);
 		xml_http.setRequestHeader("Connection", "close");
 		xml_http.send(this.argument);
-		
+
 		if(!this.async){
 			window.__base["ajax"] -= 1;
 			var loading = document.getElementById("ajaxLoading");
@@ -118,7 +118,7 @@ var ajax = function(){
 				xml_doc = xml_http.responseText;
 			}
 		}
-		
+
 		return xml_doc;
 	};
 };

@@ -52,13 +52,13 @@ function user(){
 
 $(window).ready(function() {
 	var login = new user();
-	
+
 	$("input[name*='username']").focus();
-	
+
 	$(".loginBtn a").click(function(){
 		login.login();
 	});
-	
+
 	$("input[name*='username']").keypress(function (e) {
 		 var key = e.which;
 		 if(key == 13){
@@ -69,7 +69,7 @@ $(window).ready(function() {
 			 }
 		 }
 	});
-	
+
 	$("input[name*='password']").keypress(function (e) {
 		 var key = e.which;
 		 if(key == 13){

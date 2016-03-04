@@ -99,7 +99,7 @@ html, body{
 	border-top: solid var(--mainSpacing) var(--darkBkgr);
 	border-bottom: solid var(--mainSpacing) var(--darkBkgr);
 	border-right: solid var(--mainSpacing) var(--darkBkgr);
-	float: left;	
+	float: left;
 }
 .footer{
 	clear: both;
@@ -157,7 +157,7 @@ html, body{
 	font-size: 24px;
 }
 .navigationGroup{
-	background: var(--navGroup);	
+	background: var(--navGroup);
 	background: -webkit-linear-gradient(var(--navGroup), var(--darkBkgr)); /* For Safari 5.1 to 6.0 */
     background: -o-linear-gradient(var(--navGroup), var(--darkBkgr)); /* For Opera 11.1 to 12.0 */
     background: -moz-linear-gradient(var(--navGroup), var(--darkBkgr)); /* For Firefox 3.6 to 15 */
@@ -168,12 +168,12 @@ html, body{
 	cursor: pointer;
 }
 .navigationGroup:hover{
-	background: var(--darkBkgr);	
+	background: var(--darkBkgr);
 	background: -webkit-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Safari 5.1 to 6.0 */
     background: -o-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Opera 11.1 to 12.0 */
     background: -moz-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Firefox 3.6 to 15 */
     background: linear-gradient(var(--darkBkgr), var(--navGroup)); /* Standard syntax */
-	
+
 }
 .navigationGroupContent{
 	margin: 1px;
@@ -215,17 +215,17 @@ html, body{
 	color: var(--lightText);
 }
 .tabBar span{
-	
+
 }
 .tab{
 	background: var(--darkBkgr);
 	display: inline-block;
-	position: relative;	
+	position: relative;
     padding: 2px 14px 2px 4px;
-	box-sizing: border-box;	
+	box-sizing: border-box;
 	margin: 0;
 	cursor: pointer;
-	border-top: solid 1px var(--darkBkgr);	
+	border-top: solid 1px var(--darkBkgr);
 	border-left: solid 1px var(--darkBkgr);
 	border-right: solid 1px var(--lightBkgr);
 	color: var(--lightText);
@@ -234,7 +234,7 @@ html, body{
 	color: var(--lightText);
 }
 .tab:hover{
-	background: var(--navGroup);	
+	background: var(--navGroup);
 	background: -webkit-linear-gradient(var(--darkBkgr), var(--lightBkgr)); /* For Safari 5.1 to 6.0 */
     background: -o-linear-gradient(var(--darkBkgr), var(--lightBkgr)); /* For Opera 11.1 to 12.0 */
     background: -moz-linear-gradient(var(--darkBkgr), var(--lightBkgr)); /* For Firefox 3.6 to 15 */
@@ -271,7 +271,7 @@ html, body{
 	padding: 4px 0 0 0;
 }
 .gridControl a{
-	background: var(--navGroup);	
+	background: var(--navGroup);
 	background: -webkit-linear-gradient(var(--navGroup), var(--darkBkgr)); /* For Safari 5.1 to 6.0 */
     background: -o-linear-gradient(var(--navGroup), var(--darkBkgr)); /* For Opera 11.1 to 12.0 */
     background: -moz-linear-gradient(var(--navGroup), var(--darkBkgr)); /* For Firefox 3.6 to 15 */
@@ -284,7 +284,7 @@ html, body{
 	margin: 0 4px;
 }
 .gridControl a:hover{
-	background: var(--darkBkgr);	
+	background: var(--darkBkgr);
 	background: -webkit-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Safari 5.1 to 6.0 */
     background: -o-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Opera 11.1 to 12.0 */
     background: -moz-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Firefox 3.6 to 15 */
@@ -334,7 +334,7 @@ html, body{
 .dataGrid tr th:first-child{
 }
 .dataGrid tr td:first-child{
-	
+
 }
 .dataGrid th,.dataGrid td{
 	display: inline-block;
@@ -347,7 +347,7 @@ html, body{
 }
 .gridFixed{
 	border-bottom: solid 1px var(--lightBkgr) !important;
-	border-right: solid 1px var(--lightBkgr) !important;	
+	border-right: solid 1px var(--lightBkgr) !important;
 	color: var(--lightText);
 	background-color: var(--darkBkgr);
 	position: absolute;
@@ -364,8 +364,8 @@ html, body{
 	table-layout: fixed;
 }
 .recordView tr td{
-	
+
 }
 .recordView tr td:first-child{
-	
+
 }

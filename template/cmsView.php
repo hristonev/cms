@@ -1,10 +1,10 @@
-<?php 
+<?php
 
 class cmsView extends user
 {
 	private $fields = array();
 	private $ml = false;
-	
+
 	public function __construct(){
 		parent::__construct();
 
@@ -12,23 +12,23 @@ class cmsView extends user
 	}
 
 	public function xGetGrid($arg, &$json){
-		
+
 		$table = preg_replace('/\s+/', '', $arg['object']);
 		$sql = new database();
 		$sql1 = new database();
 		$sql->query("
-			SELECT 
-				COUNT(`". $table. "`.`". $table. "Id`) as total 
-			FROM 
+			SELECT
+				COUNT(`". $table. "`.`". $table. "Id`) as total
+			FROM
 				`". $table. "`
 		");
 		$json->totalRecords = new stdClass();
 		$json->totalRecords->name = $this->kwd('totalRecords');
 		$json->totalRecords->value = $sql->total;
-		
+
 		$json->newRecord = new stdClass();
 		$json->newRecord->value = $this->kwd('newRecord');
-		
+
 		$json->saveRecord = new stdClass();
 		$json->saveRecord->value = $this->kwd('saveRecord');
 		//get header for table
@@ -47,13 +47,13 @@ class cmsView extends user
 			$sql->query("SHOW COLUMNS FROM `". $table. TABLE_ML_SUFFIX. "`");
 			if($sql->num_rows() > 0){
 				do{
-					
+
 					$realFieldSet[$sql->Field] = '';
 				}while($sql->next());
 			}
 		}
 		$sql->query("
-			SELECT 
+			SELECT
 				`sys.dependecies`.`table` as `table`
 				, `sys.dependecies`.`field` as `field`
 				, `sys.dependecies`.`relateTable` as `relateTable`
@@ -61,21 +61,21 @@ class cmsView extends user
 				, `sys.dependecies`.`showInView` as `showInView`
 				, `sys.dependecies`.`isHeader` as `isHeader`
 				, `sys.dependecies`.`columnWidth` as `columnWidth`
-				, `sys.dependecies`.`weight` as `weight` 
-				, `sys.type`.`code` as `type` 
-				, `sys.type`.`phpExpression` as `phpExp` 
-				, `sys.type`.`sqlExpression` as `sqlExp` 
-				, `sys.type`.`sqlResultCode` as `sqlResultCode` 
-				, `sys.type`.`sqlResultValue` as `sqlResultValue` 
-				, `sys.type`.`jsExpression` as `jsExp` 
-			FROM 
-				`sys.dependecies` 
-			LEFT JOIN `sys.type` ON `sys.type`.`sys.typeId` = `sys.dependecies`.`sys.typeId` 
-			WHERE 
-				`sys.dependecies`.`table` = '". $table. "' 
-			OR 
-				`sys.dependecies`.`table` = '". $table. TABLE_ML_SUFFIX. "' 
-			ORDER BY 
+				, `sys.dependecies`.`weight` as `weight`
+				, `sys.type`.`code` as `type`
+				, `sys.type`.`phpExpression` as `phpExp`
+				, `sys.type`.`sqlExpression` as `sqlExp`
+				, `sys.type`.`sqlResultCode` as `sqlResultCode`
+				, `sys.type`.`sqlResultValue` as `sqlResultValue`
+				, `sys.type`.`jsExpression` as `jsExp`
+			FROM
+				`sys.dependecies`
+			LEFT JOIN `sys.type` ON `sys.type`.`sys.typeId` = `sys.dependecies`.`sys.typeId`
+			WHERE
+				`sys.dependecies`.`table` = '". $table. "'
+			OR
+				`sys.dependecies`.`table` = '". $table. TABLE_ML_SUFFIX. "'
+			ORDER BY
 				`sys.dependecies`.`table` ASC
 				, `sys.dependecies`.`weight` ASC
 		");
@@ -110,9 +110,9 @@ class cmsView extends user
 			}while ($sql->next());
 		}
 		$query = "
-			SELECT 
-				" . implode(",", $fieldSet). " 
-			FROM 
+			SELECT
+				" . implode(",", $fieldSet). "
+			FROM
 				`". $table. "`
 		";
 		if($this->ml){
@@ -136,7 +136,7 @@ class cmsView extends user
 		unset($sql);
 		unset($sql1);
 	}
-	
+
 	public function xGetRecordView($arg, &$json){
 		$xml = new xml();
 		$table = preg_replace('/\s+/', '', $arg['object']);
@@ -144,21 +144,21 @@ class cmsView extends user
 		$sql = new database();
 		$sql1 = new database();
 		$sql2 = new database();
-		
+
 		$sql->query("
 			SHOW TABLES LIKE '". $table. TABLE_ML_SUFFIX. "'
 		");
 		if($sql->num_rows() > 0){
 			$this->ml = true;
 		}
-		
+
 		$sql->query("SHOW COLUMNS FROM `". $table. "` WHERE `Key` = 'PRI'");
 		$primary = $sql->Field;
-		
+
 		$sql->query("SHOW COLUMNS FROM `". $table. "`");
 		$json->recordView = new stdClass();
 		$recordId = (int)$arg['recordId'];
-		
+
 		//language unrelated fields
 		$json->recordView->header = array();
 		$header = &$json->recordView->header[];
@@ -190,18 +190,18 @@ class cmsView extends user
 				//get data
 				if($recordId > 0){
 					$sql2->query("
-						SELECT 
+						SELECT
 							`". $table. "`.`". $sql->Field. "` as data
-						FROM 
-							`". $table. "` 
-						WHERE 
+						FROM
+							`". $table. "`
+						WHERE
 							`". $table. "`.`". $primary. "` = ". $recordId. "
 					");
 					$cell->data = $sql2->data;
 				}
 			}while ($sql->next());
 		}
-		
+
 		//language related fields
 		if($this->ml){
 			$fields = array();
@@ -226,16 +226,16 @@ class cmsView extends user
 					$header->name = $sql->name;
 					foreach ($fields as $field => $value){
 						$sql1->query("
-							SELECT 
+							SELECT
 								`sys.type`.`sys.typeId` as `id`
-								, `sys.type`.`fieldType` as `type` 
-							FROM 
-								`sys.dependecies` 
-							JOIN `sys.type` ON `sys.type`.`sys.typeId` = `sys.dependecies`.`sys.typeId` 
-							WHERE 
-								`sys.dependecies`.`table` = '". $table. TABLE_ML_SUFFIX. "' 
-							AND 
-								`sys.dependecies`.`field` = '". $field. "' 
+								, `sys.type`.`fieldType` as `type`
+							FROM
+								`sys.dependecies`
+							JOIN `sys.type` ON `sys.type`.`sys.typeId` = `sys.dependecies`.`sys.typeId`
+							WHERE
+								`sys.dependecies`.`table` = '". $table. TABLE_ML_SUFFIX. "'
+							AND
+								`sys.dependecies`.`field` = '". $field. "'
 						");
 						$cell = &$header->cell[];
 						$cell = new stdClass();
@@ -253,8 +253,8 @@ class cmsView extends user
 								FROM
 									`". $table. TABLE_ML_SUFFIX. "`
 								WHERE
-									`". $table. TABLE_ML_SUFFIX. "`.`". $primary. "` = ". $recordId. " 
-								AND 
+									`". $table. TABLE_ML_SUFFIX. "`.`". $primary. "` = ". $recordId. "
+								AND
 									`". $table. TABLE_ML_SUFFIX. "`.`langId` = ". $sql->langId. "
 							");
 							$cell->data = $sql2->data;
@@ -263,12 +263,12 @@ class cmsView extends user
 				}while($sql->next());
 			}
 		}
-		
+
 		unset($sql2);
 		unset($sql1);
 		unset($sql);
 	}
-	
+
 	public function xSaveRecord($arg, &$xml){
 		$sql = new database();
 // 		$data = json_decode($arg['data'], true);

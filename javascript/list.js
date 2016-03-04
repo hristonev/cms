@@ -1,16 +1,16 @@
 function list(){
-	
+
 	this.id = null;
 	this.xmlObject = null;
 	this.dbObject = null;
 	this.parentElm = null;
 	this.loadData = true;
-	
+
 	if(typeof(window.__list) == "undefined"){
 		window.__list = new Array();
 		window.__listBusy = false;
 	}
-	
+
 	this.init = function(){
 		var responce = false;
 		msg("check for open grids and close them");
@@ -27,7 +27,7 @@ function list(){
 				}
 			}
 		}
-		
+
 		if(window.__listBusy == false && this.loadData){
 			msg("make new grid load data from server");
 			window.__list[this.id] = this;
@@ -39,7 +39,7 @@ function list(){
 		}
 		return responce;
 	};
-	
+
 	this.render = function(){
 		if(window.__listBusy == false){
 			window.__listInUse = this.id;
@@ -58,7 +58,7 @@ function list(){
 			}
 		}
 	};
-	
+
 	this.readXml = function(xml, attr){
 		this.xmlObject = xml;
 		this.buildHeader();
@@ -67,7 +67,7 @@ function list(){
 		window.__listBusy = false;
 		loaderOff();
 	};
-	
+
 	this.buildData = function(){
 		this.tbody = new domElement("tbody");
 		this.tbody.parent = this.table.elm;
@@ -105,7 +105,7 @@ function list(){
 							tr.elm.className = "listGroup";
 						}
 					}
-					
+
 					td = new domElement("td");
 					td.parent = tr.elm;
 					td.render();
@@ -152,7 +152,7 @@ function list(){
 							break;
 						case "int(12) unsigned"://weight
 							div.elm.style.textAlign = "center";
-							
+
 							input = new domElement("div");
 							input.parent = div.elm;
 							input.setCssClass("listWeightDecrease");
@@ -181,7 +181,7 @@ function list(){
 								e.stopPropagation();
 								return false;
 							});
-							
+
 							input = new domElement("input");
 							input.parent = div.elm;
 							input.elm.type = "button";
@@ -205,7 +205,7 @@ function list(){
 								e.stopPropagation();
 								return false;
 							});
-							
+
 							input = new domElement("div");
 							input.parent = div.elm;
 							input.setCssClass("listWeightIncrease");
@@ -244,7 +244,7 @@ function list(){
 			}
 		}
 	};
-	
+
 	this.buildHeader = function(){
 		this.header = new Array();
 		this.table = new domElement("table");
@@ -254,7 +254,7 @@ function list(){
 		this.thead = new domElement("thead");
 		this.thead.parent = this.table.elm;
 		this.dependancy = null;
-		
+
 		this.thead.render();
 		var tr = new domElement("tr");
 		tr.parent = this.thead.elm;
@@ -279,7 +279,7 @@ function list(){
 			div.render();
 		}
 	};
-	
+
 	this.resize = function(){
 		if(typeof(this.thead) != "undefined" && typeof(this.tbody) != "undefined" && typeof(this.th) != "undefined" && this.th.length > 0){
 			this.thead.setStyle("width", this.parentElm.offsetWidth + "px");
@@ -302,7 +302,7 @@ function list(){
 			}
 		}
 	};
-	
+
 	this.actionCheckbox = function(xml, attr){
 		loaderOff();
 		var result = xml.getElementsByTagName("resultRecord");
@@ -326,14 +326,14 @@ function list(){
 			msg("error unexpected result in xml");
 		}
 	};
-	
+
 	this.actionWeight = function(xml, attr){
 		loaderOff();
 		var aRow = xml.getElementsByTagName("aRow");
 		var bRow = xml.getElementsByTagName("bRow");
 		var aPrimary = xml.getElementsByTagName("aPrimary");
 		var bPrimary = xml.getElementsByTagName("bPrimary");
-		
+
 		if(aRow.length > 0 && aRow.length > 0){
 			var value = aRow[0].firstChild.nodeValue - bRow[0].firstChild.nodeValue;
 			document.getElementById("weight" + aPrimary[0].firstChild.nodeValue).value = aRow[0].firstChild.nodeValue;

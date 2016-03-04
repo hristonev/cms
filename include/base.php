@@ -2,75 +2,75 @@
 class base
 {
 	public static $xml;
-	
+
 	public $site_map_id;
 	public $record_id;
 	public $font_size;
 	protected $langId;
 	protected $parent;
-	
+
 	public function __construct(){
 		if(!isset($this->langId)){
 			$this->langId = 1;
 		}
 	}
-	
+
 	public function login(){
-		
+
 	}
-	
+
 	public function x_kwd($arg, &$xml){
 		if(isset($arg["code"])){
 			$xml->add_node("CDATA", $this->kwd($arg["code"]));
 		}
 	}
-	
+
 	public function set_globals(&$obj){
 		foreach ($obj as $key => $value){
 			$this->$key = $value;
 		}
 	}
-	
+
 	public function get_lang_code(){
 		$sql = new database();
 		$sql->query("
-			SELECT 
+			SELECT
 				`sys.lang`.`code`
-			FROM 
-				`sys.lang` 
-			WHERE 
-				`sys.lang`.`sys.langId` = ". (int)$this->langId. " 
+			FROM
+				`sys.lang`
+			WHERE
+				`sys.lang`.`sys.langId` = ". (int)$this->langId. "
 		");
 		$value = $sql->code;
 		unset($sql);
-		
+
 		return $value;
 	}
-	
+
 	public function conf($code){
 		$opt = new database();
 		$cnf = new database();
 		$cnf->query("
-			SELECT 
+			SELECT
 				`configGroup`.`name`
-				, `config`.`value` 
-			FROM 
-				`config` 
+				, `config`.`value`
+			FROM
+				`config`
 			JOIN `configGroup` ON `configGroup`.`configGroupId` = `config`.`configGroupId`
-			WHERE 
+			WHERE
 				`config`.`code` = '". $code. "'
 		");
 		$value = $cnf->value;
 		switch ($cnf->name){
 			case 'text':
 				$opt->query("
-					SELECT 
-						`kwdML`.`value` 
-					FROM 
-						`kwdML` 
-					WHERE 
-						`kwdML`.`kwdId` = ". (int)$value." 
-					AND 
+					SELECT
+						`kwdML`.`value`
+					FROM
+						`kwdML`
+					WHERE
+						`kwdML`.`kwdId` = ". (int)$value."
+					AND
 						`kwdML`.`langId` = ". $this->langId. "
 				");
 				$value = $opt->value;
@@ -78,21 +78,21 @@ class base
 		}
 		unset($opt);
 		unset($cnf);
-		
+
 		return $value;
 	}
-	
+
 	public function kwd($code, $addSymbols = true){
 		$cmsPrefix = '#';
 		$kwd = new database();
 		$kwd->query("
-			SELECT 
-				`kwdML`.`value` 
+			SELECT
+				`kwdML`.`value`
 				, `kwd`.`kwdId` as `id`
-			FROM 
-				`kwd` 
-			LEFT JOIN `kwdML` ON `kwdML`.`kwdId` = `kwd`.`kwdId` 
-			WHERE 
+			FROM
+				`kwd`
+			LEFT JOIN `kwdML` ON `kwdML`.`kwdId` = `kwd`.`kwdId`
+			WHERE
 				`kwd`.`code` = '". $cmsPrefix. $code. "'
 		");
 		$value = $kwd->value;
@@ -108,20 +108,20 @@ class base
 		}
 		return $value;
 	}
-	
+
 	public function xKwd($arg, &$xml){
 		$xml->addNode('kwd', $this->kwd($arg['code']));
 	}
-	
+
 	public function globals($code){
-		
+
 	}
-	
+
 }
 
 function error_handler($errno, $errstr, $errfile, $errline){
 	$code = '';
-	
+
 	$errortype = array(
 			E_ERROR              => 'Error',
 			E_WARNING            => 'Warning',
@@ -162,26 +162,26 @@ function error_handler($errno, $errstr, $errfile, $errline){
 		#$code .= 'in '. $errfile. '<br />';
 		#$code .= 'on line '. $errline. '<br />';
 		$code .= '</div>';
-		
+
 		$code .= '<ul type="number">';
 		$err_back = debug_backtrace();
 		for($z = (count($err_back) - 1); $z >= 0; $z--){
-			
-			
+
+
 			if(isset($err_back[$z]["file"])){
 				$code .= '<li><strong>'. $err_back[$z]["file"]. '</strong></li>';
 			}
-			
+
 			$code .= '<ul>';
-			
+
 			if(isset($err_back[$z]["line"])){
 				$code .= '<li>line: <strong>'. $err_back[$z]["line"]. '</strong></li>';
 			}
-			
+
 			if(isset($err_back[$z]["class"])){
 				$code .= '<li>class: <strong>'. $err_back[$z]["class"]. '</strong></li>';
 			}
-			
+
 			if(isset($err_back[$z]["function"])){
 				$code .= '<li>function: <strong>'. $err_back[$z]["function"]. '</strong></li>';
 			}
@@ -195,16 +195,16 @@ function error_handler($errno, $errstr, $errfile, $errline){
 	}else{
 		echo $code;
 	}
-	
+
 }
 
 function dump($object, $code = '', $head = ''){
-	
+
 	if($head == ''){
 		$height = 10;
 		echo '<div style="cursor: pointer; font-size: 11px; font-family: Courier New; background: #ffffff; width: 100%; border: solid 1px red; z-index: 1000; position: relative;">';
 	}
-	
+
 	if(is_array($object)){
 		echo $head;
 		echo '<ul>';
@@ -222,7 +222,7 @@ function dump($object, $code = '', $head = ''){
 		echo $head;
 		echo '<ul>';
 		echo '<pre>';
-		print_r($object);	
+		print_r($object);
 		echo '</pre>';
 		echo '</ul>';
 	}else{

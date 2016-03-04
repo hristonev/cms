@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 date_default_timezone_set("Etc/GMT+2");
 error_reporting(E_ALL);

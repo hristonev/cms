@@ -6,10 +6,10 @@ var builder = function(){
 	if(typeof(window.__userData) == "undefined"){
 		window.__userData = new Array();
 	}
-	
+
 	this.instance_key = window.__builder.length;
 	window.__builder[this.instance_key] = this;
-	
+
 	this.loadModule = new Array(
 		"ajax",
 		"event",
@@ -30,7 +30,7 @@ var builder = function(){
 	this.content = null;
 	this.body = null;
 	this.footer = null;
-	
+
 	this.loadJS = function(){
 		var module = this.loadModule[0];
 		this.loadModule.shift();
@@ -51,10 +51,10 @@ var builder = function(){
 				console.log('load js complete');
 				$('body').data("builder").init();
 			}
-			
+
 		});
 	};
-	
+
 	this.init = function(){
 		//load js files
 		$('body').data("builder", this);
@@ -64,13 +64,13 @@ var builder = function(){
 		}else{
 			console.log('create base containers');
 			this.body = document.getElementsByTagName('body')[0];
-			
+
 			this.head = new domElement('div');
 			this.head.parent = this.body;
 			this.head.setCssClass('head');
 			this.head.elm.setAttribute('id', 'cmsHead');
 			this.head.render();
-			
+
 			this.navigation = new domElement('div');
 			this.navigation.parent = this.body;
 			this.navigation.setCssClass('navigation');
@@ -85,32 +85,32 @@ var builder = function(){
 			this.navResize.setAttribute('eventCode', 'resize');
 			this.navResize.render();
 			this.navResize.setEvent('onmousedown', 'navSatrtResize');
-			
+
 			this.content = new domElement('div');
 			this.content.parent = this.body;
 			this.content.setCssClass('content');
 			this.content.elm.setAttribute('id', 'cmsContent');
 			this.content.render();
-			
+
 
 			this.footer = new domElement('div');
 			this.footer.parent = this.body;
 			this.footer.setCssClass('footer');
 			this.footer.elm.setAttribute('id', 'cmsFooter');
 			this.footer.render();
-			
+
 			console.log('create head elements');
 			var head = new cmsHead(this.head);
 			head.caller = this;
 			head.render();
-			
+
 			console.log('create navigation elements');
 			var nav = new cmsNavigation(this.navigation);
 			nav.caller = this;
 			nav.render();
 		}
 	};
-	
+
 	this.destruct = function(){
 		console.log('logout');
 		$.ajax({
@@ -144,7 +144,7 @@ var builder = function(){
 			console.log('bye');
 		});
 	};
-	
+
 	this.handleOutsideEvent = function(obj, e){
 		switch(obj.getAttribute('eventCode')){
 		case 'resize':
@@ -177,7 +177,7 @@ var builder = function(){
 			break;
 		}
 	};
-	
+
 };
 
 builder.registerResize = function(obj, method){

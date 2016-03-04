@@ -1,7 +1,7 @@
 var events = {};
 
 events.registerEventHandler = function(obj, name, event_code, bubling){
-	
+
 	if(typeof(window.__events) == "undefined"){
 		window.__events = new Array();
 	}
@@ -11,11 +11,11 @@ events.registerEventHandler = function(obj, name, event_code, bubling){
 	window.__events[key]["name"] = name;
 	window.__events[key]["event_code"] = event_code;
 	window.__events[key]["bubling"] = bubling;
-	
+
 	/* *** COMMENT
-	// ---------------------------------------------- 
+	// ----------------------------------------------
 	COMMENT *** */
-	
+
 	if(typeof(bubling) == "undefined"){
 		bubling = false;
 	}
@@ -26,7 +26,7 @@ events.registerEventHandler = function(obj, name, event_code, bubling){
 //		/alert(obj.tagName);
 		obj.addEventListener(name, event_code, bubling);
 	}
-	
+
 };
 
 events.removeEvents = function(obj){
