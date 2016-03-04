@@ -21,7 +21,8 @@ var builder = function(){
 		"cmsHead",
 		"cmsNavigation",
 		"cmsView",
-		"cmsViewTab"
+		"cmsViewTab",
+		"ckeditor/ckeditor"
 	);
 	this.loaded = 0;
 	this.head = null;
