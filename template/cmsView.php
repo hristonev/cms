@@ -16,6 +16,14 @@ class cmsView extends user
 		$table = preg_replace('/\s+/', '', $arg['object']);
 		$sql = new database();
 		$sql1 = new database();
+
+		$sql->query("
+			SHOW TABLES LIKE '". $table. TABLE_ML_SUFFIX. "'
+		");
+		if($sql->num_rows() > 0){
+			$this->ml = true;
+		}
+
 		$sql->query("
 			SELECT
 				COUNT(`". $table. "`.`". $table. "Id`) as total
