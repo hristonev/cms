@@ -85,7 +85,11 @@ var builder = function(){
 			this.navResize.caller = this;
 			this.navResize.setAttribute('eventCode', 'resize');
 			this.navResize.render();
-			this.navResize.setEvent('onmousedown', 'navSatrtResize');
+			this.navResize.setEvent('onmousedown', 'resize');
+			if(storage.get('navWidth') != null){
+				var obj = document.getElementsByTagName('body')[0];
+				obj.style.setProperty('--navWidth', storage.get('navWidth') + 'px', null);
+			}
 
 			this.content = new domElement('div');
 			this.content.parent = this.body;
@@ -170,6 +174,7 @@ var builder = function(){
 						width = (parseInt(window.innerWidth) * 2 / 3);
 					}
 					obj.style.setProperty('--navWidth', width + 'px', null);
+					storage.set('navWidth', width);
 				});
 			}
 			break;
