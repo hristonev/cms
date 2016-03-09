@@ -108,6 +108,7 @@ class cmsView extends user
 					}else{
 						$cell->name = $this->kwd('id');
 					}
+					$cell->code = $sql->field;
 					$cell->width = $sql->columnWidth;
 					if((int)$sql->isHeader == 1){
 						$cell->type = 'header';

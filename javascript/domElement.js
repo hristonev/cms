@@ -1,4 +1,7 @@
 function domElement(tag_name){
+	if(!isNaN(parseInt(tag_name))){//return existing instance
+		return window.__domElement[tag_name];
+	}
 	//instance
 	if(typeof(window.__domElement) == "undefined"){
 		window.__domElement = new Array();
@@ -44,6 +47,10 @@ function domElement(tag_name){
 	};
 };
 domElement.prototype = {
+	getInstanceKys: function(){
+		return this.instance_key;
+	},
+
 	getElm: function(){
 		return this.elm;
 	},
@@ -101,6 +108,13 @@ domElement.prototype = {
 		this.text = text;
 	},
 
+	renderText: function(){
+		if(this.text != null){
+			this.txt_node = document.createTextNode(this.text);
+			this.elm.appendChild(this.txt_node);
+		}
+	},
+
 	handleEvent: function(e){
 		this.caller.handleOutsideEvent(this, e);
 	},
@@ -122,6 +136,11 @@ domElement.prototype = {
 		}
 		//window.__domElement[this.instance_key] = this;
 	},
+
+	changeText: function(value){
+		this.elm.firstChild.nodeValue = value;
+	},
+
 	destruct: function(){
 		this.elm.parentNode.removeChild(this.elm);
 	},

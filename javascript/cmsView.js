@@ -52,7 +52,8 @@ function cmsView(objName, recordView, recordId){
 	this.saveTimeout = null;
 	this.saveTime = 1000;
 	this.fieldColl = new Array();
-	this.cell = {};
+	this.cellCollection = new Array();
+	this.langId = 1;//HARDCODE REMOVE ASAP
 
 	builder.registerResize("window.__cmsView['instance'][" + this.instanceKey + "]", "gridResize");
 
@@ -224,7 +225,7 @@ function cmsView(objName, recordView, recordId){
 	this.saveRecord = function(){
 		this.saveTimeout = null;
 		var dataToSend = {};
-		var htmlData;
+		var htmlData, recorId, gridCell;
 
 		dataToSend.object = this.parent.code;
 		for(var key = 0; key < this.fieldColl.length; key++){
@@ -240,6 +241,12 @@ function cmsView(objName, recordView, recordId){
 			}else{
 				dataToSend[this.fieldColl[key].langId][this.fieldColl[key].name] = encodeURIComponent(this.fieldColl[key].getValue());
 			}
+			if((this.parent.langId == this.fieldColl[key].langId || this.fieldColl[key].langId == 0) && typeof(this.parent.cellCollection[this.recordId]) != "undefined" && typeof(this.parent.cellCollection[this.recordId][this.fieldColl[key].name]) != "undefined"){
+				gridCell = new domElement(this.parent.cellCollection[this.recordId][this.fieldColl[key].name]);
+				if(typeof(gridCell.writeProtect) == "undefined" || !gridCell.writeProtect){
+					gridCell.changeText(this.fieldColl[key].getValue());
+				}
+			}
 		}
 		var data = new ajax();
 		data.async = true;
@@ -250,7 +257,7 @@ function cmsView(objName, recordView, recordId){
 		data.methodName = "xSaveRecord";
 		data.register_argument("data", JSON.stringify(dataToSend));
 		data.send();
-
+		//this.cellCollection[recordId][cellKeys[cellKey]]
 	};
 
 	this.saveRecordBack = function(dataStr){
@@ -292,7 +299,8 @@ function cmsView(objName, recordView, recordId){
 		this.rowNumber = 1;
 		var cellWidth = new Array();
 		var primaryKey = null;
-		var cssClass;
+		var cssClass, recordId;
+		var cellKeys = new Array();
 		for(var rowKey in this.data.dataGrid.row){
 			switch(this.data.dataGrid.row[rowKey].type){
 				case 'header':
@@ -332,6 +340,7 @@ function cmsView(objName, recordView, recordId){
 				cell = new domElement(cellTag);
 				cell.parent = row.elm;
 				cellText = this.data.dataGrid.row[rowKey].cell[cellKey].name;
+				cell.setTitle(cellText);
 				if(typeof(cellWidth[cellKey]) != "undefined"){
 					cell.setStyle("width", cellWidth[cellKey]);
 				}
@@ -351,14 +360,26 @@ function cmsView(objName, recordView, recordId){
 					offsetFromHeader = 0;
 				}if(cellKey === primaryKey){
 					cssClass += " openRecord";
-					cell.setAttribute("recordId", parseInt(this.data.dataGrid.row[rowKey].cell[cellKey].name));
+					recordId = parseInt(this.data.dataGrid.row[rowKey].cell[cellKey].name);
+					this.cellCollection[recordId] = new Array();
+					if(isNaN(recordId)){
+						recordId = 0;
+					}
+					cell.setAttribute("recordId", recordId);
 					cell.caller = this;
 					cell.setAttribute('eventCode', 'Record');
 				}
 				cell.setCssClass(cssClass);
 				cell.render();
-				if(cellKey === primaryKey){
+				if(cellKey === primaryKey && recordId > 0){
 					cell.setEvent('onclick', 'Record');
+					cell.writeProtect = true;
+				}
+				if(rowKey == 0){//collect first row as array keys for cellCollection
+					cellKeys[cellKey] = this.data.dataGrid.row[rowKey].cell[cellKey].code;
+				}else if(cellTag != "th"){
+					console.log(recordId + " - " + cellKeys[cellKey]);
+					this.cellCollection[recordId][cellKeys[cellKey]] = cell.getInstanceKys();
 				}
 				if(this.data.dataGrid.row[rowKey].cell[cellKey].type == "header"){
 					offsetFromHeader += cell.elm.offsetWidth;

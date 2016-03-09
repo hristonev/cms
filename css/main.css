@@ -154,10 +154,18 @@ html, body{
 }
 .logoutMsg{
 	position: fixed;
-	top: 45%;
-	left: 50%;
 	color: #ccc;
 	font-size: 24px;
+	width: 200px;
+	height: 30px;
+	padding: 0 10px;
+	text-align: center;
+	top: -moz-calc(50% - 15px);
+    top: -webkit-calc(50% - 15px);
+    top: calc(50% - 15px);
+	left: -moz-calc(50% - 100px);
+    left: -webkit-calc(50% - 100px);
+    left: calc(50% - 100px);
 }
 .navigationGroup{
 	background: var(--navGroup);
