@@ -378,7 +378,6 @@ function cmsView(objName, recordView, recordId){
 				if(rowKey == 0){//collect first row as array keys for cellCollection
 					cellKeys[cellKey] = this.data.dataGrid.row[rowKey].cell[cellKey].code;
 				}else if(cellTag != "th"){
-					console.log(recordId + " - " + cellKeys[cellKey]);
 					this.cellCollection[recordId][cellKeys[cellKey]] = cell.getInstanceKys();
 				}
 				if(this.data.dataGrid.row[rowKey].cell[cellKey].type == "header"){

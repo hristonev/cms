@@ -112,8 +112,7 @@ function cmsNavigation(root){
 				item.setAttribute('itemKey', itemKey);
 				item.render();
 				item.setEvent('onclick', 'showView');
-
-				if(typeof(window.__cmsView) != "undefined" && typeof(window.__cmsView['tab'][this.groupItem[groupKey][itemKey].getAttribute('code')]) != "undefined"){
+				if(typeof(window.__cmsView) != "undefined" && typeof(window.__cmsView['tab'][itemKey]) != "undefined"){
 					ex = new domElement('i');
 					ex.parent = item.elm;
 					ex.setCssClass('fa fa-exchange');
