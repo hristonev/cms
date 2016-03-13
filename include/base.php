@@ -112,6 +112,32 @@ class base
 
 	}
 
+	public function checkJSON(){
+		switch (json_last_error()) {
+			case JSON_ERROR_NONE:
+
+				break;
+			case JSON_ERROR_DEPTH:
+				dump(' - Maximum stack depth exceeded');
+				break;
+			case JSON_ERROR_STATE_MISMATCH:
+				dump(' - Underflow or the modes mismatch');
+				break;
+			case JSON_ERROR_CTRL_CHAR:
+				dump(' - Unexpected control character found');
+				break;
+			case JSON_ERROR_SYNTAX:
+				dump(' - Syntax error, malformed JSON');
+				break;
+			case JSON_ERROR_UTF8:
+				dump(' - Malformed UTF-8 characters, possibly incorrectly encoded');
+				break;
+			default:
+				dump(' - Unknown error');
+				break;
+		}
+	}
+
 }
 
 function error_handler($errno, $errstr, $errfile, $errline){

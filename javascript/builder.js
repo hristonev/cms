@@ -23,7 +23,8 @@ var builder = function(){
 		"cmsHead",
 		"cmsNavigation",
 		"cmsView",
-		"cmsViewTab"
+		"cmsViewTab",
+		"cmsSiteMap"
 	);
 	this.loadNonEssentialModule = new Array(
 		"ckeditor/ckeditor"

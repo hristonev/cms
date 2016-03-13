@@ -131,7 +131,7 @@ function cmsNavigation(root){
 
 	this.handleOutsideEvent = function(obj, e){
 		var call = obj.getAttribute('eventCode');
-		console.log('event ' + call);
+		console.log('call: ' + call);
 		switch (call) {
 			case 'expandGroup':
 				this.expandGroup(obj.getAttribute('key'));

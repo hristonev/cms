@@ -28,8 +28,16 @@ function cmsHead(root){
 			$(".cmsTitle").text(data.value);
 		});
 
-		var logout = new domElement('i');
-		logout.setCssClass('fa fa-sign-out logout');
+		icon = new domElement('i');
+		icon.setCssClass('fa fa-sitemap');
+		icon.caller = this;
+		icon.setAttribute('eventCode', 'siteMap');
+		icon.parent = row.elm;
+		icon.render();
+		icon.setEvent('onclick', 'siteMap');
+
+		icon = new domElement('i');
+		icon.setCssClass('fa fa-sign-out logout');
 		$.ajax({
 			method: "POST",
 			url: "index.php",
@@ -45,17 +53,30 @@ function cmsHead(root){
 			var data = JSON.parse(dataStr);
 			$(".logout").prop('title', data.value);
 		});
-		logout.parent = row.elm;
-		logout.elm.setAttribute('instance', this.caller.instance_key);
-		logout.caller = this.caller;
-		logout.setAttribute('eventCode', 'logout');
-		logout.render();
-		logout.setEvent('onclick', 'logout');
 
-		var logout = new domElement('i');
-		logout.setCssClass('fa fa-spinner ajaxLoading');
-		logout.elm.setAttribute('id', 'ajaxLoading');
-		logout.parent = row.elm;
-		logout.render();
+		icon.parent = row.elm;
+		icon.elm.setAttribute('instance', this.caller.instance_key);
+		icon.caller = this.caller;
+		icon.setAttribute('eventCode', 'logout');
+		icon.render();
+		icon.setEvent('onclick', 'logout');
+
+		icon = new domElement('i');
+		icon.setCssClass('fa fa-spinner ajaxLoading');
+		icon.elm.setAttribute('id', 'ajaxLoading');
+		icon.parent = row.elm;
+		icon.render();
+
+	};
+
+	this.handleOutsideEvent = function(obj, e){
+		var call = obj.getAttribute('eventCode');
+		console.log('call: ' + call);
+		switch (call) {
+			case 'siteMap':
+				var obj = new cmsSiteMap();
+				obj.render();
+				break;
+		};
 	};
 }

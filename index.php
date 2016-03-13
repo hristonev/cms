@@ -1,5 +1,7 @@
 <?php
-session_start();
+if(session_status() !== PHP_SESSION_ACTIVE){
+	session_start();
+}
 date_default_timezone_set("Etc/GMT+2");
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
@@ -13,9 +15,12 @@ include("include/xml.php");
 database::setOpt($conf['db']);
 $sql = new database();
 unset($sql);
+foreach ($conf as $key => $value){
+	if(is_numeric($value) || is_string($value) || is_bool($value)){
+		define($key, $value);
+	}
+}
 unset($conf);
-
-define("TABLE_ML_SUFFIX", "ML");	//multilanguage suffix
 
 include("include/user.php");
 include("include/manager.php");
