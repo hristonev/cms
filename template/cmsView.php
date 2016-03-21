@@ -2,6 +2,8 @@
 
 class cmsView extends user
 {
+	use mapTool;
+
 	private $fields = array();
 	private $ml = false;
 
@@ -118,32 +120,70 @@ class cmsView extends user
 				}
 			}while ($sql->next());
 		}
+
+		$data = new stdClass();
+		$data->fieldSet = $fieldSet;
+		$data->table = $table;
+		$data->headerSet = $headerSet;
+		$data->objProperty = $this->getObjectProperties($table);
+		$data->json = $json;
+		$this->getDataRows($data, $this->getRootId($table));
+
+		unset($sql);
+		unset($sql1);
+	}
+
+	//RECURSIVE IF OBJECT IS TREE
+	private function getDataRows(&$data, $parentId){
+		$sql = new database();
+		$fieldSet = $data->fieldSet;
+		if(!is_null($parentId) && (int)$data->objProperty->isTree == 1){
+			$parentField = $data->objProperty->recursiveField;
+			$primary = $data->table. "Id";
+			$fieldSet[$parentField] = "`". $data->table. "`.`". $parentField. "`";
+		}
 		$query = "
 			SELECT
 				" . implode(",", $fieldSet). "
 			FROM
-				`". $table. "`
+				`". $data->table. "`
 		";
 		if($this->ml){
-			$query .= " LEFT JOIN `". $table. TABLE_ML_SUFFIX. "` ON `". $table. TABLE_ML_SUFFIX. "`.`". $table. "Id` = `". $table. "`.`". $table. "Id`";
+			$query .= " LEFT JOIN `". $data->table. TABLE_ML_SUFFIX. "` ON `". $data->table. TABLE_ML_SUFFIX. "`.`". $data->table. "Id` = `". $data->table. "`.`". $data->table. "Id`";
+			$query .= " WHERE `". $data->table. TABLE_ML_SUFFIX. "`.`langId` = ". $this->langId;
+		}
+
+		if(!is_null($parentId) && (int)$data->objProperty->isTree == 1){
+			if($this->ml){
+				$query .= " AND ";
+			}else{
+				$query .= " WHERE ";
+			}
+			$query .= "`". $data->table. "`.`". $parentField. "` = ". (int)$parentId;
+		}
+
+		if(!is_null($data->objProperty)){
+			$query .= " ORDER BY ". $data->objProperty->order;
 		}
 		$sql->query($query);
 		if($sql->num_rows() > 0){
 			do{
-				$row = &$json->dataGrid->row[];
+				$row = &$data->json->dataGrid->row[];
 				$row = new stdClass();
-				foreach ($fieldSet as $key => $value){
+				foreach ($data->fieldSet as $key => $value){
 					$cell = &$row->cell[];
 					$cell = new stdClass();
 					$cell->name = $sql->$key;
-					if(isset($headerSet[$key])){
+					if(isset($data->headerSet[$key])){
 						$cell->type = 'header';
 					}
+				}
+				if(!is_null($parentId) && (int)$data->objProperty->isTree == 1 && (int)$sql->$primary > 0){
+					$this->getDataRows($data, $sql->$primary);
 				}
 			}while ($sql->next());
 		}
 		unset($sql);
-		unset($sql1);
 	}
 
 	public function xGetRecordView($arg, &$json){

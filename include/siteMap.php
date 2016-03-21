@@ -1,7 +1,58 @@
 <?php
 
+trait mapTool{
+	protected function getObjectProperties($object){
+		$sql = new database();
+		$sql->query("
+			SELECT
+				*
+			FROM
+				`sys.dynamic`
+			WHERE
+				`sys.dynamic`.`tableName` = '". $object. "'
+		");
+		if($sql->num_rows() > 0){
+			$result = $sql->row;
+		}else{
+			$result = NULL;
+		}
+		unset($sql);
+		return $result;
+	}
+
+	protected function getRootId($object){
+		$rootId = null;
+		$sql = new database();
+		$sql->query("
+			SELECT
+				*
+			FROM
+				`sys.dynamic`
+			WHERE
+				`sys.dynamic`.`tableName` = '". $object. "'
+		");
+		if((int)$sql->isTree == 1){
+			$sql->query("
+				SELECT
+					`". $object. "`.`". $sql->recursiveField. "` as `id`
+				FROM
+					`". $object. "`
+				ORDER BY
+					`". $object. "`.`". $sql->recursiveField. "` ASC
+				LIMIT 1
+			");
+			$rootId = $sql->id;
+		}
+		unset($sql);
+		return $rootId;
+	}
+
+}
+
 class siteMap
 {
+	use mapTool;
+
 	private $nodes;
 	private $langId;
 	private $langNode;
@@ -132,66 +183,52 @@ include('". getcwd(). "/index.php');
 
 	//RECURSIVE METHOD
 	private function getChildNodes($table = SITEMAP_MASTER_TABLE, $parentId = 0, $dynamicId = 0){
-		$sql1 = new database();
-		$sql2 = new database();
-		$sql3 = new database();
+		$sql = new database();
 		$nodeCollection = array();
 
-		$sql1->query("
-			SELECT
-				*
-			FROM
-				`sys.dynamic`
-			WHERE
-				`sys.dynamic`.`tableName` = '". $table. "'
-		");
+		$objProperty = $this->getObjectProperties($table);
 
-		if($sql1->num_rows() > 0){
-			do{
-				$query = "SELECT ";
-				$query .= "`". $table. "`.`". $table. "Id` as `id`, ";
-				$query .= "`". $table. "`.`showInPath`, ";
-				if((int)$sql1->isMultiLanguage == 1){//SELECT FROM ML TABLE
-					$query .= "`". $table. TABLE_ML_SUFFIX. "`.`". $sql1->siteMapField. "` as `nodeValue`";
-				}else{//SELECT FROM MAIN TABLE
-					$query .= "`". $table. "`.`". $sql1->siteMapField. "` as `nodeValue`";
-				}
-				$query .= " FROM `". $table. "`";
-				if((int)$sql1->isMultiLanguage == 1){//JOIN ML TABLE
-					$query .= " LEFT JOIN `". $table. TABLE_ML_SUFFIX. "` ON ";
-					$query .= "`". $table. TABLE_ML_SUFFIX. "`.`". $table. "Id` = ";
-					$query .= "`". $table. "`.`". $table. "Id`";
-					$query .= " AND ";
-					$query .= "`". $table. TABLE_ML_SUFFIX. "`.`langId` = ". $this->langId;
-				}
-				if((int)$sql1->isTree == 1){//ADD WHERE CLAUSE PARENT FOR TREE
-					$query .= " WHERE `". $table. "`.`". $sql1->recursiveField. "` = ". (int)$parentId;
-				}
-				$sql2->query($query);
-				if($sql2->num_rows() > 0){
-					do{
-						$node = & $nodeCollection[];
-						$node = new stdClass();
-						$node->langId = $this->langId;
-						$node->dynamicId = 0;
-						$node->relateTable = '';
-						if($dynamicId > 0){
-							$node->parentId = $dynamicId;
-						}else{
-							$node->parentId = $parentId;
-						}
-						if((int)$sql2->showInPath == 1){
-							$node->id = $sql2->id;
-							$node->name = $sql2->nodeValue;
-						}
-						$this->getDynamicNodes($node, $sql1->tableName, $sql2->id);
-					}while($sql2->next());
-				}
-			}while($sql1->next());
+		$query = "SELECT ";
+		$query .= "`". $table. "`.`". $table. "Id` as `id`, ";
+		$query .= "`". $table. "`.`showInPath`, ";
+		if((int)$objProperty->isMultiLanguage == 1){//SELECT FROM ML TABLE
+			$query .= "`". $table. TABLE_ML_SUFFIX. "`.`". $objProperty->siteMapField. "` as `nodeValue`";
+		}else{//SELECT FROM MAIN TABLE
+			$query .= "`". $table. "`.`". $objProperty->siteMapField. "` as `nodeValue`";
 		}
-		unset($sql3);
-		unset($sql2);
-		unset($sql1);
+		$query .= " FROM `". $table. "`";
+		if((int)$objProperty->isMultiLanguage == 1){//JOIN ML TABLE
+			$query .= " LEFT JOIN `". $table. TABLE_ML_SUFFIX. "` ON ";
+			$query .= "`". $table. TABLE_ML_SUFFIX. "`.`". $table. "Id` = ";
+			$query .= "`". $table. "`.`". $table. "Id`";
+			$query .= " AND ";
+			$query .= "`". $table. TABLE_ML_SUFFIX. "`.`langId` = ". $this->langId;
+		}
+		if((int)$objProperty->isTree == 1){//ADD WHERE CLAUSE PARENT FOR TREE
+			$query .= " WHERE `". $table. "`.`". $objProperty->recursiveField. "` = ". (int)$parentId;
+		}
+		$sql->query($query);
+		if($sql->num_rows() > 0){
+			do{
+				$node = & $nodeCollection[];
+				$node = new stdClass();
+				$node->langId = $this->langId;
+				$node->dynamicId = 0;
+				$node->relateTable = '';
+				if($dynamicId > 0){
+					$node->parentId = $dynamicId;
+				}else{
+					$node->parentId = $parentId;
+				}
+				if((int)$sql->showInPath == 1){
+					$node->id = $sql->id;
+					$node->name = $sql->nodeValue;
+				}
+				$this->getDynamicNodes($node, $objProperty->tableName, $sql->id);
+			}while($sql->next());
+		}
+
+		unset($sql);
 
 		return $nodeCollection;
 	}

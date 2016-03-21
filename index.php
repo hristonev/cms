@@ -12,6 +12,7 @@ include("../../htse.conf.php");
 include("include/base.php");
 include("include/database.php");
 include("include/xml.php");
+include("include/siteMap.php");
 database::setOpt($conf['db']);
 $sql = new database();
 unset($sql);
