@@ -287,7 +287,7 @@ class cmsView extends user
 		file_put_contents("/usr/local/www/htse/www/json", $dataStr);
 		$data = json_decode($dataStr, true);
 		$this->checkJSON();
-		dump($data);
+
 		$table = $data['object'];
 		$tableML = $table. TABLE_ML_SUFFIX;
 		$idFld = $table. "Id";

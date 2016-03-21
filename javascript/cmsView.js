@@ -234,9 +234,9 @@ function cmsView(objName, recordView, recordId){
 			}
 			if(typeof(this.fieldColl[key].editor) != "undefined"){
 				htmlData = this.fieldColl[key].editor.getData();
-//				if(htmlData != ""){
-//					htmlData.replace(/"/g, '&quot;');
-//				}
+				if(htmlData.length > 0){
+					htmlData = htmlData.replace(/"/g, "'");
+				}
 				dataToSend[this.fieldColl[key].langId][this.fieldColl[key].name] = encodeURIComponent(htmlData);
 			}else{
 				dataToSend[this.fieldColl[key].langId][this.fieldColl[key].name] = encodeURIComponent(this.fieldColl[key].getValue());
