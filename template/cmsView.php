@@ -69,6 +69,7 @@ class cmsView extends user
 				, `sys.dependecies`.`relateTable` as `relateTable`
 				, `sys.dependecies`.`relateField` as `relateField`
 				, `sys.dependecies`.`showInView` as `showInView`
+				, `sys.dependecies`.`showInGrid` as `showInGrid`
 				, `sys.dependecies`.`isHeader` as `isHeader`
 				, `sys.dependecies`.`columnWidth` as `columnWidth`
 				, `sys.dependecies`.`weight` as `weight`
@@ -99,7 +100,7 @@ class cmsView extends user
 			$row->type = 'header';
 			$row->cell = array();
 			do{
-				if(isset($realFieldSet[$sql->field])){
+				if(isset($realFieldSet[$sql->field]) && (int)$sql->showInGrid == 1){
 					$cell = &$row->cell[];
 					$cell = new stdClass();
 					if($primary == $sql->field){

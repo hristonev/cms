@@ -225,7 +225,7 @@ function cmsView(objName, recordView, recordId){
 	this.saveRecord = function(){
 		this.saveTimeout = null;
 		var dataToSend = {};
-		var htmlData, recorId, gridCell;
+		var htmlData, recorId, gridCell, value;
 
 		dataToSend.object = this.parent.code;
 		for(var key = 0; key < this.fieldColl.length; key++){
@@ -236,6 +236,7 @@ function cmsView(objName, recordView, recordId){
 				htmlData = this.fieldColl[key].editor.getData();
 				if(htmlData.length > 0){
 					htmlData = htmlData.replace(/"/g, "'");
+					htmlData = htmlData.replace(/\r|\n|\r\n|\n\r|\t/g, "");
 				}
 				dataToSend[this.fieldColl[key].langId][this.fieldColl[key].name] = encodeURIComponent(htmlData);
 			}else{
@@ -244,7 +245,10 @@ function cmsView(objName, recordView, recordId){
 			if((this.parent.langId == this.fieldColl[key].langId || this.fieldColl[key].langId == 0) && typeof(this.parent.cellCollection[this.recordId]) != "undefined" && typeof(this.parent.cellCollection[this.recordId][this.fieldColl[key].name]) != "undefined"){
 				gridCell = new domElement(this.parent.cellCollection[this.recordId][this.fieldColl[key].name]);
 				if(typeof(gridCell.writeProtect) == "undefined" || !gridCell.writeProtect){
-					gridCell.changeText(this.fieldColl[key].getValue());
+					value = this.fieldColl[key].getValue();
+					if(value.length){
+						gridCell.changeText(value);
+					}
 				}
 			}
 		}
@@ -267,7 +271,7 @@ function cmsView(objName, recordView, recordId){
 			if(typeof(data[this.fieldColl[key].langId]) != "undefined"
 				&& typeof(data[this.fieldColl[key].langId][this.fieldColl[key].name]) != "undefined"
 				&& parseInt(data[this.fieldColl[key].langId][this.fieldColl[key].name]) > 0){
-				this.fieldColl[key].setValue(data[this.fieldColl[key].langId][this.fieldColl[key].name]);
+					this.fieldColl[key].setValue(data[this.fieldColl[key].langId][this.fieldColl[key].name]);
 			}
 		}
 	}
