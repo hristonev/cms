@@ -16,22 +16,22 @@ class cmsView extends user
 	public function xGetGrid($arg, &$json){
 
 		$table = preg_replace('/\s+/', '', $arg['object']);
+
+		//get grid
+		$object = new object($table);
+		$object->setDataCollectObject($json);
+		$object->initObject();
+		$object->getGridData();
+
+		//global controls for grid
 		$sql = new database();
-		$sql1 = new database();
-
-		$sql->query("
-			SHOW TABLES LIKE '". $table. TABLE_ML_SUFFIX. "'
-		");
-		if($sql->num_rows() > 0){
-			$this->ml = true;
-		}
-
 		$sql->query("
 			SELECT
 				COUNT(`". $table. "`.`". $table. "Id`) as total
 			FROM
 				`". $table. "`
 		");
+
 		$json->totalRecords = new stdClass();
 		$json->totalRecords->name = $this->kwd('totalRecords');
 		$json->totalRecords->value = $sql->total;
@@ -41,151 +41,175 @@ class cmsView extends user
 
 		$json->saveRecord = new stdClass();
 		$json->saveRecord->value = $this->kwd('saveRecord');
-		//get header for table
-		$primary = "";
-		$sql->query("SHOW COLUMNS FROM `". $table. "`");
-		$realFieldSet = array();
-		if($sql->num_rows() > 0){
-			do{
-				if($sql->Key == "PRI"){
-					$primary = $sql->Field;
-				}
-				$realFieldSet[$sql->Field] = '';
-			}while ($sql->next());
-		}
-		if($this->ml){
-			$sql->query("SHOW COLUMNS FROM `". $table. TABLE_ML_SUFFIX. "`");
-			if($sql->num_rows() > 0){
-				do{
-
-					$realFieldSet[$sql->Field] = '';
-				}while($sql->next());
-			}
-		}
-		$sql->query("
-			SELECT
-				`sys.dependecies`.`table` as `table`
-				, `sys.dependecies`.`field` as `field`
-				, `sys.dependecies`.`relateTable` as `relateTable`
-				, `sys.dependecies`.`relateField` as `relateField`
-				, `sys.dependecies`.`showInView` as `showInView`
-				, `sys.dependecies`.`showInGrid` as `showInGrid`
-				, `sys.dependecies`.`isHeader` as `isHeader`
-				, `sys.dependecies`.`columnWidth` as `columnWidth`
-				, `sys.dependecies`.`weight` as `weight`
-				, `sys.type`.`code` as `type`
-				, `sys.type`.`phpExpression` as `phpExp`
-				, `sys.type`.`sqlExpression` as `sqlExp`
-				, `sys.type`.`sqlResultCode` as `sqlResultCode`
-				, `sys.type`.`sqlResultValue` as `sqlResultValue`
-				, `sys.type`.`jsExpression` as `jsExp`
-			FROM
-				`sys.dependecies`
-			LEFT JOIN `sys.type` ON `sys.type`.`sys.typeId` = `sys.dependecies`.`sys.typeId`
-			WHERE
-				`sys.dependecies`.`table` = '". $table. "'
-			OR
-				`sys.dependecies`.`table` = '". $table. TABLE_ML_SUFFIX. "'
-			ORDER BY
-				`sys.dependecies`.`table` ASC
-				, `sys.dependecies`.`weight` ASC
-		");
-		$fieldSet = array();
-		$headerSet = array();
-		if($sql->num_rows() > 0){
-			$json->dataGrid = new stdClass();
-			$json->dataGrid->row = array();
-			$row = &$json->dataGrid->row[];
-			$row = new stdClass();
-			$row->type = 'header';
-			$row->cell = array();
-			do{
-				if(isset($realFieldSet[$sql->field]) && (int)$sql->showInGrid == 1){
-					$cell = &$row->cell[];
-					$cell = new stdClass();
-					if($primary == $sql->field){
-						$cell->primary = true;
-					}
-					if($sql->field != $table. 'Id'){
-						$cell->name = $this->kwd($sql->field);
-					}else{
-						$cell->name = $this->kwd('id');
-					}
-					$cell->code = $sql->field;
-					$cell->width = $sql->columnWidth;
-					if((int)$sql->isHeader == 1){
-						$cell->type = 'header';
-						$headerSet[$sql->field] = true;
-					}
-					$fieldSet[$sql->field] = "`". $sql->table. "`.`". $sql->field. "`";
-				}
-			}while ($sql->next());
-		}
-
-		$data = new stdClass();
-		$data->fieldSet = $fieldSet;
-		$data->table = $table;
-		$data->headerSet = $headerSet;
-		$data->objProperty = $this->getObjectProperties($table);
-		$data->json = $json;
-		$this->getDataRows($data, $this->getRootId($table));
 
 		unset($sql);
-		unset($sql1);
+// 		$sql->query("
+// 			SHOW TABLES LIKE '". $table. TABLE_ML_SUFFIX. "'
+// 		");
+// 		if($sql->num_rows() > 0){
+// 			$this->ml = true;
+// 		}
+
+// 		$sql->query("
+// 			SELECT
+// 				COUNT(`". $table. "`.`". $table. "Id`) as total
+// 			FROM
+// 				`". $table. "`
+// 		");
+// 		$json->totalRecords = new stdClass();
+// 		$json->totalRecords->name = $this->kwd('totalRecords');
+// 		$json->totalRecords->value = $sql->total;
+
+// 		$json->newRecord = new stdClass();
+// 		$json->newRecord->value = $this->kwd('newRecord');
+
+// 		$json->saveRecord = new stdClass();
+// 		$json->saveRecord->value = $this->kwd('saveRecord');
+// 		//get header for table
+// 		$primary = "";
+// 		$sql->query("SHOW COLUMNS FROM `". $table. "`");
+// 		$realFieldSet = array();
+// 		if($sql->num_rows() > 0){
+// 			do{
+// 				if($sql->Key == "PRI"){
+// 					$primary = $sql->Field;
+// 				}
+// 				$realFieldSet[$sql->Field] = '';
+// 			}while ($sql->next());
+// 		}
+// 		if($this->ml){
+// 			$sql->query("SHOW COLUMNS FROM `". $table. TABLE_ML_SUFFIX. "`");
+// 			if($sql->num_rows() > 0){
+// 				do{
+
+// 					$realFieldSet[$sql->Field] = '';
+// 				}while($sql->next());
+// 			}
+// 		}
+// 		$sql->query("
+// 			SELECT
+// 				`sys.dependecies`.`table` as `table`
+// 				, `sys.dependecies`.`field` as `field`
+// 				, `sys.dependecies`.`relateTable` as `relateTable`
+// 				, `sys.dependecies`.`relateField` as `relateField`
+// 				, `sys.dependecies`.`showInView` as `showInView`
+// 				, `sys.dependecies`.`showInGrid` as `showInGrid`
+// 				, `sys.dependecies`.`isHeader` as `isHeader`
+// 				, `sys.dependecies`.`columnWidth` as `columnWidth`
+// 				, `sys.dependecies`.`weight` as `weight`
+// 				, `sys.type`.`code` as `type`
+// 				, `sys.type`.`phpExpression` as `phpExp`
+// 				, `sys.type`.`sqlExpression` as `sqlExp`
+// 				, `sys.type`.`sqlResultCode` as `sqlResultCode`
+// 				, `sys.type`.`sqlResultValue` as `sqlResultValue`
+// 				, `sys.type`.`jsExpression` as `jsExp`
+// 			FROM
+// 				`sys.dependecies`
+// 			LEFT JOIN `sys.type` ON `sys.type`.`sys.typeId` = `sys.dependecies`.`sys.typeId`
+// 			WHERE
+// 				`sys.dependecies`.`table` = '". $table. "'
+// 			OR
+// 				`sys.dependecies`.`table` = '". $table. TABLE_ML_SUFFIX. "'
+// 			ORDER BY
+// 				`sys.dependecies`.`table` ASC
+// 				, `sys.dependecies`.`weight` ASC
+// 		");
+// 		$fieldSet = array();
+// 		$headerSet = array();
+// 		if($sql->num_rows() > 0){
+// 			$json->oldGrid = new stdClass();
+// 			$json->oldGrid->row = array();
+// 			$row = &$json->oldGrid->row[];
+// 			$row = new stdClass();
+// 			$row->type = 'header';
+// 			$row->cell = array();
+// 			do{
+// 				if(isset($realFieldSet[$sql->field]) && (int)$sql->showInGrid == 1){
+// 					$cell = &$row->cell[];
+// 					$cell = new stdClass();
+// 					if($primary == $sql->field){
+// 						$cell->primary = true;
+// 					}
+// 					if($sql->field != $table. 'Id'){
+// 						$cell->name = $this->kwd($sql->field);
+// 					}else{
+// 						$cell->name = $this->kwd('id');
+// 					}
+// 					$cell->code = $sql->field;
+// 					$cell->width = $sql->columnWidth;
+// 					if((int)$sql->isHeader == 1){
+// 						$cell->type = 'header';
+// 						$headerSet[$sql->field] = true;
+// 					}
+// 					$fieldSet[$sql->field] = "`". $sql->table. "`.`". $sql->field. "`";
+// 				}
+// 			}while ($sql->next());
+// 		}
+
+// 		$data = new stdClass();
+// 		$data->fieldSet = $fieldSet;
+// 		$data->table = $table;
+// 		$data->headerSet = $headerSet;
+// 		$data->objProperty = $this->getObjectProperties($table);
+// 		$data->json = $json;
+// 		$this->getDataRows($data, $this->getRootId($table));
+
+// 		unset($sql);
+// 		unset($sql1);
 	}
 
 	//RECURSIVE IF OBJECT IS TREE
-	private function getDataRows(&$data, $parentId){
-		$sql = new database();
-		$fieldSet = $data->fieldSet;
-		if(!is_null($parentId) && (int)$data->objProperty->isTree == 1){
-			$parentField = $data->objProperty->recursiveField;
-			$primary = $data->table. "Id";
-			$fieldSet[$parentField] = "`". $data->table. "`.`". $parentField. "`";
-		}
-		$query = "
-			SELECT
-				" . implode(",", $fieldSet). "
-			FROM
-				`". $data->table. "`
-		";
-		if($this->ml){
-			$query .= " LEFT JOIN `". $data->table. TABLE_ML_SUFFIX. "` ON `". $data->table. TABLE_ML_SUFFIX. "`.`". $data->table. "Id` = `". $data->table. "`.`". $data->table. "Id`";
-			$query .= " WHERE `". $data->table. TABLE_ML_SUFFIX. "`.`langId` = ". $this->langId;
-		}
+// 	private function getDataRows(&$data, $parentId){
+// 		$sql = new database();
+// 		$fieldSet = $data->fieldSet;
+// 		if(!is_null($parentId) && (int)$data->objProperty->isTree == 1){
+// 			$parentField = $data->objProperty->recursiveField;
+// 			$primary = $data->table. "Id";
+// 			$fieldSet[$parentField] = "`". $data->table. "`.`". $parentField. "`";
+// 		}
+// 		$query = "
+// 			SELECT
+// 				" . implode(",", $fieldSet). "
+// 			FROM
+// 				`". $data->table. "`
+// 		";
+// 		if($this->ml){
+// 			$query .= " LEFT JOIN `". $data->table. TABLE_ML_SUFFIX. "` ON `". $data->table. TABLE_ML_SUFFIX. "`.`". $data->table. "Id` = `". $data->table. "`.`". $data->table. "Id`";
+// 			$query .= " WHERE `". $data->table. TABLE_ML_SUFFIX. "`.`langId` = ". $this->langId;
+// 		}
 
-		if(!is_null($parentId) && (int)$data->objProperty->isTree == 1){
-			if($this->ml){
-				$query .= " AND ";
-			}else{
-				$query .= " WHERE ";
-			}
-			$query .= "`". $data->table. "`.`". $parentField. "` = ". (int)$parentId;
-		}
+// 		if(!is_null($parentId) && (int)$data->objProperty->isTree == 1){
+// 			if($this->ml){
+// 				$query .= " AND ";
+// 			}else{
+// 				$query .= " WHERE ";
+// 			}
+// 			$query .= "`". $data->table. "`.`". $parentField. "` = ". (int)$parentId;
+// 		}
 
-		if(!is_null($data->objProperty)){
-			$query .= " ORDER BY ". $data->objProperty->order;
-		}
-		$sql->query($query);
-		if($sql->num_rows() > 0){
-			do{
-				$row = &$data->json->dataGrid->row[];
-				$row = new stdClass();
-				foreach ($data->fieldSet as $key => $value){
-					$cell = &$row->cell[];
-					$cell = new stdClass();
-					$cell->name = $sql->$key;
-					if(isset($data->headerSet[$key])){
-						$cell->type = 'header';
-					}
-				}
-				if(!is_null($parentId) && (int)$data->objProperty->isTree == 1 && (int)$sql->$primary > 0){
-					$this->getDataRows($data, $sql->$primary);
-				}
-			}while ($sql->next());
-		}
-		unset($sql);
-	}
+// 		if(!is_null($data->objProperty)){
+// 			$query .= " ORDER BY ". $data->objProperty->order;
+// 		}
+// 		$sql->query($query);
+// 		if($sql->num_rows() > 0){
+// 			do{
+// 				$row = &$data->json->oldGrid->row[];
+// 				$row = new stdClass();
+// 				foreach ($data->fieldSet as $key => $value){
+// 					$cell = &$row->cell[];
+// 					$cell = new stdClass();
+// 					$cell->name = $sql->$key;
+// 					if(isset($data->headerSet[$key])){
+// 						$cell->type = 'header';
+// 					}
+// 				}
+// 				if(!is_null($parentId) && (int)$data->objProperty->isTree == 1 && (int)$sql->$primary > 0){
+// 					$this->getDataRows($data, $sql->$primary);
+// 				}
+// 			}while ($sql->next());
+// 		}
+// 		unset($sql);
+// 	}
 
 	public function xGetRecordView($arg, &$json){
 		$xml = new xml();

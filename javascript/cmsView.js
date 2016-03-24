@@ -305,6 +305,7 @@ function cmsView(objName, recordView, recordId){
 		var primaryKey = null;
 		var cssClass, recordId;
 		var cellKeys = new Array();
+		var treeLevel;
 		for(var rowKey in this.data.dataGrid.row){
 			switch(this.data.dataGrid.row[rowKey].type){
 				case 'header':
@@ -329,6 +330,7 @@ function cmsView(objName, recordView, recordId){
 			offset = 0;
 			isLastHeader = false;
 			offsetFromHeader = 0;
+			treeLevel = this.data.dataGrid.row[rowKey].treeLevel;
 			for(var cellKey in this.data.dataGrid.row[rowKey].cell){
 				cssClass = "";
 				if(this.data.dataGrid.row[rowKey].cell[cellKey].primary){
@@ -378,6 +380,7 @@ function cmsView(objName, recordView, recordId){
 				if(cellKey === primaryKey && recordId > 0){
 					cell.setEvent('onclick', 'Record');
 					cell.writeProtect = true;
+//					cell.elm.style.paddingLeft = (treeLevel * 10) + "px";
 				}
 				if(rowKey == 0){//collect first row as array keys for cellCollection
 					cellKeys[cellKey] = this.data.dataGrid.row[rowKey].cell[cellKey].code;

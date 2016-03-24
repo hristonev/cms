@@ -13,6 +13,7 @@ include("include/base.php");
 include("include/database.php");
 include("include/xml.php");
 include("include/siteMap.php");
+include("include/object.php");
 database::setOpt($conf['db']);
 $sql = new database();
 unset($sql);
