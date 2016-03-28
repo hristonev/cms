@@ -53,25 +53,22 @@ cmsView.prototype.tab = function(code, close){
 				tab.setNewText(this.name);
 			}else{
 				tab.insert_after = window.__cmsView['tab'][this.parent.code].elm;
-				tab.setStyle("padding", "2px 4px 2px 2px");
 			}
 			tab.render();
 			window.__cmsView['tab'][code] = tab;
 			tab.setEvent('onclick', 'tabSwitch');
-			if(!this.recordView){
-				ex = new domElement('i');
-				ex.parent = tab.elm;
-				ex.setAttribute('eventCode', 'tabClose');
-				ex.caller = this;
-				ex.setCssClass('fa fa-times');
-				ex.render();
-				ex.setEvent('onclick', 'tabClose');
-			}else{
+			ex = new domElement('i');
+			ex.parent = tab.elm;
+			ex.setAttribute('eventCode', 'tabClose');
+			ex.caller = this;
+			ex.setCssClass('fa fa-times');
+			ex.render();
+			ex.setEvent('onclick', 'tabClose');
+			if(this.recordView){
 				ex = new domElement('span');
 				ex.parent = tab.elm;
 				ex.setAttribute('eventCode', 'tabSwitch');
 				ex.setNewText(this.recordId);
-//				ex.setCssClass('fa fa-plus-square-o');
 				ex.caller = this;
 				ex.setAttribute('eventCode', 'tabSwitch');
 				ex.render();
