@@ -96,6 +96,46 @@ html, body{
 .popUpClose i:hover{
 	background: var(--closeColor);
 }
+.logContainer{
+	color: #b5e6b3;
+	padding-left: 4px;
+	width: -moz-calc(100% - 5px);
+    width: -webkit-calc(100% - 5px);
+    width: calc(100% - 5px);
+	height: -moz-calc(var(--footerHeight) - 1px);
+    height: -webkit-calc(var(--footerHeight) - 1px);
+    height: calc(var(--footerHeight) - 1px);
+	overflow: hidden;
+	font-size: 80%;
+	line-height: 90%;
+}
+.logContainer:hover{
+	background: -webkit-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(var(--darkBkgr), var(--navGroup)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(var(--darkBkgr), var(--navGroup)); /* Standard syntax */
+}
+.noselect {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.logContainerExpand{
+	color: #b5e6b3;
+	position: absolute;
+	height: 50%;
+	width: -moz-calc(100% - 8px);
+    width: -webkit-calc(100% - 8px);
+    width: calc(100% - 8px);
+	overflow: auto;
+	bottom: var(--footerHeight);
+	background: var(--darkBkgr);
+	padding: 4px;
+	bottom: 0px;
+}
 .attention{
 	color: #f00;
 	display: inline-block;
@@ -491,11 +531,65 @@ html, body{
 	-moz-box-sizing:content-box;
 	-webkit-box-sizing:content-box;
 	box-sizing:content-box;
+	border: solid 1px var(--darkBkgr);
 }
-.recordView tr td input:disabled, .recordView tr td select:disabled{
+.recordViewDisable{
 	background: var(--disableFormElmBkgr);
 }
+
+
 .recordView tr td:first-child{
 	width: 1px;
 	white-space: nowrap;
+}
+.cmsSelectBoxCaller{
+	background: var(--lightBkgr);
+	color: var(--darkText);
+	cursor: default;
+	width: -moz-calc(100% - 20px) !important;
+    width: -webkit-calc(100% - 20px) !important;
+    width: calc(100% - 20px) !important;
+	padding-left: 20px;
+}
+.cmsSelectBoxCaller:hover{
+	background: var(--darkBkgr);
+	color: var(--lightText);
+}
+.cmsSelectBoxCaller:focus{
+	background: var(--darkBkgr);
+	color: var(--lightText);
+}
+.cmsSelectBoxIcon{
+	color: var(--darkText);
+	position: absolute;
+	left: 6px;
+	top: 2px;
+	font-size: 150%;
+}
+.cmsSelectBox{
+	position: absolute;
+	background: var(--lightBkgr);
+	overflow: auto;
+	z-index:10;
+	border: solid 1px var(--darkBkgr);
+	box-sizing: border-box;
+}
+.cmsSelectBox ul{
+	list-style: none;
+	margin: 0 0 0 var(--lineHeight);
+	padding: 0;
+}
+.cmsSelectBox li{
+	cursor: default;
+	margin: 0;
+	padding: 0;
+}
+.cmsSelectBox li:before {
+  content: "\f101";
+  font-family: FontAwesome;
+  padding: 0 10px 0 0;
+}
+.cmsSelectBox li:hover{
+	background: var(--darkBkgr);
+	color: var(--lightText);
 }

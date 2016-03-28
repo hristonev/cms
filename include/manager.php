@@ -13,11 +13,46 @@ class manager extends user
 
 	public function render(){
 		$code = '';
-
+// 		this.loadModule = new Array(
+// 				"ajax",
+// 				"event",
+// 				"xml",
+// 				"domElement",
+// 				"list",
+// 				"navigation",
+// 				"popUp",
+// 				"cmsHead",
+// 				"cmsNavigation",
+// 				"cmsView",
+// 				"cmsViewTab",
+// 				"cmsSiteMap",
+// 				"cmsSelectBox",
+// 				"log"
+// 				);
+// 		this.loadNonEssentialModule = new Array(
+// 				"ckeditor/ckeditor"
+// 				, "animate"
+// 				);
 		if(is_array($_POST) && count($_POST) > 0){
 			$code .= $this->xmlhttp();
 		}else if($this->isValid()){
 			$this->headAddionional[] = 'builder.js';
+			$this->headAddionional[] = 'ajax.js';
+			$this->headAddionional[] = 'event.js';
+			$this->headAddionional[] = 'xml.js';
+			$this->headAddionional[] = 'domElement.js';
+			$this->headAddionional[] = 'list.js';
+			$this->headAddionional[] = 'navigation.js';
+			$this->headAddionional[] = 'popUp.js';
+			$this->headAddionional[] = 'cmsHead.js';
+			$this->headAddionional[] = 'cmsNavigation.js';
+			$this->headAddionional[] = 'cmsView.js';
+			$this->headAddionional[] = 'cmsViewTab.js';
+			$this->headAddionional[] = 'cmsSiteMap.js';
+			$this->headAddionional[] = 'cmsSelectBox.js';
+			$this->headAddionional[] = 'log.js';
+			$this->headAddionional[] = 'ckeditor/ckeditor.js';
+			$this->headAddionional[] = 'animate.js';
 			$this->headAddionional[] = 'main.css';
 			$code .= $this->html("");
 		}else{

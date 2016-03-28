@@ -8,11 +8,21 @@ class base
 	public $font_size;
 	protected $langId;
 	protected $parent;
+	private $session;
 
 	public function __construct(){
+		$key = md5(getcwd());
+		if(!isset($_SESSION[$key])){
+			$_SESSION[$key] = array();
+		}
+
 		if(!isset($this->langId)){
 			$this->langId = 1;
 		}
+	}
+
+	protected function sessionSet(){
+
 	}
 
 	public function login(){

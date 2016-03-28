@@ -24,12 +24,15 @@ var builder = function(){
 		"cmsNavigation",
 		"cmsView",
 		"cmsViewTab",
-		"cmsSiteMap"
+		"cmsSiteMap",
+		"cmsSelectBox",
+		"log"
 	);
 	this.loadNonEssentialModule = new Array(
 		"ckeditor/ckeditor"
+		, "animate"
 	);
-	this.loaded = 0;
+	this.loaded = 1;
 	this.head = null;
 	this.navigation = null;
 	this.navResize = null;
@@ -135,6 +138,7 @@ var builder = function(){
 					eval(data);
 				});
 			}
+			log("loading complete. Please reload if something is broken.");
 		}
 	};
 

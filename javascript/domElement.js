@@ -93,6 +93,11 @@ domElement.prototype = {
 			window.__domElement[obj.getAttribute('domElement_instance')].handleEvent(e);
 			});
 	},
+
+	fireEvent: function(){
+		this.caller.handleOutsideEvent(this);
+	},
+
 	removeAllEvents: function(){
 		if(this.event_code.length > 0){
 			for(i in this.event_code){

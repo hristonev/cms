@@ -18,7 +18,6 @@ cmsView.prototype.tab = function(code, close){
 	}
 
 	if(typeof(this.tabBar) == "undefined"){
-		console.log('create new tab bar');
 		this.tabBar = new domElement('div');
 		this.tabBar.parent = this.container;
 		this.tabBar.setCssClass('tabBar');

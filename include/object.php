@@ -6,16 +6,29 @@ class object extends base
 	private $dataCollection;
 	private $objectCollection;
 	private $languageId;
+	private $recordView;
+	private $customTemplate;
 
-	public function __construct($name, $languageId = 0){
+	public function __construct($name = null, $languageId = 0){
 		parent::__construct();
-		$this->name = $name;
-		$this->languageId = (int)$languageId;
-		$this->objectCollection = new stdClass();
-		$this->objectCollection->select = array();
-		$this->objectCollection->join = new stdClass();
-		$this->objectCollection->fields = new stdClass();
-		$this->objectCollection->where = new stdClass();
+		if(!is_null($name)){
+			$this->name = $name;
+			$this->languageId = (int)$languageId;
+			$this->objectCollection = new stdClass();
+			$this->objectCollection->select = array();
+			$this->objectCollection->join = new stdClass();
+			$this->objectCollection->fields = new stdClass();
+			$this->objectCollection->where = new stdClass();
+			$this->recordView = false;
+		}
+	}
+
+	public function isCustom(){
+		return ($this->customTemplate == '') ? false : true;
+	}
+
+	public function getTemplate(){
+		return $this->customTemplate;
 	}
 
 	public function setDataCollectObject(&$data){
@@ -33,6 +46,7 @@ class object extends base
 			WHERE
 				`sys.dynamic`.`tableName` = '". $this->name. "'
 		");
+		$this->customTemplate = $sql->customTemplate;
 		$this->objectCollection->global = $sql->row;
 		//get structure for main object
 		$this->getObjectFields($this->name);
@@ -40,7 +54,7 @@ class object extends base
 		if(((int)$sql->isMultiLanguage)){
 			$object = $this->name;
 			$mlObject = $this->name. TABLE_ML_SUFFIX;
-			$this->getObjectFields($mlObject);
+			$this->getObjectFields($mlObject, true);
 			$this->objectCollection->join->$mlObject = "
 				LEFT JOIN
 					`". $mlObject. "`
@@ -59,10 +73,9 @@ class object extends base
 				");
 				$this->languageId = (int)$sql->langId;
 			}
-			$this->objectCollection->where->$mlObject = " AND `". $mlObject. "`.`langId` = ". $this->langId;
+			$this->objectCollection->where->$mlObject = " AND (`". $mlObject. "`.`langId` = ". $this->langId;
+			$this->objectCollection->where->$mlObject .= " OR `". $mlObject. "`.`langId` IS NULL)";
 		}
-
-// 		$this->dataCollection = $this->objectCollection;
 
 		unset($sql);
 	}
@@ -102,6 +115,150 @@ class object extends base
 		unset($sql);
 	}
 
+	public function getRecordData($recordId){
+		$sql = new database();
+		$this->recordView = true;
+		$this->dataCollection->recordView = new stdClass();
+		$this->dataCollection->recordView->header = array();
+		$this->dataCollection->recordView->header[0] = new stdClass();
+		$this->dataCollection->recordView->header[0]->name = $this->kwd("languageIndependentFields");
+		$this->dataCollection->recordView->header[0]->langId = 0;
+		$this->dataCollection->recordView->header[0]->cell = array();
+		$sql->query("
+			SELECT
+				`lang`.`langId`
+				, `lang`.`name`
+			FROM
+				`lang`
+			ORDER BY
+				`lang`.`default` DESC
+		");
+		$lang = array();
+		if($sql->num_rows() > 0){
+			do{
+				$lang[$sql->langId] = $sql->name;
+				$this->dataCollection->recordView->header[$sql->langId] = new stdClass();
+				$this->dataCollection->recordView->header[$sql->langId]->name = $sql->name;
+				$this->dataCollection->recordView->header[$sql->langId]->langId = $sql->langId;
+				$this->dataCollection->recordView->header[$sql->langId]->cell = array();
+			}while($sql->next());
+		}
+
+		$data = new stdClass();
+		$data->recordId = $recordId;
+		//TREE
+		if((int)$this->objectCollection->global->isTree == 1){
+			$cell = & $this->dataCollection->recordView->header[0]->cell[];
+			$cell = new stdClass();
+			$recursiveField = $this->objectCollection->global->recursiveField;
+			$cell->field = $recursiveField;
+			$cell->name = $this->kwd(preg_replace('/Id$/', '', $recursiveField));
+			$cell->type = 'SELECT';
+			$sql->query("
+						SELECT
+							`". $this->name. "`.`". $this->objectCollection->global->recursiveShowField. "` as `value`
+						FROM
+							`". $this->name. "`
+						WHERE
+							`". $this->name. "`.`". $this->name. "Id` = (
+								SELECT
+									`". $this->name. "` .`". $this->objectCollection->global->recursiveField. "`
+								FROM
+									`". $this->name. "`
+								WHERE
+									`". $this->name. "`.`". $this->name. "Id` = ". (int)$recordId. "
+							)
+					");
+			$cell->data = $sql->value;
+			$cell->collectData = new stdClass();
+			$cell->collectData->table = $this->name;
+			$cell->collectData->fieldValue = $this->objectCollection->global->recursiveShowField;
+			$cell->collectData->fieldId = $this->name. "Id";
+			$cell->collectData->recurseBy = $this->objectCollection->global->recursiveField;
+		}
+
+		foreach ($this->objectCollection->fields as $field => $property){
+			$data->name = $field;
+			$data->property = $property;
+			if($property->multilanguage){
+				foreach ($lang as $langId => $langName){
+					$data->langId = $langId;
+					$this->getFieldValue($data, $this->dataCollection->recordView->header[$langId]->cell[], $langId);
+				}
+			}else{
+				$data->langId = 0;
+				$this->getFieldValue($data, $this->dataCollection->recordView->header[0]->cell[], 0);
+			}
+		}
+
+		unset($sql);
+	}
+
+	private function getFieldValue($field, &$collector, $langId){
+		$sql = new database();
+		$collector = new stdClass();
+		if($field->property->relation){
+			$collector->name = $this->kwd($field->property->relateTable);
+		}else{
+			$collector->name = $this->kwd($field->name);
+		}
+		$sysTypeId = "sys.typeId";
+		$sql->query("
+			SELECT
+				`sys.type`.`fieldType` as `type`
+			FROM
+				`sys.type`
+			WHERE
+				`sys.type`.`sys.typeId` = ". (int)$field->property->$sysTypeId. "
+		");
+		$collector->type = $sql->type;
+		$collector->field = $field->name;
+
+		if(!$field->property->primary){
+			if($field->langId > 0){
+				$table = $this->name. TABLE_ML_SUFFIX;
+				$where = " AND `$table`.`langId` = ". $field->langId;
+			}else{
+				$table = $this->name;
+				$where = "";
+			}
+			$sql->query("
+				SELECT
+					`". $table. "`.`". $field->name. "` as `value`
+				FROM
+					`". $table. "`
+				WHERE
+					`". $table. "`.`". $this->name. "Id` = ". (int)$field->recordId. "
+					". $where. "
+			");
+			if($field->property->relation){
+				$sql->query("
+					SELECT
+						`". $field->property->relateTable. "`.`". $field->property->relateField. "` as `value`
+					FROM
+						`". $field->property->relateTable. "`
+					WHERE
+						`". $field->property->relateTable. "`.`". $field->property->relateTable. "Id` = ". (int)$sql->value. "
+				");
+				$collector->data = $sql->value;
+				$collector->collectData = new stdClass();
+				$collector->collectData->table = $field->property->relateTable;
+				$collector->collectData->fieldValue = $field->property->relateField;
+				$collector->collectData->fieldId = $field->property->relateTable. "Id";
+			}else{
+				$collector->data = $sql->value;
+			}
+		}else{
+			$collector->data = $field->recordId;
+		}
+
+		if($field->langId > 0){
+			$collector->langId = $field->langId;
+		}
+
+		unset($sql);
+	}
+
 	//RECURSIVE METHOD IF OBJECT IS TREE
 	private function collectData(&$collector, $parentId = 0, $level = 1){
 		$sql = new database();
@@ -130,12 +287,51 @@ class object extends base
 						}
 					}
 				}
+
 				if((int)$this->objectCollection->global->isTree == 1){
 					$this->collectData($collector, $sql->id, ($level + 1));
 				}
 			}while($sql->next());
 		}
 		unset($sql);
+	}
+
+	public function xGetSelectData($arg, &$json){
+		$json->data = array();
+		$data = json_decode($arg['arg']);
+
+		$this->name = $data->table;
+		$this->objectCollection = new stdClass();
+		$this->objectCollection->global = new stdClass();
+		if(isset($data->recurseBy)){
+			$this->objectCollection->global->isTree = 1;
+			$this->objectCollection->global->recursiveField = $data->recurseBy;
+		}else{
+			$this->objectCollection->global->isTree = 0;
+		}
+		$this->objectCollection->fields = new stdClass();
+		$f1 = $data->fieldValue;
+		$f2 = $data->fieldId;
+
+		$this->objectCollection->fields->$f1 = new stdClass();
+		$this->objectCollection->fields->$f1->showInGrid = 1;
+		$this->objectCollection->fields->$f1->field = $f1;
+		$this->objectCollection->fields->$f1->isHeader = 0;
+		$this->objectCollection->fields->$f1->primary = false;
+		$this->objectCollection->fields->$f1->relation = false;
+
+		$this->objectCollection->fields->$f2 = new stdClass();
+		$this->objectCollection->fields->$f2->showInGrid = 1;
+		$this->objectCollection->fields->$f2->field = $f2;
+		$this->objectCollection->fields->$f2->isHeader = 0;
+		$this->objectCollection->fields->$f2->primary = true;
+		$this->objectCollection->fields->$f2->relation = false;
+
+		$this->objectCollection->select = new stdClass();
+		$this->objectCollection->select->$f1 = "`".$data->table. "`.`". $f1. "`";
+		$this->objectCollection->select->$f2 = "`".$data->table. "`.`". $f2. "` as `id`";
+
+		$this->collectData($json->data);
 	}
 
 	private function getDataQuery($parentId){
@@ -148,26 +344,30 @@ class object extends base
 			}
 		}
 		$query .= " FROM `". $this->name. "`";
-		foreach ($this->objectCollection->join as $key => $value){
-			$query .= $value;
+		if(isset($this->objectCollection->join)){
+			foreach ($this->objectCollection->join as $key => $value){
+				$query .= $value;
+			}
 		}
 		$query .= " WHERE";
 		if((int)$this->objectCollection->global->isTree == 1){
-			$query .= "`". $this->name. "`.`". $this->objectCollection->global->recursiveField. "` = ". $parentId;
+			$query .= " `". $this->name. "`.`". $this->objectCollection->global->recursiveField. "` = ". (int)$parentId;
 		}else{
 			$query .= " 1=1";
 		}
-		foreach ($this->objectCollection->where as $key => $value){
-			$query .= $value;
+		if(isset($this->objectCollection->where)){
+			foreach ($this->objectCollection->where as $key => $value){
+				$query .= $value;
+			}
 		}
-		if(strlen($this->objectCollection->global->order) > 0){
+		if(isset($this->objectCollection->global->order) && strlen($this->objectCollection->global->order) > 0){
 			$query .= " ORDER BY ". $this->objectCollection->global->order;
 		}
 
 		return $query;
 	}
 
-	private function getObjectFields($object){
+	private function getObjectFields($object, $multilanguage = false){
 		$sql = new database();
 
 		$collectorJoin = & $this->objectCollection->fields;
@@ -186,6 +386,7 @@ class object extends base
 				$field = $sql->field;
 				$sql->row->primary = false;
 				$sql->row->relation = false;
+				$sql->row->multilanguage = $multilanguage;
 				if(strlen($sql->relateTable) > 0 && strlen($sql->relateField) > 0){
 					$sql->row->relation = true;
 					$relateObject = $sql->relateTable;
@@ -212,9 +413,6 @@ class object extends base
 		unset($sql);
 	}
 
-	public function collectHeaders(){
-
-	}
 }
 
 ?>

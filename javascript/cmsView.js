@@ -3,6 +3,7 @@ function cmsView(objName, recordView, recordId){
 	 * Create object view. Has {tab} prototype
 	 * @param window.__cmsView {Array}
 	 * @param instanceKey {Number}
+	 * @param tableName {String}
 	 * @param code {String}
 	 * @param name {String}
 	 * @param container {DomNode} root node
@@ -13,6 +14,7 @@ function cmsView(objName, recordView, recordId){
 	 * @param saveTime {int} 1s default less server processor
 	 * @param fieldColl {Array} collection with all data fields
 	 * @param data {JSON Object}
+	 * @param workingField {Object} dom object element
 	 * @fires {Method} gridResize
 	 */
 	if(typeof(window.__cmsView) == "undefined"){
@@ -35,6 +37,7 @@ function cmsView(objName, recordView, recordId){
 	this.instanceKey = window.__cmsView['instance'].length;
 	window.__cmsView['instance'][this.instanceKey] = this;
 
+	this.tableName = null;
 	this.code = objName;
 	this.ml = false;
 	this.name = null;
@@ -51,9 +54,9 @@ function cmsView(objName, recordView, recordId){
 	this.recordFields = new Array();
 	this.saveTimeout = null;
 	this.saveTime = 1000;
-	this.fieldColl = new Array();
 	this.cellCollection = new Array();
 	this.langId = 1;//HARDCODE REMOVE ASAP
+	this.workingField = null;
 
 	builder.registerResize("window.__cmsView['instance'][" + this.instanceKey + "]", "gridResize");
 
@@ -136,13 +139,13 @@ function cmsView(objName, recordView, recordId){
 			td = new domElement("td");
 			td.parent = tr.elm;
 			td.render();
-
 			switch(data.cell[cellKey].type){
 				case "DISABLE":
 					fld = new domElement("input");
 					fld.name = name;
 					fld.elm.disabled = true;
 					fld.elm.readOnly = true;
+					fld.setCssClass("recordViewDisable");
 					fld.parent = td.elm;
 					fld.render();
 					break;
@@ -163,33 +166,39 @@ function cmsView(objName, recordView, recordId){
 					fld.render();
 					break;
 				case "SELECT":
-					fld = new domElement("select");
+					fld = new domElement("input");
+					fld.elm.readOnly = true;
 					fld.name = name;
 					fld.parent = td.elm;
+					fld.setAttribute('eventCode', 'saveRecord');
+					fld.caller = this;
 					fld.render();
+					if(typeof(data.cell[cellKey].collectData) != "undefined"){
+						fld.setEvent('onchange', 'saveRecord');
+						var selectBox = new cmsSelectBox(data.cell[cellKey].collectData, fld);
+						selectBox.executeOnSelect = "window.__cmsView['instance'][" + this.instanceKey + "].workingField = domElement(" + fld.getInstanceKys() + ");";
+						selectBox.executeOnSelect += "window.__cmsView['instance'][" + this.instanceKey + "].saveData();";
+					}
 					break;
 				case "TEXT":
 					fld = new domElement("textarea");
-					console.info(name + this.recordId);
 					fld.name = name;
-					langFldId = name + "_" + data.cell[cellKey].langId + "_" + this.recordId
+					langFldId = name + "_" + data.cell[cellKey].langId + "_" + this.recordId;
 					fld.elm.id = langFldId;
 					fld.parent = td.elm;
 					fld.render();
 					fld.editor = CKEDITOR.replace(langFldId);
-					fld.editor.caller = {};
-					fld.editor.caller.instanceKey = this.instanceKey;
-					fld.editor.caller.saveTimeout = null;
-					fld.editor.caller.saveTime = this.saveTime;
+					fld.editor.caller = this;
+					fld.editor.field = data.cell[cellKey].field;
+					fld.editor.langId = data.cell[cellKey].langId;
 					fld.editor.on("change", function(){
-						clearTimeout(this.caller.saveTimeout);
-						//save delay
-						this.caller.saveTimeout = setTimeout("window.__cmsView['instance'][" + this.caller.instanceKey + "].saveRecord();", this.caller.saveTime);
+						this.caller.workingField = this;
+						this.caller.saveData();
 					});
 					break;
 			}
+			fld.field = data.cell[cellKey].field;
 			fld.langId = langId;
-			this.fieldColl[this.fieldColl.length] = fld;
 			if(typeof(data.cell[cellKey].data) != "undefined"){
 				fld.setValue(decodeURIComponent(data.cell[cellKey].data));
 			}
@@ -201,7 +210,6 @@ function cmsView(objName, recordView, recordId){
 
 	this.renderRecord = function(dataStr){
 		data = JSON.parse(dataStr);
-		console.log("render record view");
 
 		container = new domElement("div");
 		container.setCssClass("recordViewContainer");
@@ -222,8 +230,40 @@ function cmsView(objName, recordView, recordId){
 		}
 	};
 
-	this.saveRecord = function(){
+	this.saveRecord = function(fld){
+		var dataSend = {};
+		var htmlData;
+		dataSend.recordId = this.recordId;
+		dataSend.field = this.workingField.field;
+		dataSend.langId = this.workingField.langId;
+		dataSend.tableName = this.tableName;
+		if(typeof(this.workingField.mode) != "undefined" && this.workingField.mode == "wysiwyg"){//field is converted as wysiwyg editor
+			htmlData = this.workingField.getData();
+		}else if(this.workingField.elm.hasAttribute("saveData")){
+			htmlData = this.workingField.elm.getAttribute("saveData");
+		}else{
+			htmlData = this.workingField.getValue();
+		}
+		if(htmlData.length > 0){
+			htmlData = htmlData.replace(/"/g, '\\"');
+			htmlData = htmlData.replace(/\r|\n|\r\n|\n\r|\t/g, "");
+
+		}
+		dataSend.value = encodeURIComponent(htmlData);
+
 		this.saveTimeout = null;
+
+		var data = new ajax();
+		data.async = true;
+		data.call_back = "window.__cmsView['instance'][" + this.instanceKey + "].saveRecordBack";
+		data.attributes = null;
+		data.group = "template";
+		data.className = "cmsView";
+		data.methodName = "xSaveRecord";
+		data.register_argument("data", JSON.stringify(dataSend));
+		data.send();
+		return false;
+
 		var dataToSend = {};
 		var htmlData, recorId, gridCell, value;
 
@@ -252,28 +292,20 @@ function cmsView(objName, recordView, recordId){
 				}
 			}
 		}
-		var data = new ajax();
-		data.async = true;
-		data.call_back = "window.__cmsView['instance'][" + this.instanceKey + "].saveRecordBack";
-		data.attributes = null;
-		data.group = "template";
-		data.className = "cmsView";
-		data.methodName = "xSaveRecord";
-		data.register_argument("data", JSON.stringify(dataToSend));
-		data.send();
+
 		//this.cellCollection[recordId][cellKeys[cellKey]]
 	};
 
 	this.saveRecordBack = function(dataStr){
 		var data = JSON.parse(dataStr);
 		//set primary key field if the record is successfully saved
-		for(var key = 0; key < this.fieldColl.length; key++){
-			if(typeof(data[this.fieldColl[key].langId]) != "undefined"
-				&& typeof(data[this.fieldColl[key].langId][this.fieldColl[key].name]) != "undefined"
-				&& parseInt(data[this.fieldColl[key].langId][this.fieldColl[key].name]) > 0){
-					this.fieldColl[key].setValue(data[this.fieldColl[key].langId][this.fieldColl[key].name]);
-			}
-		}
+//		for(var key = 0; key < this.fieldColl.length; key++){
+//			if(typeof(data[this.fieldColl[key].langId]) != "undefined"
+//				&& typeof(data[this.fieldColl[key].langId][this.fieldColl[key].name]) != "undefined"
+//				&& parseInt(data[this.fieldColl[key].langId][this.fieldColl[key].name]) > 0){
+//					this.fieldColl[key].setValue(data[this.fieldColl[key].langId][this.fieldColl[key].name]);
+//			}
+//		}
 	}
 
 	this.renderGrid = function(){
@@ -417,8 +449,7 @@ function cmsView(objName, recordView, recordId){
 		this.fake.elm.style.bottom = "0px";
 		this.fake.elm.style.display = "none";
 		this.fake.render();
-
-		console.log((this.rowNumber * this.cellPerRow) + " elments render in grid for " + (window.performance.now() - timer) + "ms");
+		log("Datagrid rendered for " + (window.performance.now() - timer).toFixed(3) + "ms");
 
 	};
 
@@ -459,8 +490,14 @@ function cmsView(objName, recordView, recordId){
 		}
 	};
 
+	this.saveData = function(){
+		clearTimeout(this.saveTimeout);
+		//save delay
+		this.saveTimeout = setTimeout("window.__cmsView['instance'][" + this.instanceKey + "].saveRecord();", this.saveTime);
+	};
+
 	this.handleOutsideEvent = function(obj, e){
-		var call = obj.getAttribute('eventCode');
+		var call = obj.getAttribute("eventCode");
 		if(call != "scroll"){
 			console.log('event ' + call + " " + this.code);
 		}
@@ -480,15 +517,14 @@ function cmsView(objName, recordView, recordId){
 				if(obj.hasAttribute('recordId')){
 					recordId = parseInt(obj.getAttribute('recordId'));
 				}
-
 				var Record = new cmsView(this.code + "_" + recordId, true, recordId);
 				Record.parent = this;
+				Record.tableName = this.code;
 				Record.render();
 				break;
 			case 'saveRecord':
-				clearTimeout(this.saveTimeout);
-				//save delay
-				this.saveTimeout = setTimeout("window.__cmsView['instance'][" + this.instanceKey + "].saveRecord();", this.saveTime);
+				this.workingField = obj;
+				this.saveData(obj);
 				break;
 		}
 	};

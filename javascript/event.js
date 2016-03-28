@@ -23,11 +23,21 @@ events.registerEventHandler = function(obj, name, event_code, bubling){
 		obj.attachEvent(name, event_code);//element.detachevent('onclick',spyOnUser)
 	}else{
 		name = name.substr(2, (name.length - 2));
-//		/alert(obj.tagName);
 		obj.addEventListener(name, event_code, bubling);
 	}
 
 };
+
+events.triggerEvent = function(obj, eventName, options){
+	var event;
+	if(window.CustomEvent){
+		event = new CustomEvent(eventName, options);
+	}else{
+		event = document.createEvent('CustomEvent');
+		event.initCustomEvent(eventName, true, true, options);
+	}
+	obj.dispatchEvent(event);
+}
 
 events.removeEvents = function(obj){
 	if(obj.tagName){
