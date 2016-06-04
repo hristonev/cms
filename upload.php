@@ -14,7 +14,6 @@ include("include/database.php");
 include("include/xml.php");
 include("include/siteMap.php");
 include("include/object.php");
-include("include/request.php");
 database::setOpt($conf['db']);
 $sql = new database();
 unset($sql);
@@ -24,24 +23,7 @@ foreach ($conf as $key => $value){
 	}
 }
 unset($conf);
-if(is_array($_GET) && count($_GET) > 0){//get request
-	$request = new request();
-	$request->render();
-}else{
-	include("include/user.php");
-	include("include/manager.php");
-	$mng = new manager();
-	$code = $mng->render();
-	if($mng->ajax){
-		echo $code;
-	}else{
-		$dom = new DOMDocument(5, 'UTF-8');
-		$dom->preserveWhiteSpace = false;
-		$dom->formatOutput = true;
-		$dom->loadHTML($code);
-		$dom->encoding='UTF-8';
-		echo $dom->saveHTML();
-	}
-}
-
-?>
+include("include/user.php");
+include("template/fileManager.php");
+$fm = new fileManager();
+$fm->upload();

@@ -59,6 +59,10 @@ domElement.prototype = {
 		return this.elm.value;
 	},
 
+	setName: function(value){
+		this.elm.name = value;
+	},
+
 	setValue: function(value){
 		this.elm.value = value;
 	},
@@ -71,9 +75,14 @@ domElement.prototype = {
 		this.elm.setAttribute('title', value);
 	},
 
+	setSrc: function(value){
+		this.elm.src = value;
+	},
+
 	setCssClass: function(value){
 		this.elm.className = value;
 	},
+
 	setAttribute: function(name, value){
 		this.elm.setAttribute('dom_attr_' + name, value);
 	},

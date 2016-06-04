@@ -28,7 +28,18 @@ class object extends base
 	}
 
 	public function getTemplate(){
-		return $this->customTemplate;
+		$class = $this->customTemplate;
+		if(file_exists("template/". $class. ".php")){
+			include_once "template/". $class. ".php";
+		}
+		if(class_exists($class)){
+			$template = new $class();
+			if(method_exists($template, 'render')){
+				$template->setDataCollectObject($this->dataCollection);
+				$template->render();
+			}
+		}
+		return $class;
 	}
 
 	public function setDataCollectObject(&$data){

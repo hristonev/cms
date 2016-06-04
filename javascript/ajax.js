@@ -11,6 +11,8 @@ var ajax = function(){
 	this.header = "content-type: text/xml";
 	this.is_xml = true;
 	this.baseURL = "index.php";
+	this.setHeaders = true;
+	this.progressCall = "";
 	if(typeof(window.__base["ajax"]) == "undefined"){
 		window.__base["ajax"] = 0;
 	}
@@ -33,7 +35,7 @@ var ajax = function(){
 		return url;
 	};
 
-	this.send = function(){
+	this.send = function(data){
 		var loading = document.getElementById("ajaxLoading");
 		if(loading !== null){
 			loading.className = "fa fa-spinner ajaxLoading spin";
@@ -62,12 +64,12 @@ var ajax = function(){
 					return false;
 				}
 			}
-
 		}
 
 		var url = this.baseURL;
 		this.argument += "&group=" + this.group + "&className=" + this.className + "&methodName=" + this.methodName;
 		var call_back = this.call_back;
+		var progressCall = this.progressCall;
 		var attributes = this.attributes;
 
 		xml_http.onreadystatechange = function(){
@@ -92,14 +94,25 @@ var ajax = function(){
 				}
 			}
 		};
-		if(ie){
 
+		if(this.progressCall != ""){
+			xml_http.upload.addEventListener('progress', function(e){
+			    var progress = parseInt(e.loaded) / parseInt(e.total) * 100;
+			    eval(progressCall);
+			}, false);
 		}
+
 		xml_http.open(this.method, url, this.async);
-		xml_http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xml_http.setRequestHeader("Content-length", this.argument.length);
-		xml_http.setRequestHeader("Connection", "close");
-		xml_http.send(this.argument);
+		if(this.setHeaders){
+			xml_http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			xml_http.setRequestHeader("Content-length", this.argument.length);
+			xml_http.setRequestHeader("Connection", "close");
+		}
+		if(typeof(data) == "undefined"){
+			xml_http.send(this.argument);
+		}else{
+			xml_http.send(data);
+		}
 
 		if(!this.async){
 			window.__base["ajax"] -= 1;

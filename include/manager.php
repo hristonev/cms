@@ -13,26 +13,7 @@ class manager extends user
 
 	public function render(){
 		$code = '';
-// 		this.loadModule = new Array(
-// 				"ajax",
-// 				"event",
-// 				"xml",
-// 				"domElement",
-// 				"list",
-// 				"navigation",
-// 				"popUp",
-// 				"cmsHead",
-// 				"cmsNavigation",
-// 				"cmsView",
-// 				"cmsViewTab",
-// 				"cmsSiteMap",
-// 				"cmsSelectBox",
-// 				"log"
-// 				);
-// 		this.loadNonEssentialModule = new Array(
-// 				"ckeditor/ckeditor"
-// 				, "animate"
-// 				);
+
 		if(is_array($_POST) && count($_POST) > 0){
 			$code .= $this->xmlhttp();
 		}else if($this->isValid()){
@@ -53,6 +34,7 @@ class manager extends user
 			$this->headAddionional[] = 'log.js';
 			$this->headAddionional[] = 'ckeditor/ckeditor.js';
 			$this->headAddionional[] = 'animate.js';
+			$this->headAddionional[] = 'custom/fileManager.js';
 			$this->headAddionional[] = 'main.css';
 			$code .= $this->html("");
 		}else{
@@ -94,45 +76,52 @@ class manager extends user
 	private function xmlhttp(){
 		$code = '';
 		$this->ajax = true;
-		switch ($_POST["group"]){
-			case 'js':
-				if($this->isValid()){
-					$code .= file_get_contents("javascript/". $_POST['className']. ".js");
-				}
-				break;
-			case 'xml':
-				header("content-type: text/xml");
-				if(isset($_POST["className"]) && isset($_POST["className"]) && !empty($_POST["className"]) && !empty($_POST["methodName"])){
-					self::$xml = new xml();
-					include_once $_POST["group"]. "/". $_POST["className"]. ".php";
-					$method = $_POST["methodName"];
-					$class = $_POST["className"];
-					$instance = new $class();
-					self::$xml->addNode($class);
-					if(isset($_POST["argument"])){
-						$arg = $_POST["argument"];
-					}else{
-						$arg = null;
+		if(isset($_POST["group"])){
+			switch ($_POST["group"]){
+				case 'js':
+					if($this->isValid()){
+						$code .= file_get_contents("javascript/". $_POST['className']. ".js");
 					}
-					$instance->$method($arg, self::$xml);
-					$code .= self::$xml->render();
-				}
-				break;
-			default:
-				if(isset($_POST["className"]) && isset($_POST["className"]) && !empty($_POST["className"]) && !empty($_POST["methodName"])){
-					$json = new stdClass();
-					include_once $_POST["group"]. "/". $_POST["className"]. ".php";
-					$method = $_POST["methodName"];
-					$class = $_POST["className"];
-					$instance = new $class();
-					if(isset($_POST["argument"])){
-						$arg = $_POST["argument"];
-					}else{
-						$arg = null;
+					break;
+				case 'xml':
+					header("content-type: text/xml");
+					if(isset($_POST["className"]) && isset($_POST["className"]) && !empty($_POST["className"]) && !empty($_POST["methodName"])){
+						self::$xml = new xml();
+						include_once $_POST["group"]. "/". $_POST["className"]. ".php";
+						$method = $_POST["methodName"];
+						$class = $_POST["className"];
+						$instance = new $class();
+						self::$xml->addNode($class);
+						if(isset($_POST["argument"])){
+							$arg = $_POST["argument"];
+						}else{
+							$arg = null;
+						}
+						$instance->$method($arg, self::$xml);
+						$code .= self::$xml->render();
 					}
-					$instance->$method($arg, $json);
-					$code .= json_encode($json);
-				}
+					break;
+				default:
+					if(isset($_POST["className"]) && isset($_POST["className"]) && !empty($_POST["className"]) && !empty($_POST["methodName"])){
+						$json = new stdClass();
+						include_once $_POST["group"]. "/". $_POST["className"]. ".php";
+						$method = $_POST["methodName"];
+						$class = $_POST["className"];
+						$instance = new $class();
+						if(isset($_POST["argument"])){
+							$arg = $_POST["argument"];
+						}else{
+							$arg = null;
+						}
+						$instance->$method($arg, $json);
+						$code .= json_encode($json);
+					}
+			}
+		}else{
+			$json = new stdClass();
+			include_once 'template/fileManager.php';
+			fileManager::xUpload($_POST, $json);
+			$code .= json_encode($json);
 		}
 
 		return $code;

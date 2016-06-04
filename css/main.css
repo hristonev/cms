@@ -3,6 +3,7 @@ body{
 	--headHeight: 40px;
 	--darkBkgr: #336699;
 	--popUpBkgr: rgba(0,0,0,0.5);
+	--inputBkgr: #D5E0EC;
 	--lightBkgr: #b3cce6;
 	--navMinWidth: 20px;
 	--navWidth: 150px;
@@ -10,6 +11,7 @@ body{
 	--footerHeight: 20px;
 	--border: #b3cce6;
 	--lightText: #ccc;
+	--mLightText: #999;
 	--darkText: #001;
 	--navGroup: #264c72;
 	--closeColor: #e25a5a;
@@ -592,4 +594,140 @@ html, body{
 .cmsSelectBox li:hover{
 	background: var(--darkBkgr);
 	color: var(--lightText);
+}
+.fileManager{
+	height: 100%;
+	width: 80%;
+	border-right: solid 1px var(--darkBkgr);
+	vertical-align: top;
+}
+.fileUploader{
+	width: 20%;
+	height: 100%;
+	padding: 4px;
+	vertical-align: top;
+}
+.fileUploader div{
+	text-align: justify;
+}
+.fileUploader div:after{
+	content: "";
+	display: inline-block;
+	width: 100%;
+}
+.fileManagerGroup{
+	display: inline-block;
+	padding: 1px 5px;
+	margin: 1px;
+	background: var(--darkBkgr);
+	color: var(--lightText);
+	cursor: pointer;
+}
+.fileManagerGroup:hover{
+	background: var(--navGroup);
+	background: -webkit-linear-gradient(var(--darkBkgr), var(--lightBkgr)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(var(--darkBkgr), var(--lightBkgr)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(var(--darkBkgr), var(--lightBkgr)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(var(--darkBkgr), var(--lightBkgr)); /* Standard syntax */
+}
+.fileManagerGroupActive{
+	display: inline-block;
+	padding: 1px 5px;
+	margin: 0 1px;
+	background: var(--lightBkgr);
+	color: var(--darkText);
+	cursor: pointer;
+}
+.fileManagerItemContainer{
+	overflow-y: scroll;
+}
+.fileManagerItemName{
+	display: flex;
+	box-sizing: border-box;
+	color: var(--lightText);
+	margin: var(--lineHeight) var(--mainSpacing) 0 var(--mainSpacing);
+	background: var(--navGroup);
+	font-weight: bold;
+	padding: var(--mainSpacing);
+}
+.fileManagerItem{
+	margin: 0 var(--mainSpacing);
+	padding: var(--mainSpacing);
+	border: solid 1px var(--navGroup);
+}
+.fileManagerItem div{
+	height: auto;
+}
+.fileManagerItemIcon{
+    float: left;
+    margin-right: var(--lineHeight);
+}
+.iconFont{
+	color: var(--darkBkgr);
+    font-family: FontAwesome;
+	font-size: 1500%;
+	line-height: 120%;
+}
+.fileManagerItemProperty{
+	height: line-height: 120%;
+}
+.fileManagerItemProperty input{
+	margin-left: var(--mainSpacing);
+	margin-right: var(--lineHeight);
+	border: none;
+	height: var(--lineHeight);
+	margin-right: var(--mainSpacing);
+	background: var(--inputBkgr);
+	border: solid 1px var(--darkBkgr);
+	box-sizing: border-box;
+	padding: 0px;
+}
+.fileManagerItemProperty select{
+	border: none;
+	margin-right: var(--mainSpacing);
+	background: var(--inputBkgr);
+	border: solid 1px var(--darkBkgr);
+	box-sizing: border-box;
+}
+.fileManagerItemProperty i{
+	font-size: 100%;
+	color: var(--darkBkgr);
+	margin: 0;
+	padding: 0;
+	cursor: pointer;
+	padding: var(--mainSpacing);
+	border: solid 1px var(--darkBkgr);
+}
+.fileManagerItemProperty i:hover{
+	background: var(--darkBkgr);
+	color: var(--lightBkgr);
+}
+.fileManagerItemPropertyList{
+	overflow: hidden;
+	white-space: nowrap;
+	position: relative;
+	color: var(--darkText);
+}
+.fileManagerItemPropertyList:hover{
+	color: var(--mLightText);
+}
+.fileManagerItemPropertyList span{
+	font-size: 80%;
+	margin-right: var(--mainSpacing)
+}
+.fileManagerItemPropertyList h5{
+	font-size: 100%;
+	display: inline;
+}
+.fileManagerItemPropertyList i{
+	background: var(--lightBkgr);
+    border: solid 1px var(--darkBkgr);
+    cursor: default;
+    font-size: 120%;
+    padding: 2px;
+    position: absolute;
+    right: 5px;
+}
+.fileManagerItemPropertyList i:hover{
+	color: var(--closeColor);
 }

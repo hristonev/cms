@@ -93,28 +93,34 @@ function cmsView(objName, recordView, recordId){
 		var div, a;
 
 		this.data = data;
+		if(typeof(this.data.customTemplate) == "undefined"){
+			div = new domElement('div');
+			div.parent = this.root.elm;
+			div.setCssClass('gridControl');
+			div.setNewText(data.totalRecords.name + ' ' + data.totalRecords.value);
+			div.render();
 
-		div = new domElement('div');
-		div.parent = this.root.elm;
-		div.setCssClass('gridControl');
-		div.setNewText(data.totalRecords.name + ' ' + data.totalRecords.value);
-		div.render();
+			a = new domElement('a');
+			a.parent = div.elm;
+			a.setCssClass('gridControl');
+			a.setNewText(data.newRecord.value);
+			a.setAttribute('eventCode', 'Record');
+			a.caller = this;
+			a.render();
+			a.setEvent('onclick', 'Record');
 
-		a = new domElement('a');
-		a.parent = div.elm;
-		a.setCssClass('gridControl');
-		a.setNewText(data.newRecord.value);
-		a.setAttribute('eventCode', 'Record');
-		a.caller = this;
-		a.render();
-		a.setEvent('onclick', 'Record');
+			/*
+			 * render data grid
+			 */
+			this.renderGrid();
 
-		/*
-		 * render data grid
-		 */
-		this.renderGrid();
-
-		this.gridResize();
+			this.gridResize();
+		}else{
+			eval("var template = new " + this.data.customTemplate + "();");
+			template.data = this.data;
+			template.caller = this;
+			template.render();
+		}
 	};
 
 	this.renderRecordFields = function(container, data, langId){
@@ -462,7 +468,7 @@ function cmsView(objName, recordView, recordId){
 	};
 
 	this.gridResize = function(){
-		if(this.recordView){
+		if(this.recordView || typeof(this.data.customTemplate) != "undefined"){
 
 		}else if(typeof(this.table) != "undefined"){
 			var margin = this.root.elm.clientWidth;
