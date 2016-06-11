@@ -56,7 +56,7 @@ cmsSiteMap.prototype.build = function(dataStr){
 	a.setNewText(data.makeDirectories);
 	a.setAttribute('eventCode', 'makeDir');
 	a.render();
-	a.setEvent('onclick', 'makeDir');
+//	a.setEvent('onclick', 'makeDir');
 
 	//BUILD TREE
 	this.treeContainer = this.container;

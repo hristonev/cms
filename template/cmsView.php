@@ -104,10 +104,10 @@ class cmsView extends user
 			$newRecord = true;
 			if((int)$data['langId'] > 0){// ML
 				$newMLRecord = true;
-				$sql->query("INSERT INTO `". $data['tableName']. "` () VALUES()");
-				$data['recordId'] = $sql->insert_id;
+				$sql->exec("INSERT INTO `". $data['tableName']. "` () VALUES()");
+				$json->recordId = $sql->insert_id;
 				$action .= "INSERT INTO `". $data['tableName']. TABLE_ML_SUFFIX. "` SET ";
-				$value .= "`". $data['tableName']. TABLE_ML_SUFFIX. "`.`". $data['tableName']. "Id` = ". (int)$data['recordId']. ", ";
+				$value .= "`". $data['tableName']. TABLE_ML_SUFFIX. "`.`". $data['tableName']. "Id` = ". (int)$sql->insert_id. ", ";
 				$value .= "`". $data['tableName']. TABLE_ML_SUFFIX. "`.`langId` = ". (int)$data['langId']. ", ";
 				$value .= "`". $data['tableName']. TABLE_ML_SUFFIX. "`.`". $data['field']. "` = '". $sql->real_escape_string($data['value']). "' ";
 			}else{
@@ -115,8 +115,17 @@ class cmsView extends user
 				$value .= "`". $data['tableName']. "`.`". $data['field']. "` = '". $sql->real_escape_string($data['value']). "' ";
 			}
 		}
-		$sql->query($action. $object. $value. $condition);
-		$json->query = $action. $object. $value. $condition;
+		if($newRecord){
+			$sql->exec($action. $object. $value. $condition);
+			if($newMLRecord){
+				$json->recordMLId = $sql->insert_id;
+			}else{
+				$json->recordId = $sql->insert_id;
+			}
+		}else{
+			$sql->exec($action. $object. $value. $condition);
+		}
+// 		$json->query = $action. $object. $value. $condition;
 // 		$dataStr = preg_replace('/\r\n|\r|\n/', '', $arg['data']);
 // 		file_put_contents("/usr/local/www/htse/www/json", $dataStr);
 // 		$data = json_decode($dataStr, true);

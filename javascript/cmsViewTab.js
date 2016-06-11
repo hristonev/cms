@@ -34,7 +34,7 @@ cmsView.prototype.tab = function(code, close){
 		window.__cmsView['tabContent'] = new Array();
 		window.__cmsView['tabExchange'] = new Array();
 	}
-	var tab, ex;
+	var ex;
 	if(!close){
 		for(var tabKey in window.__cmsView['tab']){
 			window.__cmsView['tab'][tabKey].setCssClass('tab');
@@ -43,21 +43,21 @@ cmsView.prototype.tab = function(code, close){
 		if(typeof(window.__cmsView['tab'][code]) == "undefined"){
 			console.log('new tab ' + code);
 
-			tab = new domElement('div');
-			tab.parent = this.tabBar.elm;
-			tab.setAttribute('eventCode', 'tabSwitch');
-			tab.caller = this;
-			tab.setCssClass('tabActive');
+			this.tabName = new domElement('div');
+			this.tabName.parent = this.tabBar.elm;
+			this.tabName.setAttribute('eventCode', 'tabSwitch');
+			this.tabName.caller = this;
+			this.tabName.setCssClass('tabActive');
 			if(!this.recordView){
-				tab.setNewText(this.name);
+				this.tabName.setNewText(this.name);
 			}else{
-				tab.insert_after = window.__cmsView['tab'][this.parent.code].elm;
+				this.tabName.insert_after = window.__cmsView['tab'][this.parent.code].elm;
 			}
-			tab.render();
-			window.__cmsView['tab'][code] = tab;
-			tab.setEvent('onclick', 'tabSwitch');
+			this.tabName.render();
+			window.__cmsView['tab'][code] = this.tabName;
+			this.tabName.setEvent('onclick', 'tabSwitch');
 			ex = new domElement('i');
-			ex.parent = tab.elm;
+			ex.parent = this.tabName.elm;
 			ex.setAttribute('eventCode', 'tabClose');
 			ex.caller = this;
 			ex.setCssClass('fa fa-times');
@@ -65,7 +65,7 @@ cmsView.prototype.tab = function(code, close){
 			ex.setEvent('onclick', 'tabClose');
 			if(this.recordView){
 				ex = new domElement('span');
-				ex.parent = tab.elm;
+				ex.parent = this.tabName.elm;
 				ex.setAttribute('eventCode', 'tabSwitch');
 				ex.setNewText(this.recordId);
 				ex.caller = this;
@@ -116,3 +116,8 @@ cmsView.prototype.tab = function(code, close){
 
 	return tabContent;
 };
+
+cmsView.prototype.tabChangeName = function(value){
+	var span = this.tabName.elm.getElementsByTagName("span")[0];
+	span.firstChild.nodeValue = value;
+}
