@@ -148,7 +148,7 @@ include('". getcwd(). "/index.php');
 						INSERT INTO
 							`sys.siteMap`
 						SET
-							`sys.siteMap`.`path` = '". $path. $value->name. "'
+							`sys.siteMap`.`path` = '". preg_replace("/ /", "%20", $path. $value->name). "'
 							, `sys.siteMap`.`langId` = '". $value->langId. "'
 							, `sys.siteMap`.`masterTableId` = '". $value->id. "'
 							, `sys.siteMap`.`relateTableId` = '". $value->dynamicId. "'

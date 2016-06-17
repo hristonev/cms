@@ -8,13 +8,13 @@ ini_set("display_errors", 1);
 
 chdir(__DIR__);
 
-include("../../htse.conf.php");
-include("include/base.php");
-include("include/database.php");
-include("include/xml.php");
-include("include/siteMap.php");
-include("include/object.php");
-include("include/request.php");
+include '../../htse.conf.php';
+include 'include/base.php';
+include 'include/database.php';
+include 'include/xml.php';
+include 'include/siteMap.php';
+include 'include/object.php';
+include 'include/request.php';
 database::setOpt($conf['db']);
 $sql = new database();
 unset($sql);
@@ -28,8 +28,8 @@ if(is_array($_GET) && count($_GET) > 0){//get request
 	$request = new request();
 	$request->render();
 }else{
-	include("include/user.php");
-	include("include/manager.php");
+	include 'include/user.php';
+	include 'include/manager.php';
 	$mng = new manager();
 	$code = $mng->render();
 	if($mng->ajax){
