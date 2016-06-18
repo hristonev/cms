@@ -67,79 +67,74 @@ var builder = function(){
 	this.init = function(){
 		//load js files
 		$('body').data("builder", this);
-		if(this.loaded == 0){
-			console.log('load framework');
-			this.loadJS();
-		}else{
-			console.log('create base containers');
-			this.body = document.getElementsByTagName('body')[0];
+		console.log('create base containers');
+		this.body = document.getElementsByTagName('body')[0];
 
-			this.head = new domElement('div');
-			this.head.parent = this.body;
-			this.head.setCssClass('head');
-			this.head.elm.setAttribute('id', 'cmsHead');
-			this.head.render();
+		this.head = new domElement('div');
+		this.head.parent = this.body;
+		this.head.setCssClass('head');
+		this.head.elm.setAttribute('id', 'cmsHead');
+		this.head.render();
 
-			this.navigation = new domElement('div');
-			this.navigation.parent = this.body;
-			this.navigation.setCssClass('navigation');
-			this.navigation.elm.setAttribute('id', 'cmsNavigation');
-			this.navigation.render();
+		this.navigation = new domElement('div');
+		this.navigation.parent = this.body;
+		this.navigation.setCssClass('navigation');
+		this.navigation.elm.setAttribute('id', 'cmsNavigation');
+		this.navigation.render();
 
-			this.navResize = new domElement('div');
-			this.navResize.parent = this.body;
-			this.navResize.setCssClass('navResize');
-			this.navResize.elm.setAttribute('id', 'cmsNavResize');
-			this.navResize.caller = this;
-			this.navResize.setAttribute('eventCode', 'resize');
-			this.navResize.render();
-			this.navResize.setEvent('onmousedown', 'resize');
-			if(storage.get('navWidth') != null){
-				var obj = document.getElementsByTagName('body')[0];
-				obj.style.setProperty('--navWidth', storage.get('navWidth') + 'px', null);
-			}
-
-			this.content = new domElement('div');
-			this.content.parent = this.body;
-			this.content.setCssClass('content');
-			this.content.elm.setAttribute('id', 'cmsContent');
-			this.content.render();
-
-
-			this.footer = new domElement('div');
-			this.footer.parent = this.body;
-			this.footer.setCssClass('footer');
-			this.footer.elm.setAttribute('id', 'cmsFooter');
-			this.footer.render();
-
-			console.log('create head elements');
-			var head = new cmsHead(this.head);
-			head.caller = this;
-			head.render();
-
-			console.log('create navigation elements');
-			var nav = new cmsNavigation(this.navigation);
-			nav.caller = this;
-			nav.render();
-
-			//loading non esentials for startup
-			var jsItem;
-			while(this.loadNonEssentialModule.length > 0){
-				jsItem = this.loadNonEssentialModule.pop();
-				$.ajax({
-					method: "POST",
-					url: "index.php",
-					dataType: "script",
-					data: {
-						"group": "js",
-						"className": jsItem
-					}
-				}).done(function(data) {
-					eval(data);
-				});
-			}
-			log("loading complete. Please reload if something is broken.");
+		this.navResize = new domElement('div');
+		this.navResize.parent = this.body;
+		this.navResize.setCssClass('navResize');
+		this.navResize.elm.setAttribute('id', 'cmsNavResize');
+		this.navResize.caller = this;
+		this.navResize.setAttribute('eventCode', 'resize');
+		this.navResize.render();
+		this.navResize.setEvent('onmousedown', 'resize');
+		if(storage.get('navWidth') != null){
+			var obj = document.getElementsByTagName('body')[0];
+			obj.style.setProperty('--navWidth', storage.get('navWidth') + 'px', null);
 		}
+
+		this.content = new domElement('div');
+		this.content.parent = this.body;
+		this.content.setCssClass('content');
+		this.content.elm.setAttribute('id', 'cmsContent');
+		this.content.render();
+
+
+		this.footer = new domElement('div');
+		this.footer.parent = this.body;
+		this.footer.setCssClass('footer');
+		this.footer.elm.setAttribute('id', 'cmsFooter');
+		this.footer.render();
+
+		console.log('create head elements');
+		var head = new cmsHead(this.head);
+		head.caller = this;
+		head.render();
+
+		console.log('create navigation elements');
+		var nav = new cmsNavigation(this.navigation);
+		nav.caller = this;
+		nav.render();
+
+		//loading non esentials for startup
+		var jsItem;
+		while(this.loadNonEssentialModule.length > 0){
+			jsItem = this.loadNonEssentialModule.pop();
+			$.ajax({
+				method: "POST",
+				url: "index.php",
+				dataType: "script",
+				data: {
+					"group": "js",
+					"className": jsItem
+				}
+			}).done(function(data) {
+				eval(data);
+			});
+		}
+		log("loading complete. Please reload if something is broken.");
 	};
 
 	this.destruct = function(){
@@ -241,10 +236,3 @@ storage.set = function(code, value){
 	console.log('STORE ' + code);
 	localStorage.setItem(code, value);
 };
-
-$(window).ready(function() {
-	if(typeof(window.__builder) == "undefined"){
-		var cms = new builder();
-		cms.init();
-	}
-});

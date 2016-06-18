@@ -15,7 +15,7 @@ function user(){
 				"methodName": "xValidateLogin",
 				"argument": {
 					"username" : this.username.val(),
-					"password" : sha512(this.password.val())
+					"password" : this.password.val()
 				}
 			}
 		}).done(function(xml) {
@@ -26,28 +26,49 @@ function user(){
 		var data = JSON.parse(dataStr);
 		$(".loginMsg span").text(data.loginAttempt);
 		if(parseInt(data.valid) == 1){
-			$.ajax({
-				method: "POST",
-				url: "index.php",
-				dataType: "script",
-				data: {
-					"group": "js",
-					"className": data.include
-				}
-			}).done(function(xml) {
-				eval(xml);
-				$(".login").remove();
-				var css = document.getElementsByTagName('link');
-				for(var i = 0; i < css.length; i++){
-					if(css[i].getAttribute('href').match('user')){
-						css[i].setAttribute('href', css[i].getAttribute('href').replace('user', 'main'));
-					}
-				}
-			});
+			$(".login").remove();
+			var item;
+			if(typeof(data.framework) != "undefined"){
+				window.__userFramework = data.framework;
+				leadFramework();
+			}
 		}else{
 			$(this.loginForm).fadeIn(400);
 		}
 	};
+}
+
+function leadFramework(){
+	if(window.__userFramework.length > 0){
+		var head = document.getElementsByTagName("head")[0];
+		var data = window.__userFramework[0];
+		window.__userFramework.shift();
+		
+		switch(data.type){
+			case "js":
+				item = document.createElement("script");
+				item.onload = function(){
+					leadFramework();
+				};
+				item.setAttribute("src", "javascript/" + data.value);
+				item.setAttribute("type", "text/javascript");
+				break;
+			case "css":
+				item = document.createElement("link");
+				item.onload = function(){
+					leadFramework();
+				};
+				item.setAttribute("href", "css/" + data.value);
+				item.setAttribute("type", "text/css");
+				item.setAttribute("rel", "stylesheet");
+				item.setAttribute("media", "screen");
+				break;
+		}
+		head.appendChild(item);
+	}else{
+		var cms = new builder();
+		cms.init();
+	}
 }
 
 $(window).ready(function() {

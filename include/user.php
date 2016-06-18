@@ -75,33 +75,13 @@ class user extends base{
 				WHERE
 					`user`.`username` = '". $arg['username']. "'
 				AND
-					`user`.`password` = '". $arg['password']. "'
+					`user`.`password` = '". hash('sha512', $arg['password']). "'
 			");
 
 			$_SESSION['userLog']['id'] = $sql->userId;
 			$json->valid = $sql->cmsAccess;
 			$json->include = 'builder';
 		}
-// 		$xml->addNode('loginAttempt', (self::LOGIN_ATTEMPTS - (int)$this->loginAttempt));
-// 		if($this->loginAttempt < 5){
-// 			$this->loginAttempt++;
-// 			$sql = new database();
-// 			$sql->query("
-// 				SELECT
-// 					`user`.`userId`
-// 					, `user`.`cmsAccess`
-// 				FROM
-// 					`user`
-// 				WHERE
-// 					`user`.`username` = '". $arg['username']. "'
-// 				AND
-// 					`user`.`password` = '". $arg['password']. "'
-// 			");
-
-// 			$_SESSION['userLog']['id'] = $sql->userId;
-// 			$xml->addNode('valid', $sql->cmsAccess);
-// 			$xml->addNode('include', 'builder');
-// 		}
 
 	}
 }
