@@ -483,6 +483,7 @@ function fileManager(){
 			data.methodName = "xUpload";
 			data.send(this.files[i]);
 		}
+		this.files = new Array();
 	};
 
 	this.handleOutsideEvent = function(obj, e){
