@@ -3,15 +3,14 @@
 class manager extends user
 {
 	protected $headAddionional = array();
-	
+
 	public $ajax = false;
-	
+
 	private $framework = array('builder.js'
 			,'ajax.js'
 			,'event.js'
 			,'xml.js'
 			,'domElement.js'
-			,'list.js'
 			,'navigation.js'
 			,'popUp.js'
 			,'cmsHead.js'
@@ -34,12 +33,12 @@ class manager extends user
 
 	public function render(){
 		$code = '';
-		
+
 		if(is_array($_POST) && count($_POST) > 0){
 			$code .= $this->xmlhttp();
 		}else if($this->isValid()){
 			$this->headAddionional = $this->framework;
-			
+
 			$code .= $this->html('
 			<script type="text/javascript">
 				$(window).ready(function() {
@@ -88,13 +87,13 @@ class manager extends user
 	private function xmlhttp(){
 		$code = '';
 		$this->ajax = true;
-		
+
 		if(isset($_POST["argument"])){
 			$arg = $_POST["argument"];
 		}else{
 			$arg = null;
 		}
-		
+
 		if($this->isValid()){
 			if(isset($_POST["group"])){
 				switch ($_POST["group"]){

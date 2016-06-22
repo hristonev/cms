@@ -53,7 +53,7 @@ function cmsView(objName, recordView, recordId){
 	this.parent = null;
 	this.recordFields = new Array();
 	this.saveTimeout = null;
-	this.saveTime = 1000;
+	this.saveTime = 100;
 	this.cellCollection = new Array();
 	this.langId = 1;//HARDCODE REMOVE ASAP
 	this.workingField = null;
