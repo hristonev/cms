@@ -68,20 +68,20 @@ cmsSelectBox.prototype.render = function(){
 	this.container.render();
 	var ul = new Array(), li, treeLevel, parentNode;
 	for(var i in this.data){
-		treeLevel = this.data[i].treeLevel;
-		if(typeof(ul[treeLevel]) == "undefined"){
-			ul[treeLevel] = new domElement("ul");
+		treeLevel = this.data[i].parent;
+		if(typeof(ul[this.data[i].current]) == "undefined"){
+			ul[this.data[i].current] = new domElement("ul");
 			if(treeLevel > 1){
-				parentNode = ul[treeLevel - 1].elm;
+				parentNode = ul[treeLevel].elm;
 			}else{
 				parentNode = this.container.elm;
 			}
-			ul[treeLevel].parent = parentNode;
-			ul[treeLevel].render();
+			ul[this.data[i].current].parent = parentNode;
+			ul[this.data[i].current].render();
 		}
 		if(typeof(this.data[i].cell[0]) != "undefined" && typeof(this.data[i].cell[1]) != "undefined"){
 			li = new domElement("li");
-			li.parent = ul[treeLevel].elm;
+			li.parent = ul[this.data[i].current].elm;
 			li.setNewText(this.data[i].cell[0].name);
 			li.setAttribute("id", this.data[i].cell[1].name);
 			li.setAttribute('eventCode', 'select');

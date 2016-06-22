@@ -279,6 +279,8 @@ class object extends base
 				$row = & $collector[];
 				$row = new stdClass();
 				$row->treeLevel = $level;
+				$row->current = $sql->id;
+				$row->parent = $parentId;
 				$row->cell = array();
 				foreach ($this->objectCollection->fields as $field => $value){
 					if((int)$value->showInGrid == 1){
