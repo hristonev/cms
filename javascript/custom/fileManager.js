@@ -12,6 +12,7 @@ function fileManager(){
 	this.caller = null;
 	this.rootElm = null;
 	this.fileContainer = null;
+	this.uploadContainer = null;
 	this.files = new Array();
 
 	this.lang = null;
@@ -81,7 +82,12 @@ function fileManager(){
 	};
 
 	this.resize = function(){
-		this.fileContainer.elm.style.height = (this.rootElm.offsetHeight - this.groupBtnContainer.elm.offsetHeight - 4) + "px";
+		if(this.fileContainer != null){
+			this.fileContainer.elm.style.height = (this.rootElm.offsetHeight - this.groupBtnContainer.elm.offsetHeight - 4) + "px";
+		}
+		if(this.uploadContainer != null){
+			this.uploadContainer.elm.style.height = (this.rootElm.offsetHeight - this.groupBtnContainer.elm.offsetHeight - 4) + "px";
+		}
 	};
 
 	this.itemPropertyRender = function(data, container, insertBefore){
@@ -383,14 +389,20 @@ function fileManager(){
 	};
 
 	this.uploadSection = function(){
+		this.uploadContainer = new domElement('div');
+		this.uploadContainer.parent = this.uploader.elm;
+		this.uploadContainer.setStyle("overflowY", "scroll");
+		this.uploadContainer.render();
+
 		this.uploadBtn = new domElement("input");
-		this.uploadBtn.parent = this.uploader.elm;
+		this.uploadBtn.parent = this.uploadContainer.elm;
 		this.uploadBtn.elm.setAttribute("type", "file");
 		this.uploadBtn.elm.setAttribute("multiple", true);
 		this.uploadBtn.setAttribute('eventCode', 'fileSelect');
 		this.uploadBtn.caller = this;
 		this.uploadBtn.render();
 		this.uploadBtn.setEvent('onchange', 'fileSelect');
+		this.resize();
 	};
 
 	this.handleFileSelect = function(){
@@ -402,7 +414,7 @@ function fileManager(){
 			progress = new domElement("div");
 			progress.setStyle("position", "relative");
 			progress.setNewText(this.uploadBtn.elm.files[i].name + " " + this.bytesFormat(this.uploadBtn.elm.files[i].size));
-			progress.parent = this.uploader.elm;
+			progress.parent = this.uploadContainer.elm;
 			progress.insert_after = this.uploadBtn.elm;
 			progress.render();
 			bar = new domElement("div");
@@ -415,7 +427,8 @@ function fileManager(){
 			bar.setStyle("bottom", "20px");
 			bar.render();
 		}
-		this.upload();
+		this.resize();
+		//this.upload();
 	};
 
 	this.bytesFormat = function (size) {
