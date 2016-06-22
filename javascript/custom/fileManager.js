@@ -11,6 +11,7 @@ function fileManager(){
 	this.data = null;
 	this.caller = null;
 	this.rootElm = null;
+	this.fileContainer = null;
 	this.files = new Array();
 
 	this.lang = null;
@@ -161,6 +162,9 @@ function fileManager(){
 			console.log("error in received data lang,property,mime");
 		}
 		if(typeof(data.file) != "undefined"){
+			if(this.fileContainer != null){
+				this.fileContainer.destruct();
+			}
 			this.fileContainer = new domElement("div");
 			this.fileContainer.parent = this.manager.elm;
 			this.fileContainer.setCssClass("fileManagerItemContainer");
