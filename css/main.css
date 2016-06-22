@@ -606,6 +606,7 @@ html, body{
 	height: 100%;
 	padding: 4px;
 	vertical-align: top;
+	position: relative;
 }
 .fileUploader div{
 	text-align: justify;
@@ -730,4 +731,29 @@ html, body{
 }
 .fileManagerItemPropertyList i:hover{
 	color: var(--closeColor);
+}
+.fileManagerUploadBtn{
+	width: 80%;
+	left: 5%;
+	text-align: center;
+	background: var(--darkBkgr);
+	color: var(--lightText);
+	cursor: pointer;
+	display: block;
+	border: solid 1px var(--darkBkgr);
+	position: absolute;
+	bottom: 5px;
+}
+.fileManagerUploadBtn:hover{
+	background: var(--lighBkgr);
+	color: var(--darkText);
+}
+.fileManagerUploadProgress{
+	width: 100%;
+	left: 0;
+	background: #0c0;
+	display: block;
+	position: absolute;
+	bottom: 6px;
+	height: var(--lineHeight);
 }

@@ -23,6 +23,7 @@ class fileManager extends user
 
 		$fm->group = array();
 		$fm->groupCount = array();
+		$fm->uploadToServer = $this->kwd('uploadToServer');
 
 		$sql->query("
 			SELECT

@@ -86,7 +86,7 @@ function fileManager(){
 			this.fileContainer.elm.style.height = (this.rootElm.offsetHeight - this.groupBtnContainer.elm.offsetHeight - 4) + "px";
 		}
 		if(this.uploadContainer != null){
-			this.uploadContainer.elm.style.height = (this.rootElm.offsetHeight - this.groupBtnContainer.elm.offsetHeight - 4) + "px";
+			this.uploadContainer.elm.style.height = (this.rootElm.offsetHeight - 5) + "px";
 		}
 	};
 
@@ -402,6 +402,18 @@ function fileManager(){
 		this.uploadBtn.caller = this;
 		this.uploadBtn.render();
 		this.uploadBtn.setEvent('onchange', 'fileSelect');
+
+		if(typeof(this.data.fm) != "undefined" && typeof(this.data.fm.group) != "undefined"){
+			var upload = new domElement("span");
+			upload.parent = this.uploadContainer.elm;
+			upload.setAttribute('eventCode', 'upload');
+			upload.setNewText(this.data.fm.uploadToServer);
+			upload.setCssClass("fileManagerUploadBtn");
+			upload.caller = this;
+			upload.render();
+			upload.setEvent('onclick', 'upload');
+		}
+
 		this.resize();
 	};
 
@@ -427,8 +439,6 @@ function fileManager(){
 			bar.setStyle("bottom", "20px");
 			bar.render();
 		}
-		this.resize();
-		//this.upload();
 	};
 
 	this.bytesFormat = function (size) {
@@ -439,10 +449,31 @@ function fileManager(){
 	};
 
 	this.upload = function(){
+		var upload = new domElement("span");
+		upload.parent = this.uploadContainer.elm;
+		upload.setAttribute('eventCode', 'upload');
+		upload.setCssClass("fileManagerUploadProgress");
+		upload.setStyle("width", "0%");
+		upload.elm.setAttribute("id", "totalProgress");
+		upload.caller = this;
+		upload.render();
+		window.__fileManager['progress'] = 0;
+
+		var progress;
 		for(var i = 0; i < this.files.length; i++){
 			var data = new ajax();
 			data.baseURL = "upload.php";
-			data.progressCall = "document.getElementById('bar" + i + "').style.width = progress + '%';";
+			progress = "document.getElementById('bar" + i + "').style.width = progress + '%';";
+			progress += "if(progress >= 100){";
+			progress += "window.__fileManager['progress']++;";
+			progress += "currentProgress = (100 * window.__fileManager['progress'] / " + this.files.length + ");";
+			progress += "if(currentProgress < 100){";
+			progress += "document.getElementById('totalProgress').style.width = currentProgress + '%'";
+			progress += "}else{";
+			progress += "document.getElementById('totalProgress').parentNode.removeChild(document.getElementById('totalProgress'));";
+			progress += "}";
+			progress += "}";
+			data.progressCall = progress;
 			data.setHeaders = false;
 			data.async = true;
 			//data.call_back = "window.__fileManager['instance'][" + this.instanceKey + "].build";
@@ -459,6 +490,9 @@ function fileManager(){
 		switch (call) {
 			case 'fileSelect':
 				this.handleFileSelect();
+				break;
+			case 'upload':
+				this.upload();
 				break;
 			case 'groupSelect':
 				this.groupSelect(obj.getAttribute("group"));
