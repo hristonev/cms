@@ -491,6 +491,7 @@ function cmsView(objName, recordView, recordId){
 		switch (call) {
 			case 'tabSwitch':
 				this.tab(this.code);
+				this.gridResize();
 				break;
 			case 'tabClose':
 				events.stop(e);

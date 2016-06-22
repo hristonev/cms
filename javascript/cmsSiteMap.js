@@ -43,19 +43,19 @@ cmsSiteMap.prototype.render = function(){
 cmsSiteMap.prototype.build = function(dataStr){
 	data = JSON.parse(dataStr);
 
-	var div = new domElement('div');
-	div.setCssClass("attention");
-	div.parent = this.container.elm;
-	div.setNewText(data.workDir);
-	div.render();
+//	var div = new domElement('div');
+//	div.setCssClass("attention");
+//	div.parent = this.container.elm;
+//	div.setNewText(data.workDir);
+//	div.render();
 
-	var a = new domElement('a');
-	a.caller = this;
-	a.setCssClass("siteMapButton");
-	a.parent = this.container.elm;
-	a.setNewText(data.makeDirectories);
-	a.setAttribute('eventCode', 'makeDir');
-	a.render();
+//	var a = new domElement('a');
+//	a.caller = this;
+//	a.setCssClass("siteMapButton");
+//	a.parent = this.container.elm;
+//	a.setNewText(data.makeDirectories);
+//	a.setAttribute('eventCode', 'makeDir');
+//	a.render();
 //	a.setEvent('onclick', 'makeDir');
 
 	//BUILD TREE
