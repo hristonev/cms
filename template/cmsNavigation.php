@@ -3,6 +3,8 @@
 class cmsNavigation extends user
 {
 
+	private $exclude = array('fileManagerProperty', 'sys.siteMap');
+
 	public function __construct(){
 		parent::__construct();
 
@@ -33,20 +35,22 @@ class cmsNavigation extends user
 		if($sql->num_rows() > 0){
 			do{
 				foreach ($sql->row as $value){
-					$group = &$group2;
-					if(strpos($value, 'sys') === 0){
-						$group = &$group4;
-					}
-					if(!property_exists($group,'item')){
-						$group->item = new stdClass();
-					}
-					if(strpos($value, TABLE_ML_SUFFIX)){
-						$code = substr($value, 0, -strlen(TABLE_ML_SUFFIX));
-						$group->item->$code->ml = true;
-					}else{
-						$group->item->$value = new stdClass();
-						$group->item->$value->name = $this->kwd($value);
-						$group->item->$value->ml = false;
+					if(array_search($value, $this->exclude) === false){
+						$group = &$group2;
+						if(strpos($value, 'sys') === 0){
+							$group = &$group4;
+						}
+						if(!property_exists($group,'item')){
+							$group->item = new stdClass();
+						}
+						if(strpos($value, TABLE_ML_SUFFIX)){
+							$code = substr($value, 0, -strlen(TABLE_ML_SUFFIX));
+							$group->item->$code->ml = true;
+						}else{
+							$group->item->$value = new stdClass();
+							$group->item->$value->name = $this->kwd($value);
+							$group->item->$value->ml = false;
+						}
 					}
 				}
 			}while($sql->next());

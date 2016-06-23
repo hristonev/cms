@@ -51,41 +51,6 @@ class base
 		return $value;
 	}
 
-	public function conf($code){
-		$opt = new database();
-		$cnf = new database();
-		$cnf->query("
-			SELECT
-				`configGroup`.`name`
-				, `config`.`value`
-			FROM
-				`config`
-			JOIN `configGroup` ON `configGroup`.`configGroupId` = `config`.`configGroupId`
-			WHERE
-				`config`.`code` = '". $code. "'
-		");
-		$value = $cnf->value;
-		switch ($cnf->name){
-			case 'text':
-				$opt->query("
-					SELECT
-						`kwdML`.`value`
-					FROM
-						`kwdML`
-					WHERE
-						`kwdML`.`kwdId` = ". (int)$value."
-					AND
-						`kwdML`.`langId` = ". $this->langId. "
-				");
-				$value = $opt->value;
-				break;
-		}
-		unset($opt);
-		unset($cnf);
-
-		return $value;
-	}
-
 	public function kwd($code, $addSymbols = true){
 		$cmsPrefix = '#';
 		$kwd = new database();
