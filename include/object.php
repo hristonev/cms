@@ -393,6 +393,7 @@ class object extends base
 				`sys.dependecies`
 			WHERE
 				`sys.dependecies`.`table` = '". $object. "'
+			ORDER BY `sys.dependecies`.`weight` ASC
 		");
 		if($sql->num_rows() > 0){
 			do{
