@@ -757,3 +757,45 @@ html, body{
 	bottom: 6px;
 	height: var(--lineHeight);
 }
+.calendarContainer{
+	background: var(--lightBkgr);
+    position: absolute;
+    z-index: 100;
+	border: solid 1px var(--darkBkgr);
+	display: none;
+}
+.calendarMonth{
+	display: inline-block;
+	text-align: center;
+}
+.calendarYear{
+	display: inline-block;
+	text-align: center;
+}
+.calendarControll{
+	display: inline-block;
+    font-size: 2em;
+    line-height: 0.6em;
+    overflow: hidden;
+    padding: 0;
+    text-align: center;
+    cursor: pointer;
+}
+.calendarControll:hover{
+	color: var(--darkBkgr);
+}
+.calendarDay{
+	display: inline-block;
+	margin: 1px;
+	border: solid 1px var(--darkBkgr);
+	text-align: center;
+	cursor: default;
+}
+.calendarDay:hover{
+	background: var(--darkBkgr);
+	color: var(--lightText);
+}
+.calendarDisable{
+	background: #666;
+	color: #ccc;
+}

@@ -126,7 +126,7 @@ function cmsView(objName, recordView, recordId){
 	};
 
 	this.renderRecordFields = function(container, data, langId){
-		var container, table, tr, td, fld = null, name, langFldId, editor;
+		var container, table, tr, td, fld = null, name, langFldId, editor, datetime;
 
 		table = new domElement("table");
 		table.setCssClass("recordView");
@@ -203,6 +203,14 @@ function cmsView(objName, recordView, recordId){
 						this.caller.workingField = this;
 						this.caller.saveData();
 					});
+					break;
+				case "DATETIME":
+					fld = new domElement("input");
+					fld.name = name;
+					fld.parent = td.elm;
+					fld.caller = this;
+					fld.render();
+					datetime = new calendar(fld, this, 'saveRecord', true);
 					break;
 			}
 			fld.field = data.cell[cellKey].field;
@@ -483,8 +491,10 @@ function cmsView(objName, recordView, recordId){
 		this.saveTimeout = setTimeout("window.__cmsView['instance'][" + this.instanceKey + "].saveRecord();", this.saveTime);
 	};
 
-	this.handleOutsideEvent = function(obj, e){
-		var call = obj.getAttribute("eventCode");
+	this.handleOutsideEvent = function(obj, e, call){
+		if(typeof(call) == "undefined"){
+			var call = obj.getAttribute("eventCode");
+		}
 		if(call != "scroll"){
 			console.log('event ' + call + " " + this.code);
 		}

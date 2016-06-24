@@ -20,6 +20,7 @@ class manager extends user
 			,'cmsSiteMap.js'
 			,'cmsSelectBox.js'
 			,'log.js'
+			,'calendar.js'
 			,'ckeditor/ckeditor.js'
 			,'animate.js'
 			,'custom/fileManager.js'
