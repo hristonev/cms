@@ -268,7 +268,7 @@ function fileManager(){
 	};
 
 	this.onPropertySelect = function(obj){
-		var prop, opt, x;
+		var prop, opt, x, value, z;
 		var file = obj.parent.getAttribute("dom_attr_file");
 		for(var i in this.data.property){
 			if(this.data.property[i].id == obj.getValue()){
@@ -293,7 +293,19 @@ function fileManager(){
 						for(x in this.data.property[i].row){
 							opt = new domElement("option");
 							opt.parent = prop.elm;
-							opt.setNewText(this.data.property[i].row[x].value);
+							if(typeof(this.data.property[i].row[x].level) != "undefined"){
+								value = "";
+								for(z = 1; z < parseInt(this.data.property[i].row[x].level); z++){
+									value += "\u2015\u2015";
+								}
+								if(parseInt(this.data.property[i].row[x].level) > 1){
+									value += "\u00BB ";
+								}
+								value += this.data.property[i].row[x].value;
+							}else{
+								value = this.data.property[i].row[x].value;
+							}
+							opt.setNewText(value);
 							opt.setValue(this.data.property[i].row[x].id);
 							opt.render();
 						}

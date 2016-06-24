@@ -205,6 +205,8 @@ class fileManager extends user
 						SELECT
 							`sys.dynamic`.`siteMapField` as `value`
 							, `sys.dynamic`.`isMultilanguage` as `ml`
+							, `sys.dynamic`.`isTree`
+							, `sys.dynamic`.`recursiveField`
 						FROM
 							`sys.dynamic`
 						WHERE
@@ -212,14 +214,16 @@ class fileManager extends user
 					");
 					$field = $sql1->value;
 					$join = "";
+					$where = "";
 					$tableName = $matches[1];
+					$isTree = ($sql1->isTree == 1) ? true : false;
+					$recursiveField = $sql1->recursiveField;
 
 					if((int)$sql1->ml == 1){
 						$join = "JOIN `". $matches[1]. "ML` ON `". $matches[1]. "ML`.`". $matches[1]. "Id` = `". $matches[1]. "`.`". $matches[1]. "Id`
 								JOIN `lang` ON `lang`.`langId` = `". $matches[1]. "ML`.`langId`
-								WHERE
-									`lang`.`default` = 1
 						";
+						$where = "WHERE `lang`.`default` = 1";
 
 						$sql1->query("
 							SHOW COLUMNS FROM `". $matches[1]. "ML` LIKE '". $field. "'
@@ -228,26 +232,44 @@ class fileManager extends user
 							$tableName = $matches[1]. "ML";
 						}
 					}
-					$sql1->query("
-						SELECT
-							`". $tableName. "`.`". $field. "` as `value`
-							, `". $matches[1]. "`.`". $matches[1]. "Id` as `id`
-						FROM
-							`". $matches[1]. "`
-						". $join. "
-						ORDER BY
-							`". $matches[1]. "`.`". $matches[1]. "Id` ASC
-					");
+
+					$select = "`". $tableName. "`.`". $field. "` as `value`";
+					$select .= ", `". $matches[1]. "`.`". $matches[1]. "Id` as `id`";
+					$from = "`". $matches[1]. "`";
+					$order = "`". $matches[1]. "`.`". $matches[1]. "Id` ASC";
+
 					$obj->object = $sql->property;
 					$obj->value = $this->kwd($matches[1]);
-					if($sql1->num_rows() > 0){
+					if($isTree){
+						$query = new stdClass();
+						$query->select = $select;
+						$query->from = $from;
+						$query->join = $join;
+						$query->where = $where;
+						$query->order = $order;
+						$query->recursive = "`". $matches[1]. "`.`". $recursiveField. "` = ";
 						$obj->row = array();
-						do{
-							$rowElm = & $obj->row[];
-							$rowElm = new stdClass();
-							$rowElm->id = $sql1->id;
-							$rowElm->value = $sql1->value;
-						}while($sql1->next());
+						$this->getRecursiveData($query, $obj->row, 0);
+					}else{
+						$sql1->query("
+							SELECT
+								". $select. "
+							FROM
+								". $from. "
+							". $join. "
+							". $where. "
+							ORDER BY
+								". $order. "
+						");
+						if($sql1->num_rows() > 0){
+							$obj->row = array();
+							do{
+								$rowElm = & $obj->row[];
+								$rowElm = new stdClass();
+								$rowElm->id = $sql1->id;
+								$rowElm->value = $sql1->value;
+							}while($sql1->next());
+						}
 					}
 				}else{
 					$obj->id = $sql->id;
@@ -389,6 +411,38 @@ class fileManager extends user
 
 		unset($sql);
 		unset($sql1);
+	}
+
+	private function getRecursiveData(& $query, & $data, $id, $level = 1){
+		$sql = new database();
+		$where = "";
+		if($query->where != ""){
+			$where .= $query->where;
+			$where .= " AND ". $query->recursive. $id;
+		}else{
+			$where .= " WHERE ". $query->recursive. $id;
+		}
+		$sql->query("
+			SELECT
+				". $query->select. "
+			FROM
+				". $query->from. "
+			". $query->join. "
+			". $where. "
+			ORDER BY
+				". $query->order. "
+		");
+		if($sql->num_rows() > 0){
+			do{
+				$rowElm = & $data[];
+				$rowElm = new stdClass();
+				$rowElm->id = $sql->id;
+				$rowElm->value = $sql->value;
+				$rowElm->level = $level;
+				$this->getRecursiveData($query, $data, $sql->id, $level + 1);
+			}while($sql->next());
+		}
+		unset($sql);
 	}
 
 	public function upload(){
