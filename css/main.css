@@ -639,6 +639,14 @@ html, body{
 	color: var(--darkText);
 	cursor: pointer;
 }
+.fileManagerDeleteItem{
+	color: var(--closeColor);
+	cursor: pointer;
+	float: right;
+}
+.fileManagerDeleteItem:hover{
+	text-decoration: underline;
+}
 .fileManagerItemContainer{
 	overflow-y: scroll;
 }
@@ -655,6 +663,7 @@ html, body{
 	margin: 0 var(--mainSpacing);
 	padding: var(--mainSpacing);
 	border: solid 1px var(--navGroup);
+	clear: both;
 }
 .fileManagerItem div{
 	height: auto;

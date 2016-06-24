@@ -144,6 +144,8 @@ class fileManager extends user
 
 		$group = array();
 
+		$json->deleteItem = $this->kwd('delete');
+
 		if($arg['group'] == self::GROUP_UNDEF){
 			$group[] = 0;
 		}else{

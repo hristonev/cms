@@ -152,7 +152,7 @@ function fileManager(){
 	this.groupRender = function(dataStr){
 		data = JSON.parse(dataStr);
 
-		var i,x,fileContainer,file,name,icon;
+		var i,x,fileContainer,file,name,icon, deleteBtn;
 
 		if(typeof(data.lang) != "undefined" && typeof(data.property) != "undefined" && typeof(data.mime) != "undefined"){
 			if(this.lang == null){
@@ -187,6 +187,12 @@ function fileManager(){
 				name.setCssClass("fileManagerItemName");
 				name.setNewText(data.file[i].originalName + " (" + this.bytesFormat(data.file[i].size) + ") " + data.file[i].hash);
 				name.render();
+
+				deleteBtn = new domElement("div");
+				deleteBtn.parent = name.elm;
+				deleteBtn.setNewText(data.deleteItem);
+				deleteBtn.setCssClass("fileManagerDeleteItem");
+				deleteBtn.render();
 
 				//header name and info
 				file = new domElement("div");
