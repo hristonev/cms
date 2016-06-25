@@ -229,6 +229,7 @@ function cmsView(objName, recordView, recordId){
 
 	this.renderRecord = function(dataStr){
 		data = JSON.parse(dataStr);
+		this.recordData = data;
 
 		container = new domElement("div");
 		container.setCssClass("recordViewContainer");
@@ -247,7 +248,45 @@ function cmsView(objName, recordView, recordId){
 			div.render();
 			this.renderRecordFields(div, data.recordView.header[headerKey], data.recordView.header[headerKey].langId);
 		}
+
+		this.primaryFld.setStyle("width", "50%");
+		var recordDelete = new domElement("div");
+		recordDelete.parent = this.primaryFld.elm.parentNode;
+		recordDelete.caller = this;
+		recordDelete.setCssClass("recordViewDelete");
+		recordDelete.setNewText(data.deleteKwd);
+		recordDelete.setAttribute('eventCode', 'deleteConfirm');
+		recordDelete.render();
+		recordDelete.setEvent('onclick', 'deleteConfirm');
 	};
+
+	this.deleteConfirm = function(){
+		this.dialog = new popUp("recordDeleteConfirm");
+
+		var alert = new domElement("h2");
+		alert.setCssClass("recordViewDeleteAlert");
+		alert.parent = this.dialog.container.elm;
+		alert.setNewText(this.recordData.alertDelete + this.primaryFld.elm.value);
+		alert.render();
+
+		var positive = new domElement("div");
+		positive.parent = this.dialog.container.elm;
+		positive.caller = this;
+		positive.setCssClass("recordViewDeleteConfirmPositive");
+		positive.setNewText(data.positive);
+		positive.setAttribute('eventCode', 'deleteConfirmPositive');
+		positive.render();
+		positive.setEvent('onclick', 'deleteConfirmPositive');
+
+		var negative = new domElement("div");
+		negative.parent = this.dialog.container.elm;
+		negative.caller = this;
+		negative.setCssClass("recordViewDeleteConfirmNegative");
+		negative.setNewText(data.negative);
+		negative.setAttribute('eventCode', 'deleteConfirmNegative');
+		negative.render();
+		negative.setEvent('onclick', 'deleteConfirmNegative');
+	}
 
 	this.saveRecord = function(fld){
 		var dataSend = {};
@@ -409,11 +448,13 @@ function cmsView(objName, recordView, recordId){
 				}
 				cell.setCssClass(cssClass);
 				cell.render();
-				if(cellKey === primaryKey && recordId > 0 && this.data.dataGrid.maxTreeLevel > 0){
+				if(cellKey === primaryKey && recordId > 0){
 					cell.setEvent('onclick', 'Record');
 					cell.writeProtect = true;
-					cell.elm.style.paddingLeft = ((treeLevel - 1) * 20) + "px";
-					cell.elm.style.paddingRight = ((this.data.dataGrid.maxTreeLevel - treeLevel) * 20) + "px";
+					if(this.data.dataGrid.maxTreeLevel > 0){
+						cell.elm.style.paddingLeft = ((treeLevel - 1) * 20) + "px";
+						cell.elm.style.paddingRight = ((this.data.dataGrid.maxTreeLevel - treeLevel) * 20) + "px";
+					}
 				}
 				if(rowKey == 0){//collect first row as array keys for cellCollection
 					cellKeys[cellKey] = this.data.dataGrid.row[rowKey].cell[cellKey].code;
@@ -497,6 +538,40 @@ function cmsView(objName, recordView, recordId){
 		this.saveTimeout = setTimeout("window.__cmsView['instance'][" + this.instanceKey + "].saveRecord();", this.saveTime);
 	};
 
+	this.deleteRecord = function(){
+		var data = new ajax();
+		data.async = true;
+		data.call_back = "window.__cmsView['instance'][" + this.instanceKey + "].deleteRecordBack";
+		data.attributes = null;
+		data.group = "template";
+		data.className = "cmsView";
+		data.methodName = "xDeleteRecord";
+		data.register_argument("object", this.code);
+		data.register_argument("id", this.recordId);
+		data.send();
+	}
+
+	this.deleteFromGrid = function(rowId){
+		var cell, parentNode;
+		for(var i in this.cellCollection[rowId]){
+			cell = new domElement(this.cellCollection[rowId][i]);
+			parentNode = cell.parent;
+			cell.destruct();
+		}
+		parentNode.parentNode.removeChild(parentNode);
+		this.gridResize();
+	}
+
+	this.deleteRecordBack = function(dataStr){
+		var data = JSON.parse(dataStr);
+
+		this.tab(this.code, true);
+		this.dialog.destruct();
+		if(typeof(data.recordId) != "undefined" && parseInt(data.recordId) > 0){
+			this.parent.deleteFromGrid(parseInt(data.recordId));
+		}
+	}
+
 	this.handleOutsideEvent = function(obj, e, call){
 		if(typeof(call) == "undefined"){
 			var call = obj.getAttribute("eventCode");
@@ -529,6 +604,15 @@ function cmsView(objName, recordView, recordId){
 			case 'saveRecord':
 				this.workingField = obj;
 				this.saveData(obj);
+				break;
+			case 'deleteConfirm':
+				this.deleteConfirm();
+				break;
+			case 'deleteConfirmNegative':
+				this.dialog.destruct();
+				break;
+			case 'deleteConfirmPositive':
+				this.deleteRecord();
 				break;
 		}
 	};

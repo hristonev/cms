@@ -62,7 +62,39 @@ class cmsView extends user
 		$object->getRecordData($recordId);
 
 		$json->deleteKwd = $this->kwd("delete");
+		$json->alertDelete = $this->kwd("alertDelete");
+		$json->positive = $this->kwd("yes");
+		$json->negative = $this->kwd("no");
 
+	}
+
+	public function xDeleteRecord($arg, &$json){
+		$table = preg_replace('/_'. $arg['id']. '/', '', $arg['object']);
+		$sql = new database();
+		$execute = array();
+		$sql->query("
+			SELECT
+				`sys.dynamic`.`tableName`
+				, `sys.dynamic`.`isMultiLanguage`
+			FROM
+				`sys.dynamic`
+			WHERE
+				`sys.dynamic`.`tableName` LIKE '". $table. "'
+		");
+		if((int)$sql->isMultiLanguage == 1){
+			$execute[] = $sql->prepare("
+				DELETE FROM `". $table. TABLE_ML_SUFFIX. "` WHERE `". $table. TABLE_ML_SUFFIX. "`.`". $table. "Id` = ". (int)$arg['id']. "
+			");
+		}
+		$execute[] = $sql->prepare("
+			DELETE FROM `". $table. "` WHERE `". $table. "`.`". $table. "Id` = ". (int)$arg['id']. "
+		");
+		foreach ($execute as $key => $value){
+			$value->execute();
+			$value->close();
+		}
+		$json->recordId = (int)$arg['id'];
+		unset($sql);
 	}
 
 	public function xSaveRecord($arg, &$json){

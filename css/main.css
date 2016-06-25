@@ -483,18 +483,6 @@ html, body{
 .openRecord:hover{
 	background-color: var(--navGroup);
 }
-.recordViewDelete{
-	text-align: center;
-	max-width: 10%;
-	margin: 3px 1% var(--lineHeightNegative) auto;
-	background: var(--darkBkgr);
-	color: var(--lightText);
-	cursor: pointer;
-}
-.recordViewDelete:hover{
-	background: var(--closeColor);
-	color: var(--darkText);
-}
 .recordViewContainer{
 	overflow: auto;
 	width: 100%;
@@ -548,8 +536,51 @@ html, body{
 .recordViewDisable{
 	background: var(--disableFormElmBkgr);
 }
-
-
+.recordViewDelete{
+	display: inline-block;
+	padding: 0 var(--lineHeight);
+	text-align: center;
+	background: var(--disableFormElmBkgr);
+	color: var(--darkText);
+	cursor: pointer;
+	margin: 0 var(--lineHeight);
+}
+.recordViewDelete:hover{
+	background: var(--closeColor);
+	color: var(--darkText);
+}
+.recordViewDeleteAlert{
+	font-weight: normal;
+	font-size: 2em;
+	line-height: 2em;
+}
+.recordViewDeleteConfirmNegative{
+	border: solid 1px var(--darkBkgr);
+	display: inline-block;
+	font-size: 2em;
+	line-height: 2em;
+	text-align: center;
+	width: 69%;
+	cursor: pointer;
+}
+.recordViewDeleteConfirmNegative:hover{
+	color: var(--lightText);
+	background: var(--darkBkgr);
+}
+.recordViewDeleteConfirmPositive{
+	border: solid 1px var(--closeColor);
+	background: var(--closeColor);
+	color: var(--lightText);
+	display: inline-block;
+	font-size: 2em;
+	line-height: 2em;
+	text-align: center;
+	width: 30%;
+	cursor: pointer;
+}
+.recordViewDeleteConfirmPositive:hover{
+	border: solid 1px var(--darkBkgr);
+}
 .recordView tr td:first-child{
 	width: 1px;
 	white-space: nowrap;
