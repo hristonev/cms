@@ -1,5 +1,6 @@
 body{
 	--lineHeight: 20px;
+	--lineHeightNegative: -20px;
 	--headHeight: 40px;
 	--darkBkgr: #336699;
 	--popUpBkgr: rgba(0,0,0,0.5);
@@ -482,6 +483,18 @@ html, body{
 .openRecord:hover{
 	background-color: var(--navGroup);
 }
+.recordViewDelete{
+	text-align: center;
+	max-width: 10%;
+	margin: 3px 1% var(--lineHeightNegative) auto;
+	background: var(--darkBkgr);
+	color: var(--lightText);
+	cursor: pointer;
+}
+.recordViewDelete:hover{
+	background: var(--closeColor);
+	color: var(--darkText);
+}
 .recordViewContainer{
 	overflow: auto;
 	width: 100%;
@@ -490,9 +503,6 @@ html, body{
 	height: -moz-calc(100% - var(--lineHeight));
     height: -webkit-calc(100% - var(--lineHeight));
     height: calc(100% - var(--lineHeight));
-	margin: -moz-calc(var(--lineHeight) / 2) 0;
-	margin: -webkit-calc(var(--lineHeight) / 2) 0;
-	margin: calc(var(--lineHeight) / 2) 0;
 }
 .recordViewContainer h3{
 	position: relative;

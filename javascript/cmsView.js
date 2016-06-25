@@ -387,6 +387,11 @@ function cmsView(objName, recordView, recordId){
 					cell.setStyle("left", offset + "px");
 					this.headCell[this.headCell.length] = cell;
 					isLastHeader = true;
+					if(cellKey === primaryKey && this.data.dataGrid.row[rowKey].cell[cellKey].primary && this.data.dataGrid.maxTreeLevel > 0){
+						cell.setStyle("width", parseInt(cellWidth[cellKey]) + ((this.data.dataGrid.maxTreeLevel - 1) * 20) + "px");
+						cell.setStyle("padding", "0");
+						cell.elm.style.textAlign = "center";
+					}
 				}else if(isLastHeader){
 					cell.setStyle("margin-left", offsetFromHeader + "px");
 					isLastHeader = false;
@@ -404,10 +409,11 @@ function cmsView(objName, recordView, recordId){
 				}
 				cell.setCssClass(cssClass);
 				cell.render();
-				if(cellKey === primaryKey && recordId > 0){
+				if(cellKey === primaryKey && recordId > 0 && this.data.dataGrid.maxTreeLevel > 0){
 					cell.setEvent('onclick', 'Record');
 					cell.writeProtect = true;
-//					cell.elm.style.paddingLeft = (treeLevel * 10) + "px";
+					cell.elm.style.paddingLeft = ((treeLevel - 1) * 20) + "px";
+					cell.elm.style.paddingRight = ((this.data.dataGrid.maxTreeLevel - treeLevel) * 20) + "px";
 				}
 				if(rowKey == 0){//collect first row as array keys for cellCollection
 					cellKeys[cellKey] = this.data.dataGrid.row[rowKey].cell[cellKey].code;

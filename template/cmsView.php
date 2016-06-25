@@ -60,6 +60,9 @@ class cmsView extends user
 		$object->setDataCollectObject($json);
 		$object->initObject();
 		$object->getRecordData($recordId);
+
+		$json->deleteKwd = $this->kwd("delete");
+
 	}
 
 	public function xSaveRecord($arg, &$json){

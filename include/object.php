@@ -8,6 +8,7 @@ class object extends base
 	private $languageId;
 	private $recordView;
 	private $customTemplate;
+	private $maxTreeLevel;
 
 	public function __construct($name = null, $languageId = 0){
 		parent::__construct();
@@ -122,7 +123,11 @@ class object extends base
 			}
 		}
 		//get data set
+		if((int)$this->objectCollection->global->isTree == 1){
+			$this->maxTreeLevel = 0;
+		}
 		$this->collectData($this->dataCollection->dataGrid->row);
+		$this->dataCollection->dataGrid->maxTreeLevel = $this->maxTreeLevel;
 		unset($sql);
 	}
 
@@ -302,6 +307,9 @@ class object extends base
 				}
 
 				if((int)$this->objectCollection->global->isTree == 1){
+					if($level > $this->maxTreeLevel){
+						$this->maxTreeLevel = $level;
+					}
 					$this->collectData($collector, $sql->id, ($level + 1));
 				}
 			}while($sql->next());
