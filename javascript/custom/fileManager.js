@@ -22,6 +22,7 @@ function fileManager(){
 	this.generatedProperty = new Array();
 	this.generatedAddIcon = new Array();
 	this.generatorElm = new Array();
+	this.itemCollection = new Array();
 
 	this.render = function(){
 		this.rootElm = this.caller.root.elm;
@@ -152,7 +153,7 @@ function fileManager(){
 	this.groupRender = function(dataStr){
 		data = JSON.parse(dataStr);
 
-		var i,x,fileContainer,file,name,icon, deleteBtn;
+		var i,x,fileContainer,file,name,icon, deleteBtn, table, tr, td;
 
 		if(typeof(data.lang) != "undefined" && typeof(data.property) != "undefined" && typeof(data.mime) != "undefined"){
 			if(this.lang == null){
@@ -181,35 +182,67 @@ function fileManager(){
 			builder.registerResize("window.__fileManager[" + this.instanceKey + "]", "resize");
 
 			for(i in data.file){
+				table = new domElement("table");
+				table.parent = this.fileContainer.elm;
+				table.render();
+
+				this.itemCollection[data.file[i].id] = {};
+				tr = new domElement("tr");
+				tr.parent = table.elm;
+				tr.render();
+				td = new domElement("td");
+				td.parent = tr.elm;
+				td.setCssClass("fileManagerItemName");
+				td.render();
 
 				name = new domElement("div");
-				name.parent = this.fileContainer.elm;
-				name.setCssClass("fileManagerItemName");
+				name.parent = td.elm;
 				name.setNewText(data.file[i].originalName + " (" + this.bytesFormat(data.file[i].size) + ") " + data.file[i].hash);
 				name.render();
 
+				td = new domElement("td");
+				td.parent = tr.elm;
+				td.setCssClass("fileManagerItemName");
+				td.render();
+
 				deleteBtn = new domElement("div");
-				deleteBtn.parent = name.elm;
+				deleteBtn.parent = td.elm;
+				deleteBtn.caller = this;
 				deleteBtn.setNewText(data.deleteItem);
 				deleteBtn.setCssClass("fileManagerDeleteItem");
+				deleteBtn.setAttribute('eventCode', 'deleteRecord');
+				deleteBtn.setAttribute('recordId', data.file[i].id);
 				deleteBtn.render();
+				deleteBtn.setEvent('onclick', 'deleteRecord');
+
+				this.itemCollection[data.file[i].id].name = tr;
+
+				table = new domElement("table");
+				table.parent = this.fileContainer.elm;
+				table.render();
+
+				tr = new domElement("tr");
+				tr.parent = table.elm;
+				tr.render();
 
 				//header name and info
-				file = new domElement("div");
-				file.parent = this.fileContainer.elm;
-				file.setCssClass("fileManagerItem");
-				file.render();
 
+				this.itemCollection[data.file[i].id].file = tr;
+
+				td = new domElement("td");
+				td.parent = tr.elm;
+				td.setStyle("width", "320px");
+				td.render();
 				//icon
 				if(data.file[i].mimeCheck.match(/image/g)){
 					icon = new domElement("IMG");
-					icon.parent = file.elm;
+					icon.parent = td.elm;
 					icon.setCssClass("fileManagerItemIcon");
 					icon.setSrc("?type=image&id=" + data.file[i].id + "&size=300");
 					icon.render();
 				}else{
 					icon = new domElement("div");
-					icon.parent = file.elm;
+					icon.parent = td.elm;
 					icon.setCssClass("fileManagerItemIcon iconFont");
 					if(typeof(data.file[i].icon) != "undefined" && data.file[i].icon != ""){
 						icon.setNewText(String.fromCharCode("0x" + data.file[i].icon));
@@ -219,12 +252,19 @@ function fileManager(){
 					icon.render();
 				}
 
+				td = new domElement("td");
+				td.parent = tr.elm;
+				td.render();
 				//properties
 				//add new property
+				var propertyContainer = new domElement("div");
+				propertyContainer.parent = td.elm;
+				propertyContainer.setCssClass("fileManagerItemPropertyContainer");
+				propertyContainer.render();
 				var opt;
 				var property = new domElement("div");
 				property.setAttribute("file", i);
-				property.parent = file.elm;
+				property.parent = propertyContainer.elm;
 				property.setCssClass("fileManagerItemProperty");
 				property.render();
 
@@ -258,14 +298,9 @@ function fileManager(){
 				//render properties
 				if(typeof(data.file[i].property) != "undefined" && data.file[i].property.length > 0){
 					for(x in data.file[i].property){
-						this.itemPropertyRender(data.file[i].property[x], file.elm);
+						this.itemPropertyRender(data.file[i].property[x], propertyContainer.elm);
 					}
 				}
-				var clear = new domElement("div");
-				clear.setAttribute("file", i);
-				clear.parent = file.elm;
-				clear.setStyle("clear", "both");
-				clear.render();
 			}
 		}else{
 			console.log("error in received data file");
@@ -504,6 +539,23 @@ function fileManager(){
 		this.files = new Array();
 	};
 
+	this.deleteRecord = function(recordId){
+		var data = new ajax();
+		data.async = true;
+		data.call_back = "window.__fileManager[" + this.instanceKey + "].deleteRecordBack";
+		data.group = "template";
+		data.className = "fileManager";
+		data.methodName = "xDeleteRecord";
+		data.register_argument("recordId", recordId);
+		data.send();
+	};
+
+	this.deleteRecordBack = function(dataStr, attr){
+		data = JSON.parse(dataStr);
+		this.itemCollection[data.recordId].file.destruct();
+		this.itemCollection[data.recordId].name.destruct();
+	}
+
 	this.handleOutsideEvent = function(obj, e){
 		var call = obj.getAttribute("eventCode");
 		switch (call) {
@@ -524,6 +576,9 @@ function fileManager(){
 				break;
 			case 'propertyDelete':
 				this.propertyDelete(obj);
+				break;
+			case 'deleteRecord':
+				this.deleteRecord(obj.getAttribute("recordId"));
 				break;
 		}
 	};

@@ -684,33 +684,51 @@ html, body{
 	color: var(--closeColor);
 	cursor: pointer;
 	float: right;
+	margin-left: auto;
+	margin-right: 1%;
 }
 .fileManagerDeleteItem:hover{
 	text-decoration: underline;
 }
 .fileManagerItemContainer{
 	overflow-y: scroll;
+	width: 100%;
+	display: block;
+	overflow-x: hidden;
+}
+.fileManagerItemContainer table{
+	width: 100%;
+}
+.fileManagerItemContainer table tr td{
+	vertical-align: top;
+}
+.fileManagerItemContainer table tr td p{
+	display: inline;
+	width: 100%;
+	overflow: hidden;
 }
 .fileManagerItemName{
-	display: flex;
 	box-sizing: border-box;
 	color: var(--lightText);
 	margin: var(--lineHeight) var(--mainSpacing) 0 var(--mainSpacing);
 	background: var(--navGroup);
 	font-weight: bold;
 	padding: var(--mainSpacing);
+	width: 100%;
 }
 .fileManagerItem{
 	margin: 0 var(--mainSpacing);
 	padding: var(--mainSpacing);
 	border: solid 1px var(--navGroup);
-	clear: both;
+	width: 100%;
 }
 .fileManagerItem div{
 	height: auto;
 }
+.fileManagerItemPropertyContainer{
+
+}
 .fileManagerItemIcon{
-    float: left;
     margin-right: var(--lineHeight);
 }
 .iconFont{
@@ -720,7 +738,7 @@ html, body{
 	line-height: 120%;
 }
 .fileManagerItemProperty{
-	height: line-height: 120%;
+	width: 80%;
 }
 .fileManagerItemProperty input{
 	margin-left: var(--mainSpacing);
@@ -754,10 +772,11 @@ html, body{
 	color: var(--lightBkgr);
 }
 .fileManagerItemPropertyList{
-	overflow: hidden;
-	white-space: nowrap;
 	position: relative;
 	color: var(--darkText);
+}
+.fileManagerItemPropertyList{
+	border-bottom: solid 1px var(--darkBkgr);
 }
 .fileManagerItemPropertyList:hover{
 	color: var(--mLightText);
@@ -768,7 +787,8 @@ html, body{
 }
 .fileManagerItemPropertyList h5{
 	font-size: 100%;
-	display: inline;
+	display: inline-block;
+	margin: 0;
 }
 .fileManagerItemPropertyList i{
 	background: var(--lightBkgr);
@@ -777,7 +797,8 @@ html, body{
     font-size: 120%;
     padding: 2px;
     position: absolute;
-    right: 5px;
+    right: 0;
+    top: 0;
 }
 .fileManagerItemPropertyList i:hover{
 	color: var(--closeColor);

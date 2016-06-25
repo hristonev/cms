@@ -138,6 +138,55 @@ class fileManager extends user
 		unset($sql);
 	}
 
+	public function xDeleteRecord($arg, &$json){
+		$sql = new database();
+		$json->recordId = $arg['recordId'];
+
+		$rmFiles = array();
+		$sql->query("
+			SELECT
+				`fileManager`.`hash`
+				, `fileManager`.`path`
+			FROM
+				`fileManager`
+			WHERE
+				`fileManager`.`fileManagerId` = ". (int)$arg['recordId']. "
+		");
+
+		if(is_file($sql->path. '/'. $sql->hash)){
+			$rmFiles[] = $sql->path. '/'. $sql->hash;
+		}
+		//search for resized images
+		$thumbDirs = glob(IMAGE_DIR. '/*');
+		foreach ($thumbDirs as $key => $path){
+			if(is_file($path. '/'. $sql->hash)){
+				$rmFiles[] = $path. '/'. $sql->hash;
+			}
+		}
+
+		$json->fileRemove = array();
+		foreach ($rmFiles as $key => $file){
+			$obj = & $json->fileRemove[];
+			$obj = new stdClass();
+			$obj->file = $file;
+			$obj->success = unlink($file);
+		}
+		$sql->exec("
+			DELETE FROM
+				`fileManager`
+			WHERE
+				`fileManager`.`fileManagerId` = ". (int)$arg['recordId']. "
+		");
+		$sql->exec("
+			DELETE FROM
+				`fileManagerProperty`
+			WHERE
+				`fileManagerProperty`.`fileManagerId` = ". (int)$arg['recordId']. "
+		");
+
+		unset($sql);
+	}
+
 	public function xGetGroup($arg, &$json){
 		$sql = new database();
 		$sql1 = new database();
