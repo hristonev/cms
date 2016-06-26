@@ -17,6 +17,7 @@ class manager extends user
 			,'cmsNavigation.js'
 			,'cmsView.js'
 			,'cmsViewTab.js'
+			,'DnD.js'
 			,'cmsSiteMap.js'
 			,'cmsSelectBox.js'
 			,'log.js'

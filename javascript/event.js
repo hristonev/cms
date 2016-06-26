@@ -76,11 +76,19 @@ events.getAffectedElement = function(e){
 };
 
 events.stop = function(e){
-	if (e.preventDefault){
-		e.preventDefault();
-		e.stopPropagation();
-	}else{
-		e.returnValue = false;
-		e.cancelBubble = true;
-	}
+	if(e.stopPropagation) e.stopPropagation();
+    if(e.preventDefault) e.preventDefault();
+    e.cancelBubble=true;
+    e.returnValue=false;
+    return false;
 };
+
+events.mouseCoords = function(e){
+    if(e.pageX || e.pageY){
+        return {x:e.pageX, y:e.pageY};
+    }
+    return {
+        x:e.clientX + document.body.scrollLeft - document.body.clientLeft,
+        y:e.clientY + document.body.scrollTop  - document.body.clientTop
+    };
+}

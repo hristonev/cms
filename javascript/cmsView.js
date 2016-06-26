@@ -347,6 +347,12 @@ function cmsView(objName, recordView, recordId){
 		this.table.parent = this.root.elm;
 		this.table.setCssClass('dataGrid');
 		this.table.render();
+		if(this.data.dataGrid.hasWeight){
+			this.dnd = new tableDnD(this.table.elm);
+			if(this.data.dataGrid.maxTreeLevel > 0){
+				this.dnd.tree = true;
+			}
+		}
 
 		this.thead = new domElement('thead');
 		this.thead.parent = this.table.elm;
@@ -358,6 +364,9 @@ function cmsView(objName, recordView, recordId){
 		this.tbody.setAttribute('eventCode', 'scroll');
 		this.tbody.render();
 		this.tbody.setEvent('onscroll', 'scroll');
+		if(this.data.dataGrid.hasWeight){
+			this.dnd.init();
+		}
 
 		this.tfoot = new domElement('tfoot');
 		this.tfoot.parent = this.table.elm;
@@ -389,6 +398,17 @@ function cmsView(objName, recordView, recordId){
 			row = new domElement('tr');
 			row.parent = rowParent;
 			row.render();
+			if(this.data.dataGrid.hasWeight){
+				if(this.dnd.tree){
+					this.dnd.addRow(
+						row.elm
+						, this.data.dataGrid.row[rowKey].current
+						, this.data.dataGrid.row[rowKey].parent
+					);
+				}else{
+					this.dnd.addRow(row.elm, this.data.dataGrid.row[rowKey].current);
+				}
+			}
 
 			if(cellTag == 'th'){
 				this.cellPerRow = this.data.dataGrid.row[rowKey].cell.length;
@@ -468,6 +488,7 @@ function cmsView(objName, recordView, recordId){
 			}
 			this.lastCellInRow[this.lastCellInRow.length] = cell;
 		}
+		console.log(this.dnd);
 		/*
 		 * render fake/empty element for proper grid size
 		 */

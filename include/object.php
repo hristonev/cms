@@ -9,6 +9,7 @@ class object extends base
 	private $recordView;
 	private $customTemplate;
 	private $maxTreeLevel;
+	private $hasWeight;
 
 	public function __construct($name = null, $languageId = 0){
 		parent::__construct();
@@ -60,6 +61,7 @@ class object extends base
 		");
 		$this->customTemplate = $sql->customTemplate;
 		$this->objectCollection->global = $sql->row;
+		$this->hasWeight = ($sql->weightField != "") ? true : false;
 		//get structure for main object
 		$this->getObjectFields($this->name);
 		//get structure for ML object
@@ -97,6 +99,7 @@ class object extends base
 
 		$this->dataCollection->dataGrid = new stdClass();
 		$data = & $this->dataCollection->dataGrid;
+		$data->hasWeight = $this->hasWeight;
 		//get header data
 		$data->row = array();
 		$row = & $data->row[];
