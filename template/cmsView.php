@@ -97,6 +97,100 @@ class cmsView extends user
 		unset($sql);
 	}
 
+	public function xchangeWeight($arg, &$json){
+		$table = $arg['table'];
+		$sourceId = (int)$arg['source'];
+		$targetId = (int)$arg['target'];
+		$sql = new database();
+
+		$sql->query("
+			SELECT
+				`sys.dynamic`.`tableName`
+				, `sys.dynamic`.`weightField`
+				, `sys.dynamic`.`isTree`
+				, `sys.dynamic`.`recursiveField`
+			FROM
+				`sys.dynamic`
+			WHERE
+				`sys.dynamic`.`tableName` LIKE '". $table. "'
+		");
+		if($sql->tableName == $table){
+			$isTree = ((int)$sql->isTree == 1) ? true : false;
+			$recursiveFld = $sql->recursiveField;
+			$weightFld = $sql->weightField;
+
+			if($isTree){
+				$select = ", `". $table. "`.`". $recursiveFld. "` as `parentId`";
+			}else{
+				$select = "";
+			}
+
+			$sql->query("
+				SELECT
+					`". $table. "`.`". $weightFld. "` as `weight`
+					". $select. "
+				FROM
+					`". $table. "`
+				WHERE
+					`". $table. "`.`". $table. "Id` = ". $targetId. "
+			");
+			$target = new stdClass();
+			$target->weight = (int)$sql->weight;
+			$target->parentId = (int)$sql->parentId;
+
+			$sql->query("
+				SELECT
+					`". $table. "`.`". $weightFld. "` as `weight`
+					". $select. "
+				FROM
+					`". $table. "`
+				WHERE
+					`". $table. "`.`". $table. "Id` = ". $sourceId. "
+			");
+			$source = new stdClass();
+			$source->weight = (int)$sql->weight;
+			$source->parentId = (int)$sql->parentId;
+
+			if($target->parentId == $source->parentId){
+				$newWeight = $target->weight;
+				if($target->weight > $source->weight){
+					$upd = "- 1";
+					$cond1 = "<=";
+					$cond2 = ">";
+				}else{
+					$upd = "+ 1";
+					$cond1 = ">=";
+					$cond2 = "<";
+				}
+				$query = "
+					UPDATE
+						`". $table. "`
+					SET
+						`". $table. "`.`". $weightFld. "` = `". $table. "`.`". $weightFld. "` ". $upd. "
+					WHERE
+						`". $table. "`.`". $weightFld. "` ". $cond1. " ". $target->weight. "
+					AND
+						`". $table. "`.`". $weightFld. "` ". $cond2. " ". $source->weight. "
+				";
+				if($isTree){
+					$query .= " AND `". $table. "`.`". $recursiveFld. "` = ". $target->parentId. "";
+				}
+				$sql->exec($query);
+				$query = "
+					UPDATE
+						`". $table. "`
+					SET
+						`". $table. "`.`". $weightFld. "` = ". $newWeight. "
+					WHERE
+						`". $table. "`.`". $table. "Id` = ". $sourceId. "
+				";
+				$sql->exec($query);
+			}
+		}
+
+		unset($sql);
+	}
+
 	public function xSaveRecord($arg, &$json){
 		$sql = new database();
 		$dataStr = preg_replace('/\r\n|\r|\n/', '', $arg['data']);
@@ -148,6 +242,7 @@ class cmsView extends user
 			}else{
 				$action .= "INSERT INTO `". $data['tableName']. "` SET ";
 				$value .= "`". $data['tableName']. "`.`". $data['field']. "` = '". $sql->real_escape_string($data['value']). "' ";
+				$data['recordId'] = $sql->insert_id;
 			}
 		}
 		if($newRecord){
@@ -160,91 +255,44 @@ class cmsView extends user
 		}else{
 			$sql->exec($action. $object. $value. $condition);
 		}
-// 		$json->query = $action. $object. $value. $condition;
-// 		$dataStr = preg_replace('/\r\n|\r|\n/', '', $arg['data']);
-// 		file_put_contents("/usr/local/www/htse/www/json", $dataStr);
-// 		$data = json_decode($dataStr, true);
-// 		$this->checkJSON();
 
-// 		$table = $data['object'];
-// 		$tableML = $table. TABLE_ML_SUFFIX;
-// 		$idFld = $table. "Id";
-// 		$mlIdFld = $tableML. "Id";
-// 		$langIdFld = "langId";
+		//update weight if parent is changed
+		$sql->query("
+			SELECT
+				`sys.dynamic`.`tableName`
+				, `sys.dynamic`.`weightField`
+				, `sys.dynamic`.`isTree`
+				, `sys.dynamic`.`recursiveField`
+			FROM
+				`sys.dynamic`
+			WHERE
+				`sys.dynamic`.`tableName` LIKE '". $data['tableName']. "'
+		");
+		if((int)$sql->isTree == 1 && $data['field'] == $sql->recursiveField && $sql->weightField != ""){
+			$weightFld = $sql->weightField;
+			$recursiveFld = $sql->recursiveField;
+			$sql->query("
+				SELECT
+					`". $data['tableName']. "`.`". $weightFld. "` as `weight`
+				FROM
+					`". $data['tableName']. "`
+				WHERE
+					`". $data['tableName']. "`.`". $recursiveFld. "` = ". (int)$data['value']. "
+				ORDER BY
+					`". $data['tableName']. "`.`". $weightFld. "` DESC
+				LIMIT 1
+			");
 
-// 		//non ml table
-// 		$query = "";
-// 		$insert = false;
-// 		$execute = false;
-// 		$langId = 0;
-// 		if((int)$data[0][$idFld] > 0){
-// 			$query .= "UPDATE ". $table;
-// 		}else{
-// 			$query .= "INSERT INTO ". $table;
-// 			$insert = true;
-// 		}
-// 		$query .= " SET ";
-// 		$delimiter = "";
-// 		foreach ($data[0] as $key => $value){
-// 			if($key != $idFld && strlen($value) > 0){
-// 				$query .= $delimiter. "`". $key. "` = '". $sql->real_escape_string($value). "'";
-// 				$delimiter = ", ";
-// 				$execute = true;
-// 			}
-// 		}
-// 		if(!$insert){
-// 			$query .= " WHERE `". $idFld. "` = ". (int)$data[0][$idFld];
-// 		}
-// 		if($execute){
-// 			$sql->exec($query);
-// 			$json->$langId = new stdClass();
-// 			$json->$langId->$idFld = $sql->insert_id;
-// 		}
+			$sql->exec("
+				UPDATE
+					`". $data['tableName']. "`
+				SET
+					`". $data['tableName']. "`.`". $weightFld. "` = ". ((int)$sql->weight + 1). "
+				WHERE
+					`". $data['tableName']. "`.`". $data['tableName']. "Id` = ". $data['recordId']. "
+			");
+		}
 
-// 		//ml table
-// 		if(count($data) > 1){
-// 			foreach ($data as $langId => $dataSet){
-// 				$query = "";
-// 				$insert = false;
-// 				$execute = false;
-// 				if((int)$langId > 0){
-// 					if((int)$data[$langId][$mlIdFld] > 0){
-// 						$query .= "UPDATE ". $tableML;
-// 					}else{
-// 						$query .= "INSERT INTO ". $tableML;
-// 						$insert = true;
-// 					}
-// 					$query .= " SET ";
-// 					$query .= $idFld . " = ". (int)$data[0][$idFld];
-// 					$query .= ", ". $langIdFld . " = ". (int)$langId;
-// 					$delimiter = ", ";
-// 					foreach ($data[$langId] as $key => $value){
-// 						if($key != $idFld && $key != $langIdFld && $key != $mlIdFld && strlen($value) > 0){
-// 							$query .= $delimiter. "`". $key. "` = '". $sql->real_escape_string($value). "'";
-// 							$execute = true;
-// 						}
-// 					}
-// 					if(!$insert){
-// 						$query .= " WHERE `". $mlIdFld. "` = ". (int)$data[$langId][$mlIdFld];
-// 					}
-// 				}
-// 				if($execute){
-// 					$sql->exec($query);
-// 					$json->$langId = new stdClass();
-// 					$json->$langId->$mlIdFld = $sql->insert_id;
-// 				}
-// 			}
-// 		}
-// 		dump($data);
-// 		dump(json_decode($arg['data'], false, 512, JSON_BIGINT_AS_STRING));
-// 		$query = "INSERT INTO `". $arg['object']. "` SET ";
-// 		$delimiter = "";
-// 		foreach ($data as $key => $value){
-// 			$query .= $delimiter. "`". $key. "` = '". $value. "' ";
-// 			$delimiter = ",";
-// 		}
-// 		dump($query);
-// 		$sql->exec($query);
 		unset($sql);
 	}
 

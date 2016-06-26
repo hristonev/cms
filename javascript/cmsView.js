@@ -352,6 +352,7 @@ function cmsView(objName, recordView, recordId){
 			if(this.data.dataGrid.maxTreeLevel > 0){
 				this.dnd.tree = true;
 			}
+			this.dnd.caller = this;
 		}
 
 		this.thead = new domElement('thead');
@@ -488,7 +489,6 @@ function cmsView(objName, recordView, recordId){
 			}
 			this.lastCellInRow[this.lastCellInRow.length] = cell;
 		}
-		console.log(this.dnd);
 		/*
 		 * render fake/empty element for proper grid size
 		 */
@@ -570,7 +570,7 @@ function cmsView(objName, recordView, recordId){
 		data.register_argument("object", this.code);
 		data.register_argument("id", this.recordId);
 		data.send();
-	}
+	};
 
 	this.deleteFromGrid = function(rowId){
 		var cell, parentNode;
@@ -581,7 +581,7 @@ function cmsView(objName, recordView, recordId){
 		}
 		parentNode.parentNode.removeChild(parentNode);
 		this.gridResize();
-	}
+	};
 
 	this.deleteRecordBack = function(dataStr){
 		var data = JSON.parse(dataStr);
@@ -591,7 +591,21 @@ function cmsView(objName, recordView, recordId){
 		if(typeof(data.recordId) != "undefined" && parseInt(data.recordId) > 0){
 			this.parent.deleteFromGrid(parseInt(data.recordId));
 		}
-	}
+	};
+
+	this.changeWeight = function(obj){
+		var data = new ajax();
+		data.async = true;
+		data.call_back = "";
+		data.attributes = null;
+		data.group = "template";
+		data.className = "cmsView";
+		data.methodName = "xchangeWeight";
+		data.register_argument("table", this.code);
+		data.register_argument("source", obj.source);
+		data.register_argument("target", obj.target);
+		data.send();
+	};
 
 	this.handleOutsideEvent = function(obj, e, call){
 		if(typeof(call) == "undefined"){
@@ -634,6 +648,9 @@ function cmsView(objName, recordView, recordId){
 				break;
 			case 'deleteConfirmPositive':
 				this.deleteRecord();
+				break;
+			case 'DnD':
+				this.changeWeight(obj);
 				break;
 		}
 	};

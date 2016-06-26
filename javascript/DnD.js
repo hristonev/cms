@@ -7,6 +7,8 @@ if(typeof(window.__dnd) == "undefined"){
 function tableDnD(table){
 	/**
 	 * Create table rows drag and drop handler
+	 * @param caller {Object} caller class.
+	 * @param call {String} call caller class method with this param
 	 * @param table {DomNode} table node
 	 * @param tree {Bool} table is tree
 	 * @param tbody {DomNode} table body if not set corresponds to tbody node
@@ -17,22 +19,9 @@ function tableDnD(table){
 	 * @param dragItem item in drag condition
 	 *
 	 * @method init
-	 *
-	 * @param instanceKey {Number}
-	 * @param tableName {String}
-	 * @param code {String}
-	 * @param name {String}
-	 * @param container {DomNode} root node
-	 * @param root {Object} root element for [view] returned by [tab]
-	 * @param recordView {Bool}
-	 * @param recordId {int}
-	 * @param saveTimeout {timeout ID}
-	 * @param saveTime {int} 1s default less server processor
-	 * @param fieldColl {Array} collection with all data fields
-	 * @param data {JSON Object}
-	 * @param workingField {Object} dom object element
-	 * @fires {Method} gridResize
 	 */
+	this.caller = null;
+	this.call = "DnD";
 	this.table = table;
 	this.tree = false;
 	this.tbody = null;
@@ -192,7 +181,7 @@ function tableDnD(table){
 				this.moveChildNodes(this.rowId[this.dragItemKey], this.row[this.dragItemKey].nextSibling);
 			}
 		}
-		console.log(collection);
+		this.caller.handleOutsideEvent(collection, null, this.call);
 	};
 
 	this.moveChildNodes = function(id, parent){
