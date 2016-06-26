@@ -76,11 +76,47 @@ class cmsView extends user
 			SELECT
 				`sys.dynamic`.`tableName`
 				, `sys.dynamic`.`isMultiLanguage`
+				, `sys.dynamic`.`weightField`
+				, `sys.dynamic`.`isTree`
+				, `sys.dynamic`.`recursiveField`
 			FROM
 				`sys.dynamic`
 			WHERE
 				`sys.dynamic`.`tableName` LIKE '". $table. "'
 		");
+		$weightFld = $sql->weightField;
+		$recursiveFld = $sql->recursiveField;
+		$isTree = (int)$sql->isTree;
+
+		if($weightFld != ""){
+			$parent = "";
+			if($isTree == 1){
+				$parent .= ", `". $table. "`.`". $recursiveFld. "` as `parent`";
+			}
+			$sql->query("
+				SELECT
+					`". $table. "`.`". $weightFld. "` as `weight`
+					". $parent. "
+				FROM
+					`". $table. "`
+				WHERE
+					`". $table. "`.`". $table. "Id` = ". (int)$arg['id']. "
+			");
+			$weight = $sql->weight;
+			if($isTree == 1){
+				$parent = " AND `". $table. "`.`". $recursiveFld. "` = ". $sql->parent;
+			}
+			$sql->exec("
+				UPDATE
+					`". $table. "`
+				SET
+					`". $table. "`.`". $weightFld. "` = `". $table. "`.`". $weightFld. "` - 1
+				WHERE
+					`". $table. "`.`". $weightFld. "` > ". $weight. "
+				". $parent. "
+			");
+		}
+
 		if((int)$sql->isMultiLanguage == 1){
 			$execute[] = $sql->prepare("
 				DELETE FROM `". $table. TABLE_ML_SUFFIX. "` WHERE `". $table. TABLE_ML_SUFFIX. "`.`". $table. "Id` = ". (int)$arg['id']. "
@@ -94,6 +130,7 @@ class cmsView extends user
 			$value->close();
 		}
 		$json->recordId = (int)$arg['id'];
+
 		unset($sql);
 	}
 
@@ -235,6 +272,7 @@ class cmsView extends user
 				$newMLRecord = true;
 				$sql->exec("INSERT INTO `". $data['tableName']. "` () VALUES()");
 				$json->recordId = $sql->insert_id;
+				$data['recordId'] = $sql->insert_id;
 				$action .= "INSERT INTO `". $data['tableName']. TABLE_ML_SUFFIX. "` SET ";
 				$value .= "`". $data['tableName']. TABLE_ML_SUFFIX. "`.`". $data['tableName']. "Id` = ". (int)$sql->insert_id. ", ";
 				$value .= "`". $data['tableName']. TABLE_ML_SUFFIX. "`.`langId` = ". (int)$data['langId']. ", ";
@@ -242,7 +280,6 @@ class cmsView extends user
 			}else{
 				$action .= "INSERT INTO `". $data['tableName']. "` SET ";
 				$value .= "`". $data['tableName']. "`.`". $data['field']. "` = '". $sql->real_escape_string($data['value']). "' ";
-				$data['recordId'] = $sql->insert_id;
 			}
 		}
 		if($newRecord){
@@ -255,7 +292,9 @@ class cmsView extends user
 		}else{
 			$sql->exec($action. $object. $value. $condition);
 		}
-
+		if((int)$data['recordId'] <= 0){
+			$data['recordId'] = $sql->insert_id;
+		}
 		//update weight if parent is changed
 		$sql->query("
 			SELECT
@@ -291,6 +330,35 @@ class cmsView extends user
 				WHERE
 					`". $data['tableName']. "`.`". $data['tableName']. "Id` = ". $data['recordId']. "
 			");
+		}elseif($sql->weightField != ""){
+			$weightFld = $sql->weightField;
+			$sql->query("
+				SELECT
+					`". $data['tableName']. "`.`". $weightFld. "` as `weight`
+				FROM
+					`". $data['tableName']. "`
+				WHERE
+					`". $data['tableName']. "`.`". $data['tableName']. "Id` = ". $data['recordId']. "
+			");
+			if((int)$sql->weight <= 0){
+				$sql->query("
+					SELECT
+						`". $data['tableName']. "`.`". $weightFld. "` as `weight`
+					FROM
+						`". $data['tableName']. "`
+					ORDER BY
+						`". $data['tableName']. "`.`". $weightFld. "` DESC
+					LIMIT 1
+				");
+				$sql->exec("
+				UPDATE
+					`". $data['tableName']. "`
+				SET
+					`". $data['tableName']. "`.`". $weightFld. "` = ". ((int)$sql->weight + 1). "
+				WHERE
+					`". $data['tableName']. "`.`". $data['tableName']. "Id` = ". $data['recordId']. "
+			");
+			}
 		}
 
 		unset($sql);

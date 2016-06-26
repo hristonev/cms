@@ -180,8 +180,10 @@ function tableDnD(table){
 				}
 				this.moveChildNodes(this.rowId[this.dragItemKey], this.row[this.dragItemKey].nextSibling);
 			}
+			this.dragItemKey = null;
+			this.replaceItem = null;
+			this.caller.handleOutsideEvent(collection, null, this.call);
 		}
-		this.caller.handleOutsideEvent(collection, null, this.call);
 	};
 
 	this.moveChildNodes = function(id, parent){
