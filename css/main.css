@@ -20,6 +20,8 @@ body{
 	--tableRowEven: rgba(0,0,0,0.1);
 	--tableRowOdd: rgba(255,255,255,0.3);
 	--disableFormElmBkgr: #fcc;
+	--errorColor: #f00;
+	--infoColor: #006105;
 }
 
 @-webkit-keyframes spinnerRotate
@@ -869,4 +871,83 @@ html, body{
 .calendarDisable{
 	background: #666;
 	color: #ccc;
+}
+.userSettings{
+	padding: 1em;
+}
+.userSettings h2{
+	margin-top: 0;
+}
+.userSettings a{
+	padding-left: 1em;
+	cursor: pointer;
+	display: block;
+	font-size: 1em;
+	font-weight: bold;
+	background: var(--darkBkgr);
+	color: var(--lightText);
+	margin-top: 2px;
+}
+.userSettingsContainer{
+	border: solid 1px var(--darkBkgr);
+	padding: 1em;
+	box-sizing: border-box;
+	display: table;
+	padding: 1em;
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: separate;
+	border-spacing: 1px;
+    
+}
+.userSettingsSaveButton{
+	background: var(--darkBkgr) !important;
+	color: var(--lightText);
+	width: 50%;
+	margin: 0.5em 0 0 50%;
+	padding: 0;
+	box-sizing: border-box;
+	text-align: center;
+
+}
+.userSettings a:hover{
+	text-decoration: underline;
+}
+.userSettingsRow{
+	display: table-row;
+}
+.userSettingsRow:nth-child(even){
+	background: var(--tableRowEven);
+}
+.userSettingsRow:nth-child(odd){
+	background: var(--tableRowOdd);
+}
+.userSettingsRow:hover{
+	/*background: none;*/
+}
+.userSettings span{
+	padding-right: 1em;
+	display: table-cell;
+}
+.userSettingsRow input{
+	background: none;
+	border: solid 1px var(--darkBkgr);
+	display: table-cell;
+	width: 99.6%;
+}
+.userSettingsError{
+	color: var(--errorColor);
+}
+.userSettingsInfo{
+	color: var(--infoColor);
+}
+.radioOff{
+	color: var(--closeColor);
+}
+.radioOn{
+	color: var(--darkBkgr);
+}
+.radioOn, .radioOff{
+	cursor: pointer;
+	font-size: 2em;
 }

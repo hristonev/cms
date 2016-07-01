@@ -20,11 +20,13 @@ class manager extends user
 			,'DnD.js'
 			,'cmsSiteMap.js'
 			,'cmsSelectBox.js'
+			,'radio.js'
 			,'log.js'
 			,'calendar.js'
 			,'ckeditor/ckeditor.js'
 			,'animate.js'
 			,'custom/fileManager.js'
+			,'custom/userSettings.js'
 			,'main.css');
 
 	public function __construct(){

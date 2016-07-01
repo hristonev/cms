@@ -38,6 +38,94 @@ class user extends base{
 		return $valid;
 	}
 
+	protected function checkValidPassword($password){
+		$sql = new database();
+		$sql->query("
+			SELECT
+				`user`.`cmsAccess`
+			FROM
+				`user`
+			WHERE
+				`user`.`userId` = ". (int)$_SESSION['userLog']['id']. "
+			AND
+				`user`.`password` = '". hash('sha512', $password). "'
+		");
+
+		return ((int)$sql->cmsAccess == 1) ? true : false;
+	}
+
+	protected function changePassword($password, $newPassword){
+		$sql = new database();
+		$sql->exec("
+			UPDATE
+				`user`
+			SET
+				`user`.`password` = '". hash('sha512', $newPassword). "'
+			WHERE
+				`user`.`userId` = ". (int)$_SESSION['userLog']['id']. "
+			AND
+				`user`.`password` = '". hash('sha512', $password). "'
+		");
+		return ((int)$sql->affected_rows > 0) ? true : false;
+	}
+
+	protected function checkAvailableUsername($username){
+		$sql = new database();
+		$sql->query("
+			SELECT
+				`user`.`userId`
+			FROM
+				`user`
+			WHERE
+				`user`.`username` = '". $username. "'
+		");
+		return ((int)$sql->userId > 0) ? false : true;
+	}
+
+	protected function changeUserName($password, $newUser){
+		$sql = new database();
+		$sql->exec("
+			UPDATE
+				`user`
+			SET
+				`user`.`username` = '". $newUser. "'
+			WHERE
+				`user`.`userId` = ". (int)$_SESSION['userLog']['id']. "
+			AND
+				`user`.`password` = '". hash('sha512', $password). "'
+		");
+		return ((int)$sql->affected_rows > 0) ? true : false;
+	}
+
+	protected function addUser($username, $password, $cmsAccess){
+		$sql = new database();
+		$sql->exec("
+			INSERT INTO
+				`user`
+			SET
+				`user`.`username` = '". $username. "'
+				, `user`.`password` = '". hash('sha512', $password). "'
+				, `user`.`cmsAccess` = ". (int)$cmsAccess. "
+		");
+		return ((int)$sql->affected_rows > 0) ? true : false;
+	}
+
+	protected function getUserName(){
+		$sql = new database();
+		$sql->query("
+			SELECT
+				`user`.`username`
+			FROM
+				`user`
+			WHERE
+				`user`.`userId` = ". (int)$_SESSION['userLog']['id']. "
+		");
+		$username = $sql->username;
+		unset($sql);
+		return $username;
+
+	}
+
 	protected function render(){
 		$code = '';
 
