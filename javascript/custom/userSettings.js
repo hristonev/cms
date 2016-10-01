@@ -46,8 +46,8 @@ function userSettings(){
 				self.sc.elm.style.display = "none";
 			}
 		};
-		var formKey = this.forms.length;
-		this.forms[formKey] = new Array(
+		var formKeyEdit = this.forms.length;
+		this.forms[formKeyEdit] = new Array(
 			"currentPassword"
 			, "newPassword"
 			, "newPasswordRepeat"
@@ -58,10 +58,10 @@ function userSettings(){
 		this.sc.setStyle("display", "none");
 		this.sc.setCssClass("userSettingsContainer");
 		this.sc.render();
-		this.renderSettingsRow(this.forms[formKey][0], "password", this.sc.elm);
-		this.renderSettingsRow(this.forms[formKey][1], "password", this.sc.elm);
-		this.renderSettingsRow(this.forms[formKey][2], "password", this.sc.elm);
-		this.renderSettingsRow(this.forms[formKey][3], "text", this.sc.elm);
+		this.renderSettingsRow(this.forms[formKeyEdit][0], "password", this.sc.elm);
+		this.renderSettingsRow(this.forms[formKeyEdit][1], "password", this.sc.elm);
+		this.renderSettingsRow(this.forms[formKeyEdit][2], "password", this.sc.elm);
+		this.renderSettingsRow(this.forms[formKeyEdit][3], "text", this.sc.elm);
 		this.scInfo = new domElement('span');
 		this.scInfo.parent = this.sc.elm;
 		this.scInfo.render();
@@ -75,8 +75,11 @@ function userSettings(){
 			var formData = {};
 			var formElements = self.sc.elm.getElementsByTagName("input");
 			for(var x = 0; x < formElements.length; x++){
-				for(var i = 0; i < self.forms[formKey].length; i++){
-					if(formElements[x].name == self.forms[formKey][i]){
+				console.log(formElements[x].name);
+				console.log('<------------->');
+				for(var i = 0; i < self.forms[formKeyEdit].length; i++){
+					console.log(self.forms[formKeyEdit][i]);
+					if(formElements[x].name == self.forms[formKeyEdit][i]){
 						formData[formElements[x].name] = formElements[x].value;
 					}
 				}
@@ -104,8 +107,8 @@ function userSettings(){
 				self.auc.elm.style.display = "none";
 			}
 		};
-		var formKey = this.forms.length;
-		this.forms[formKey] = new Array(
+		var formKeyAdd = this.forms.length;
+		this.forms[formKeyAdd] = new Array(
 			"username"
 			, "password"
 			, "cmsAccess"
@@ -115,9 +118,9 @@ function userSettings(){
 		this.auc.setStyle("display", "none");
 		this.auc.setCssClass("userSettingsContainer");
 		this.auc.render();
-		this.renderSettingsRow(this.forms[formKey][0], "text", this.auc.elm);
-		this.renderSettingsRow(this.forms[formKey][1], "text", this.auc.elm);
-		this.renderSettingsRow(this.forms[formKey][2], "radio", this.auc.elm);
+		this.renderSettingsRow(this.forms[formKeyAdd][0], "text", this.auc.elm);
+		this.renderSettingsRow(this.forms[formKeyAdd][1], "text", this.auc.elm);
+		this.renderSettingsRow(this.forms[formKeyAdd][2], "radio", this.auc.elm);
 		this.aucInfo = new domElement('span');
 		this.aucInfo.parent = this.auc.elm;
 		this.aucInfo.render();
@@ -131,8 +134,8 @@ function userSettings(){
 			var formData = {};
 			var formElements = self.auc.elm.getElementsByTagName("input");
 			for(var x = 0; x < formElements.length; x++){
-				for(var i = 0; i < self.forms[formKey].length; i++){
-					if(formElements[x].name == self.forms[formKey][i]){
+				for(var i = 0; i < self.forms[formKeyAdd].length; i++){
+					if(formElements[x].name == self.forms[formKeyAdd][i]){
 						if(formElements[x].type != "radio" || formElements[x].checked == true){
 							formData[formElements[x].name] = formElements[x].value;
 						}

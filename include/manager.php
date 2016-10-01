@@ -69,7 +69,7 @@ class manager extends user
 		$code .= '<head>';
 		$code .= '<meta charset="utf-8">';
 		$code .= '<title>'. $this->kwd('cmsTitle'). '</title>';
-		$code .= '<link rel="stylesheet" type="text/css" media="screen" href="../css/font-awesome.min.css" />';
+		$code .= '<link rel="stylesheet" type="text/css" media="screen" href="css/font-awesome.min.css" />';
 		$code .= '<script src="javascript/jquery.js" type="text/javascript"></script>';
 		$code .= '<script type="text/javascript">window.__base = new Array();</script>';
 		foreach ($this->headAddionional as $value){
