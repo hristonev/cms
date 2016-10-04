@@ -28,6 +28,7 @@ class manager extends user
 			,'custom/fileManager.js'
 			,'custom/userSettings.js'
 			,'main.css');
+	private $addOns = array();
 
 	public function __construct(){
 		parent::__construct();
@@ -42,6 +43,27 @@ class manager extends user
 			$code .= $this->xmlhttp();
 		}else if($this->isValid()){
 			$this->headAddionional = $this->framework;
+			$dir = opendir('addOns');
+			while (false !== ($addOnName = readdir($dir))) {
+				if($addOnName != '.' && $addOnName != '..'){
+					if(is_dir('addOns/'. $addOnName. '/js')){
+						$addOnDir = opendir('addOns/'. $addOnName. '/js');
+						while (false !== ($fileName = readdir($addOnDir))) {
+							if(preg_match('/\w+\.js$/', $fileName)){
+								$this->addOns[] = 'addOns/'. $addOnName. '/js/'. $fileName;
+							}
+						}
+					}
+					if(is_dir('addOns/'. $addOnName. '/css')){
+						$addOnDir = opendir('addOns/'. $addOnName. '/css');
+						while (false !== ($fileName = readdir($addOnDir))) {
+							if(preg_match('/\w+\.css$/', $fileName)){
+								$this->addOns[] = 'addOns/'. $addOnName. '/css/'. $fileName;
+							}
+						}
+					}
+				}
+			}
 
 			$code .= $this->html('
 			<script type="text/javascript">
@@ -78,6 +100,14 @@ class manager extends user
 			}
 			if(strpos($value, 'css')){
 				$code .= '<link rel="stylesheet" type="text/css" media="screen" href="css/'. $value. '" />';
+			}
+		}
+		foreach ($this->addOns as $value){
+			if(strpos($value, 'js')){
+				$code .= '<script src="'. $value. '" type="text/javascript"></script>';
+			}
+			if(strpos($value, 'css')){
+				$code .= '<link rel="stylesheet" type="text/css" media="screen" href="'. $value. '" />';
 			}
 		}
 		$code .= '</head>';
@@ -122,7 +152,14 @@ class manager extends user
 					default:
 						if(isset($_POST["className"]) && isset($_POST["className"]) && !empty($_POST["className"]) && !empty($_POST["methodName"])){
 							$json = new stdClass();
-							include_once $_POST["group"]. "/". $_POST["className"]. ".php";
+							switch ($_POST["group"]){
+								case 'addOn':
+									include_once "addOns/". $_POST["addOn"]. "/php/". $_POST["className"]. ".php";
+									break;
+								default:
+									include_once $_POST["group"]. "/". $_POST["className"]. ".php";
+							}
+
 							$method = $_POST["methodName"];
 							$class = $_POST["className"];
 							$instance = new $class();

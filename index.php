@@ -2,13 +2,13 @@
 if(session_status() !== PHP_SESSION_ACTIVE){
 	session_start();
 }
-date_default_timezone_set("Etc/GMT+2");
+date_default_timezone_set("Europe/Sofia");
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
 chdir(__DIR__);
 
-include '../../htse.conf.php';
+include '../petarPetrov.conf.php';
 include 'include/base.php';
 include 'include/database.php';
 include 'include/xml.php';

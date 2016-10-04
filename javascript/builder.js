@@ -32,6 +32,7 @@ var builder = function(){
 		"ckeditor/ckeditor"
 		, "animate"
 	);
+	this.loadNonEssentialModule = new Array(); //no need to load from here. loaded from php side.
 	this.loaded = 1;
 	this.head = null;
 	this.navigation = null;

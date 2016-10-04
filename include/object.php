@@ -30,9 +30,25 @@ class object extends base
 	}
 
 	public function getTemplate(){
-		$class = $this->customTemplate;
-		if(file_exists("template/". $class. ".php")){
-			include_once "template/". $class. ".php";
+		$sql = new database();
+		$sql->query("
+				SELECT
+					`sys.dynamic`.*
+				FROM
+					`sys.dynamic`
+				WHERE
+					`sys.dynamic`.`tableName` = '". $this->name. "'
+		");
+		$class = $sql->customTemplate;
+		switch ($sql->customTemplateType){
+			case 'addOn':
+				$path = 'addOns/'. $class. '/php/';
+				break;
+			default:
+				$path = 'template/';
+		}
+		if(file_exists($path. $class. ".php")){
+			include_once $path. $class. ".php";
 		}
 		if(class_exists($class)){
 			$template = new $class();

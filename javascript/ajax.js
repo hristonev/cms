@@ -4,6 +4,7 @@ var ajax = function(){
 	this.async = true;
 	this.call_back = '';
 	this.group = '';
+	this.addOn = null;
 	this.className = '';
 	this.methodName = '';
 	this.argument = '';
@@ -25,15 +26,18 @@ var ajax = function(){
 		this.argument += '&argument[' + name + ']=' + value;
 	};
 
-	this.get_url = function(){
-		var url = "?ajax=1";
-		url += "&group=" + this.group;
-		url += "&className=" + this.className;
-		url += "&methodName=" + this.methodName;
-		url += this.argument;
-
-		return url;
-	};
+//	this.get_url = function(){
+//		var url = "?ajax=1";
+//		url += "&group=" + this.group;
+//		if(this.addOn != null){
+//			url += "&addOn=" + this.addOn;
+//		}
+//		url += "&className=" + this.className;
+//		url += "&methodName=" + this.methodName;
+//		url += this.argument;
+//
+//		return url;
+//	};
 
 	this.send = function(data){
 		var loading = document.getElementById("ajaxLoading");
@@ -67,6 +71,9 @@ var ajax = function(){
 		}
 
 		var url = this.baseURL;
+		if(this.addOn != null){
+			this.argument += "&addOn=" + this.addOn;
+		}
 		this.argument += "&group=" + this.group + "&className=" + this.className + "&methodName=" + this.methodName;
 		var call_back = this.call_back;
 		var progressCall = this.progressCall;
