@@ -21,7 +21,7 @@ A Symfony project created on August 10, 2017, 4:26 pm.
 # Setup
 
 ## Git setup
-> git clone https://hristonev@gitlab.com/hristonev/miss-benny.git
+> git clone https://gitlab.com/hristonev/miss-benny.git
 
 ## Composer setup
 Installs backend bundles and libraries.
