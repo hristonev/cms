@@ -1,0 +1,24 @@
+{
+  "name": "organizer",
+  "authors": [
+    "Dimitar Hristonev <hristonev@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "vendor/bower_components ",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~4.0.0",
+    "font-awesome": "^4.7.0",
+    "bootstrap-social": "^5.1.1",
+    "underscore": "~1.8.3"
+  }
+}
