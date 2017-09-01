@@ -102,7 +102,6 @@ gulp.task('scripts', function () {
 
     pipeline.add([
         config.bowerDir + '/jquery/dist/jquery.js',
-        config.bowerDir + '/tether/dist/js/tether.js',
         config.bowerDir + '/bootstrap/dist/js/bootstrap.js',
         config.assetsDir + '/js/main.js'
     ], 'site.js');
