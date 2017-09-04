@@ -1,0 +1,47 @@
+logo.alt: 'Miss Benny'
+logout.btn: Logout
+login.btn: Login
+signIn.btn: 'Sign In'
+user_edit.btn: Account
+sonata_admin.btn: Admin
+apply_for_job: 'Become a Pro'
+application.list_heading: 'List of your applications'
+'%status%': '%status%'
+status_application.pending: pending
+status_application.deleted: deleted
+status_application.open: open
+status_application.approved: approved
+home.header.heading: 'Booking your local, trusted cleaner'
+home.header.support1: 'Friendly, vetted professionals at your doorstep.'
+home.header.support2: 'Just pick a time and we''ll do the rest.'
+testimonial-pros: 'Pros using the Handy platform are experienced, friendly, and background-checked.'
+testimonial-availability: 'Booking online in 60 seconds and schedule your home service for as early as tomorrow.'
+testimonial-guarantee: 'Your happiness is our goal. If you’re not happy, we’ll work to make it right.'
+home.header.steps: 'Handy helps you get your home in order'
+step-calendar-support-text: 'Select the date and time you’d like your professional to show up.'
+step-card-support-text: 'We’ll confirm your appointment and take care of payment electronically and securely.'
+step-phone-support-text: 'Download the app to access booking management tools and more.'
+step-pros-support-text: 'An experienced, fully-equipped professional will show up on time at your doorstep!'
+shine-support-text: 'Let your home shine.'
+home.ready_to_book: 'Ready to book now?'
+footer.copyright: "&copy; %year% Miss Benny. All rights reserved.\n"
+book_for_service: 'Book now'
+home_btn: 'Visit home page'
+user_orders.btn: Orders
+navigation.toggle: 'Toggle navigation'
+navigation.brand: Football
+navigation.user: User
+navigation.user.list: 'List of users'
+navigation.account: Account
+navigation.account.edit: 'Edit my profile'
+navigation.account.logout: 'Lock down my account'
+admin.user.list.title: 'Edit system users'
+admin.user.list.meta.description: " \tEdit system users"
+admin.user.list.meta.og.description: " \tEdit system users"
+email: Email
+roles: Roles
+actions: Actions
+edit: Edit
+delete: Delete
+edit_modal: 'Edit <span class="text-danger"><%= email %></span> account.'
+delete_modal: delete_modal

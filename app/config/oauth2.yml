@@ -1,0 +1,27 @@
+knpu_oauth2_client:
+    clients:
+        # the key "facebook_main" can be anything, it
+        # will create a service: "knpu.oauth2.client.facebook_main"
+        facebook_main:
+            type: facebook
+            client_id: 1871520209793696
+            client_secret: 847a1115c61e4bcf47be15055cd91438
+            # the route that you're redirected to after
+            redirect_route: connect_facebook_check
+            # route parameters to pass to your route, if needed
+            redirect_params: {}
+            graph_api_version: 'v2.8'
+        # LinkedIn
+        # Client ID: 77ofo5o2be97td
+        # Client Secret: kWQDoGBKkJXGQDGs
+        linkedin_main:
+            # must be "linkedin" - it activates that type!
+            type: linkedin
+            client_id: 77ofo5o2be97td
+            client_secret: kWQDoGBKkJXGQDGs
+            # a route name you'll create
+            redirect_route: connect_linkedin_check
+            redirect_params: {}
+
+            # whether to check OAuth2 "state": defaults to true
+            # use_state: true

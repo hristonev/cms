@@ -1,0 +1,18 @@
+# Security services
+services:
+    app.security.login_form_authenticator:
+        class: AppBundle\Security\LoginFormAuthenticator
+        # problem with auto wire multiple orm managers
+        arguments: ["@form.factory", "@doctrine.orm.entity_manager", "@router", "@service_container", "@security.user_password_encoder.generic"]
+
+    app.security.facebook_authenticator:
+        class: AppBundle\Security\FacebookAuthenticator
+        arguments: ["@knpu.oauth2.registry", "@doctrine.orm.entity_manager", "@router", "@service_container"]
+
+    app.security.linkedin_authenticator:
+        class: AppBundle\Security\LinkedInAuthenticator
+        arguments: ["@knpu.oauth2.registry", "@doctrine.orm.entity_manager", "@router", "@service_container"]
+
+    app.security.logout_listener:
+        class: AppBundle\EventListener\LogoutListener
+        autowire: true

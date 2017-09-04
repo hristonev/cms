@@ -1,0 +1,27 @@
+register.orConnectVia: 'or connect via'
+connect.facebook.btn: Facebook
+connect.linkedIn.btn: LinkedIn
+login.heading: Login
+login_btn: Login
+login.orLoginVia: 'or login via'
+login.facebook.btn: Facebook
+login.linkedIn.btn: LinkedIn
+user_edit.heading: 'Edit account settings'
+user.view_application_requests_btn: 'View your applications'
+referral_link: 'Referral link'
+change_account_settings: 'Change your settings'
+reset_password: 'Forgot your password?'
+user_reset.heading: 'Reset account password'
+user_change_password.heading: 'Change password for your account.'
+user_orders.heading: 'Your booking orders.'
+user_orders.list_service: Service
+user_orders.list_date: Date
+user_orders.list_address: Address
+user_orders.list_actions: Actions
+user_orders.bnt_edit_date: 'Change date'
+user_orders.bnt_delete: Delete
+register.heading: 'Register new account'
+register_btn: Send
+register.orLoginVia: 'or connect via'
+register.facebook.btn: Facebook
+register.linkedIn.btn: LinkedIn

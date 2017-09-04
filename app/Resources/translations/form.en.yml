@@ -1,0 +1,54 @@
+save_user.btn: 'Save settings'
+Username: Username
+Password: Password
+location_field_help: 'Location is setted via map above.'
+Email: Email
+Name: Name
+Country: Country
+Province: Province
+City: City
+'Post code': 'Post code'
+Address: Address
+Location: Location
+help.location.userForm: 'Location is set by map in above!'
+Latitude: Latitude
+Longitude: Longitude
+bg.CountryName: Bulgaria
+ro.CountryName: Romania
+'Captcha code': 'Captcha code'
+application.select_service_heading: 'Select Service'
+Service: Service
+application.select_service_submit: 'Submit to next step'
+application.select_document_heading: 'Application Documents'
+application.select_document_submit: 'Save Documents'
+Document: Document
+Description: Description
+application.options_btn: Options
+application.select_document_btn: 'Apply documents'
+application.finalize: 'Finish your application'
+application.options_heading: 'Application options'
+'Start time': 'Start time'
+hour.start: 'Earliest hour of job. Format HH:MM.'
+'End time': 'End time'
+hour.end: 'Latest hour of job. Format HH:MM.'
+application.cancel_btn: Cancel
+book.for_service: 'Book for service'
+Date: Date
+booking_finalize: 'Complete your order'
+order_service_name: 'Your order'
+schedule_select: 'Choose your cleaning schedule'
+order_price_per_cleaning: 'Price per cleaning'
+service_provider_info: 'Your Professional'
+cant_find_provider: 'Sorry, no providers for your location.'
+payment_processor: 'Payment method'
+process: 'Complete booking'
+processing-transaction: 'Processing transaction.'
+saving-order: 'Saving order.'
+restore.btn: 'Send to email'
+'New password': 'New password'
+'Repeat new Password': 'Repeat new Password'
+change.btn: 'Save and re login'
+'Old password': 'Old password'
+'Repeat Password': 'Repeat Password'
+btn.register: Register
+btn.login: Login

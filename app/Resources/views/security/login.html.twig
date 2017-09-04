@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="top-main-buffer"></div>
+    <div class="container">
+        <div class="modal fade in home-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">
+                            {% trans from "security" %}login.heading{% endtrans %}
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        {% if error %}
+                            <div class="alert alert-danger">
+                                {{ error.messageKey|trans(error.messageData, 'security') }}
+                            </div>
+                        {% endif %}
+
+                        {{ form_start(form) }}
+                        {{ form_row(form._username) }}
+                        {{ form_row(form._password) }}
+
+                        {% if error %}
+                            <div class="row bottom-buffer">
+                                <div class="col-md-12">
+                                    <a title="{% trans from "security" %}reset_password{% endtrans %}" href="{{ path('reset_password') }}">
+                                        {% trans from "security" %}reset_password{% endtrans %}
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">
+                            {% trans from "security" %}login_btn{% endtrans %}
+                            <span class="fa fa-lock"></span>
+                        </button>
+                        <span class="left-buffer right-buffer">
+                            {% trans from "security" %}login.orLoginVia{% endtrans %}
+                        </span>
+                        <a class="btn btn-social btn-facebook" href="{{ path('connect_facebook') }}">
+                            <span class="fa fa-facebook"></span>
+                            {% trans from "security" %}login.facebook.btn{% endtrans %}
+                        </a>
+                        <a class="btn btn-social btn-linkedin" href="{{ path('connect_linkedin') }}">
+                            <span class="fa fa-linkedin"></span>
+                            {% trans from "security" %}login.linkedIn.btn{% endtrans %}
+                        </a>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

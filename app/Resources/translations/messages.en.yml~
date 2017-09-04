@@ -1,0 +1,7 @@
+register.heading: Registration
+register.btn: Register
+msg.success.edit_user_settings: 'Successfully changed your settings'
+msg.success.register: 'Registration complete.'
+msg.success.reset_account: 'Info email is send to your mailbox!'
+msg.invalid_reset_token: 'Token is invalid or expired!'
+msg.success.change_password: 'Password successfully changed'

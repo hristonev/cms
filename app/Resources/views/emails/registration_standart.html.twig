@@ -1,0 +1,13 @@
+<p>
+    {% if name|length > 0 %}
+        Dear {{ name }},
+    {% else %}
+        Dear Sir or Dear Madam,
+    {% endif %}
+</p>
+<p>
+    Your password is {{ password }}.
+</p>
+<p>
+    Regards.
+</p>

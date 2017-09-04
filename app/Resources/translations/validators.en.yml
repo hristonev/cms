@@ -1,0 +1,4 @@
+form.validCaptcha: 'Please enter valid captcha code'
+min_one_file: 'You must specify at least one file'
+validation.hour_minute: 'Please use valid format HH:MM'
+'Account already in use.': 'Account already in use.'

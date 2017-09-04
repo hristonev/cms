@@ -1,0 +1,7 @@
+title: 'Football database'
+meta.og.description: 'Football database'
+meta.description: 'Football database'
+msg.security: 'Authentication required. After registration admin must approve your registration.'
+msg.security_note: 'Please do not register if you don''t plan to use the API.'
+approve_require: 'Your account is not approved by administrator.'
+status: Status

@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% include 'blocks/header.html.twig' %}
+    <div class="top-main-buffer"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans from "security" %}user_edit.heading{% endtrans %}</h1>
+
+                {% if applicationsCount > 0 %}
+                    <a href="{{ path('application-list') }}">{% trans from "security" %}user.view_application_requests_btn{% endtrans %}</a>
+                {% endif %}
+
+                {% if referralHash %}
+                    <div class="formGroup">
+                        <label class="control-label" for="referralLink">{% trans from "security" %}referral_link{% endtrans %}</label>
+                        <input class="form-control" id="referralLink" type="text" readonly value="{{ url('user_register_referral', {'code': referralHash}) }}">
+                    </div>
+                {% endif %}
+
+                <h2>
+                    {% trans from "security" %}change_account_settings{% endtrans %}
+                    <small class="pull-right">
+                        <a class="btn btn-warning" href="{{ path('user_edit_password', {'email': email}) }}">Change password</a>
+                    </small>
+                </h2>
+
+                {{ form_start(form) }}
+
+                {{ form_errors(form) }}
+
+                {{ form_row(form.email) }}
+                {{ form_row(form.name) }}
+
+                {{ form_row(form.country) }}
+                {{ form_row(form.postCode) }}
+                <div id="map" class="user-edit-map js-map"></div>
+                <div class="form-group">
+                    {{ form_label(form.location) }}
+                    {% do form.location.setRendered() %}
+                    {{ form_errors(form.location) }}
+                    <div class="form-group">
+                        <input class="js-ajax-action" type="hidden" value="{{ path('get_post_code') }}">
+                        {{ form_label(form.location.latitude) }}
+                        {% do form.location.latitude.setRendered() %}
+                        <input readonly class="js-lat" type="text" value="{{ form.location.latitude.vars.value }}"
+                               id="{{ form.location.latitude.vars.id }}"
+                               name="{{ form.location.latitude.vars.full_name }}">
+                        {{ form_label(form.location.longitude) }}
+                        {% do form.location.longitude.setRendered() %}
+                        <input readonly class="js-lng" type="text" value="{{ form.location.longitude.vars.value }}"
+                               id="{{ form.location.longitude.vars.id }}"
+                               name="{{ form.location.longitude.vars.full_name }}">
+                    </div>
+                </div>
+
+                {{ form_row(form.province) }}
+                {{ form_row(form.city) }}
+                {{ form_row(form.address) }}
+
+                <button type="submit" class="btn btn-success">
+                    {% trans from "form" %}save_user.btn{% endtrans %}
+                    <span class="fa fa-lock"></span>
+                </button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/user.js'|asset_version) }}" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_map_api_key }}&callback=userSettings.initMap" async defer></script>
+{% endblock %}
+

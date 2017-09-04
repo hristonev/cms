@@ -1,0 +1,33 @@
+{% use "bootstrap_3_layout.html.twig" %}
+
+{% block form_errors -%}
+    {% if errors|length > 0 -%}
+        <div class="invalid-feedback">
+            <ul class="list-unstyled">
+                {%- for error in errors -%}
+                    <li><span class="fa fa-exclamation-circle"></span> {{ error.message }}</li>
+                {%- endfor -%}
+            </ul>
+        </div>
+    {%- endif %}
+{%- endblock form_errors %}
+
+{% block form_row -%}
+    {% set showErrorIcon = (not compound or force_error|default(false)) and not valid %}
+    <div class="form-group{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}{{ showErrorIcon ? ' has-danger' : '' }}">
+        {{- form_label(form) -}}
+        {% if showErrorIcon and (type is not defined or type not in ['file', 'hidden']) %}
+            {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-control-danger')|trim}) -%}
+        {% endif %}
+        {% if help|default %}
+            {% set attr = attr|merge({'aria-describedby': 'help-block-'~id}) %}
+        {% endif %}
+        {{- form_widget(form, {
+            attr: attr
+        }) -}}
+        {% if help|default %}
+            <p class="form-text text-muted" id="help-block-{{ id }}">{{ help|trans({}, translation_domain) }}</p>
+        {% endif %}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row %}

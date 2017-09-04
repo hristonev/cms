@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {% trans from "public" %}admin.user.list.title{% endtrans %}
+{% endblock %}
+
+{% block meta_og_description %}
+    {% trans from "public" %}admin.user.list.meta.og.description{% endtrans %}
+{% endblock %}
+
+{% block meta_description %}
+    {% trans from "public" %}admin.user.list.meta.description{% endtrans %}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        {% include 'block/header.html.twig' %}
+        <h1>
+            {% trans from "public" %}admin.user.list.title{% endtrans %}
+        </h1>
+        <div class="table-responsive">
+            <table class="table table-hover js-UserEdit">
+                <thead>
+                    <tr>
+                        <th>{% trans from "public" %}email{% endtrans %}</th>
+                        <th>{% trans from "public" %}roles{% endtrans %}</th>
+                        <th>{% trans from "public" %}actions{% endtrans %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in userCollection %}
+                        <tr class="js-user" data-id="{{ user.id }}">
+                            <td class="js-email">{{ user.email }}</td>
+                            <td class="js-roles">
+                            {% for role in user.roles %}
+                                {% if role != 'ROLE_GUEST' %}
+                                    <span class="label label-success">
+                                        {{ role }}
+                                    </span>&nbsp;
+                                {% endif %}
+                            {% endfor %}
+                            </td>
+                            <td>
+                                <button class="btn btn-primary js-user-edit">{% trans from "public" %}edit{% endtrans %}</button>
+                                <button class="btn btn-danger pull-right js-user-delete">{% trans from "public" %}delete{% endtrans %}</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}" defer ></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}" defer ></script>
+    <script src="{{ asset('js/userEdit.js'|asset_version) }}" defer></script>
+    <script src="{{ asset('js/underscore.js'|asset_version) }}" defer></script>
+    {% include 'js_template/admin_user.html.twig' %}
+{% endblock %}

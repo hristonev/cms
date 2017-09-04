@@ -1,0 +1,3 @@
+register_via_email: 'Football database registration note'
+password_recovery_mail: 'Password recovery for FDB account'
+salutation: 'Dear Sir or Dear Madam,'

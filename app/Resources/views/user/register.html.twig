@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="top-main-buffer"></div>
+    <div class="container">
+        <div class="modal fade in home-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">
+                            {% trans from "security" %}register.heading{% endtrans %}
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+
+                        {{ form_start(form) }}
+                        {{ form_row(form.email) }}
+                        {{ form_row(form.name) }}
+                        {{ form_row(form.captchaCode) }}
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">
+                            {% trans from "security" %}register_btn{% endtrans %}
+                            <span class="fa fa-lock"></span>
+                        </button>
+                        <span class="left-buffer right-buffer">
+                            {% trans from "security" %}register.orLoginVia{% endtrans %}
+                        </span>
+                        <a class="btn btn-social btn-facebook" href="{{ path('connect_facebook') }}">
+                            <span class="fa fa-facebook"></span>
+                            {% trans from "security" %}register.facebook.btn{% endtrans %}
+                        </a>
+                        <a class="btn btn-social btn-linkedin" href="{{ path('connect_linkedin') }}">
+                            <span class="fa fa-linkedin"></span>
+                            {% trans from "security" %}register.linkedIn.btn{% endtrans %}
+                        </a>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#<div class="row">#}
+            {#<div class="col-md-12">#}
+                {#<h1>#}
+                    {#{% trans %}register.heading{% endtrans %}#}
+                    {#{% if referrerUser %}#}
+                        {#<small>#}
+                            {#{{ referrerUser.name }}#}
+                            {#{{ referrerUser.email }}#}
+                        {#</small>#}
+                    {#{% endif %}#}
+                {#</h1>#}
+
+                {#{{ form_start(form) }}#}
+                    {#{{ form_row(form.email) }}#}
+                    {#{{ form_row(form.name) }}#}
+                    {#{{ form_row(form.captchaCode) }}#}
+
+                    {#<button type="submit" class="btn btn-primary" formnovalidate>#}
+                        {#{% trans %}register.btn{% endtrans %}#}
+                    {#</button>#}
+                    {#<span class="left-buffer right-buffer">#}
+                            {#{% trans from "security" %}register.orConnectVia{% endtrans %}#}
+                        {#</span>#}
+                    {#<a class="btn btn-social btn-facebook" href="{{ path('connect_facebook') }}">#}
+                        {#<span class="fa fa-facebook"></span>#}
+                        {#{% trans from "security" %}connect.facebook.btn{% endtrans %}#}
+                    {#</a>#}
+                    {#<a class="btn btn-social btn-linkedin">#}
+                        {#<span class="fa fa-linkedin"></span>#}
+                        {#{% trans from "security" %}connect.linkedIn.btn{% endtrans %}#}
+                    {#</a>#}
+                {#{{ form_end(form) }}#}
+            {#</div>#}
+        {#</div>#}
+    </div>
+{% endblock %}

@@ -1,0 +1,10 @@
+<p>
+    You have a password change request.
+</p>
+<p>
+    Please follow this <a href="{{ url('restore_password', {'token': token}) }}">link</a>.
+    Link is valid for {{ valid_time }} hours.
+</p>
+<p>
+    If you are not requested password recovery just ignore this message!
+</p>

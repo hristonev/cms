@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% include 'blocks/header.html.twig' %}
+    <div class="top-main-buffer"></div>
+    <ul class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{% trans from "security" %}user_orders.heading{% endtrans %}</h1>
+            </div>
+        </div>
+        <ul class="list-group">
+            <li class="list-group-item active">
+                <div class="row">
+                    <div class="col-md-2">
+                        {% trans from "security" %}user_orders.list_service{% endtrans %}
+                    </div>
+                    <div class="col-md-2">
+                        {% trans from "security" %}user_orders.list_date{% endtrans %}
+                    </div>
+                    <div class="col-md-4">
+                        {% trans from "security" %}user_orders.list_address{% endtrans %}
+                    </div>
+                    <div class="col-md-4 text-right">
+                        {% trans from "security" %}user_orders.list_actions{% endtrans %}
+                    </div>
+                </div>
+            </li>
+            {% for order in orders %}
+                <li class="list-group-item list-action">
+                    <div class="row">
+                        <div class="col-md-2">
+                            {{ order.service }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ order.date|date }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ order.postCode }}
+                        </div>
+                        <div class="col-md-4">
+                            <div class="btn-group pull-right" role="group" aria-label="Order actions">
+                                <button type="button" class="btn btn-warning">
+                                    {% trans from "security" %}user_orders.bnt_edit_date{% endtrans %}
+                                </button>
+                                <button type="button" class="btn btn-danger">
+                                    {% trans from "security" %}user_orders.bnt_delete{% endtrans %}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+
+{% endblock %}
+
