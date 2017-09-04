@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{ name }}</h1>
+        <div class="row">
+            <div class="col-xs-12 label label-danger">Голямо хале</div>
+        {% for num, pos in position %}
+            {% if (pos.pos - 1) % rows == 0 and pos.pos > 0 %}
+                </div>
+                <div class="row text-center">
+            {% endif %}
+                    {% if pos.contract %}
+                        {% set cssClass = 'primary' %}
+                    {% else %}
+                        {% set cssClass = 'warning' %}
+                    {% endif %}
+                    <div class="col-xs-{{ 12/rows }} btn btn-{{ cssClass }}">
+                        {{ num }}
+                    </div>
+        {% endfor %}
+            <div class="col-xs-12 label label-danger">Администрация</div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+
